@@ -321,6 +321,42 @@
       "address": "Почтовый адрес: на стадии смены юридического адреса",
       "website": "www.rukemcenter.com",
       "image": ""
+    },
+    {
+      "plaka": "TR06",
+      "name": "asd",
+      "description": "asd",
+      "type": "Okul",
+      "address": "asd",
+      "website": "asd",
+      "image": ""
+    },
+    {
+      "plaka": "TR06",
+      "name": "Ассоциация русскоговорящей молодежи",
+      "description": "Контактный адрес:jenyasarlak@gmail.com",
+      "type": "Dernekler",
+      "address": "Анкара",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR06",
+      "name": "Ассоциация преподавателей-русистов и переводчиков",
+      "description": "Контактный адрес:rukent@djuzchimen.ru",
+      "type": "Dernekler",
+      "address": "Анкара",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR06",
+      "name": "Танцевально-спортивная ассоциация «Фавори»",
+      "description": "Контактный адрес:favoridans@mail.ru",
+      "type": "Dernekler",
+      "address": "Анкара",
+      "website": "-",
+      "image": ""
     }
   ],
   "TR34": [
@@ -520,6 +556,33 @@
       "address": "Почтовый адрес: Okan Üniversitesi Tuzla Kampüsü Yanı 34959 Akfırat-Tuzla, İstanbul, Türkiye",
       "website": "www.okankoleji.com",
       "image": ""
+    },
+    {
+      "plaka": "TR34",
+      "name": "Ассоциация якутского делового сотрудничества, культуры и солидарности",
+      "description": "Контактный адрес: matrena.egorova@gmail.com",
+      "type": "Dernekler",
+      "address": "Стамбул",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR34",
+      "name": "Ассоциация “Общественная дипломатия”",
+      "description": "Контактный адрес: r.rizayeva@gmail.com",
+      "type": "Dernekler",
+      "address": "Стамбул",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR34",
+      "name": "Российская молодежная ассоциация",
+      "description": "Контактный адрес: tanyatekdal@gmail.com",
+      "type": "Dernekler",
+      "address": "Стамбул",
+      "website": "-",
+      "image": ""
     }
   ],
   "TR01": [
@@ -530,6 +593,15 @@
       "type": "Kültür",
       "address": "Почтовый адрес: Sümer mah., Baraj Cad., Topbaş apt., 45 B blok. Kat 1.d.2, Seyhan/Adana, Türkiye",
       "website": "www.matroshkaadana.wixsite.com/website",
+      "image": ""
+    },
+    {
+      "plaka": "TR01",
+      "name": "Ассоциация русской культуры, образования, взаимопомощи и дружбы жителей Чукурова",
+      "description": "Контактный адрес:cukurova.rusca@gmail.com",
+      "type": "Dernekler",
+      "address": "Адана",
+      "website": "-",
       "image": ""
     }
   ],
@@ -623,6 +695,60 @@
       "address": "Почтовый адрес: Güzeloba Mah. Havaalanı Cad. No: 100 A-B Muratpaşa/Antalya, 07230, Türkiye",
       "website": "www. antalya.mip.school",
       "image": ""
+    },
+    {
+      "plaka": "TR07",
+      "name": "Ассоциация культуры и образования",
+      "description": "Контактный адрес:ekaterinagunduz@mail.ru",
+      "type": "Dernekler",
+      "address": "Анталия/Алания",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR07",
+      "name": "Международная ассоциация образования и культуры «EDURUS»",
+      "description": "Контактный адрес:alanyaedurusdernek@gmail.com",
+      "type": "Dernekler",
+      "address": "Анталия/Алания",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR07",
+      "name": "Ассоциация русского языка и культуры «АРУДЕР»",
+      "description": "Контактный адрес:aruderalanya@yandex.ru",
+      "type": "Dernekler",
+      "address": "Анталия/Алания",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR07",
+      "name": "Русское общество Антальи",
+      "description": "Контактный адрес: ruantalya@gmail.com",
+      "type": "Dernekler",
+      "address": "Анталья",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR07",
+      "name": "Культурно-просветительское общество «Столица»",
+      "description": "Контактный адрес: babaevmail@gmail.com",
+      "type": "Dernekler",
+      "address": "Анталья",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR07",
+      "name": "Общество русскоговорящих православных",
+      "description": "Контактный адрес: asenaalikan@gmail.com",
+      "type": "Dernekler",
+      "address": "Анталья",
+      "website": "-",
+      "image": ""
     }
   ],
   "TR35": [
@@ -652,6 +778,15 @@
       "address": "Почтовый адрес: Üniversite Caddesi, No:37-39, Ağaçlı Yol, Bornova/İzmir, PK. 35100, Türkiye",
       "website": "www.yasar.edu.tr",
       "image": ""
+    },
+    {
+      "plaka": "TR35",
+      "name": "Общество изучения русского языка и культуры им. А.И.Солженицына",
+      "description": "Контактный адрес: turkey-izmir@mail.ru",
+      "type": "Dernekler",
+      "address": "Измир",
+      "website": "-",
+      "image": ""
     }
   ],
   "TR09": [
@@ -674,6 +809,15 @@
       "address": "Почтовый адрес: 1 Anafartalar Mah, 1601 Sok, 20-2, Şehzadeler, Manisa, Türkiye",
       "website": "_",
       "image": ""
+    },
+    {
+      "plaka": "TR45",
+      "name": "Ассоциация образования и культуры русскоговорящих",
+      "description": "Контактный адрес: nastyaonur@gmail.com",
+      "type": "Dernekler",
+      "address": "Маниса",
+      "website": "-",
+      "image": ""
     }
   ],
   "TR48": [
@@ -694,6 +838,15 @@
       "address": "Почтовый адрес: Muğla Sıtkı Koçman Üniversitesi Rektörlüğü, 48000 Kötekli/Muğla, Türkiye",
       "website": "www.mu.edu.tr",
       "image": ""
+    },
+    {
+      "plaka": "TR48",
+      "name": "Российско-турецкое общество межкультурного сотрудничества «MaRus»",
+      "description": "Контактный адрес: rusmarmaris@gmail.com",
+      "type": "Dernekler",
+      "address": "Мугла/Мармарис",
+      "website": "-",
+      "image": ""
     }
   ],
   "TR61": [
@@ -713,6 +866,15 @@
       "type": "Üniversite",
       "address": "Почтовый адрес: Karadeniz Teknik Üniversitesi, 61080, Trabzon, Türkiye",
       "website": "www.ktu.edu.tr",
+      "image": ""
+    },
+    {
+      "plaka": "TR61",
+      "name": "Русскоязычная ассоциация образования, культуры и дружбы черноморского побережья",
+      "description": "Контактный адрес: trabzon.rus.dernegi@gmail.com",
+      "type": "Dernekler",
+      "address": "Трабзон",
+      "website": "-",
       "image": ""
     }
   ],
@@ -824,6 +986,15 @@
       "address": "Адрес: Anadolu Üniversitesi Yunus Emre Kampüsü Tepebaşı, 26470, Eskişehir/Türkiye",
       "website": "www.anadolu.edu.tr",
       "image": ""
+    },
+    {
+      "plaka": "TR26",
+      "name": "Ассоциация русского языка «Эрудиль»",
+      "description": "Контактный адрес: info.erudil@internet.ru",
+      "type": "Dernekler",
+      "address": "Эскишехир",
+      "website": "-",
+      "image": ""
     }
   ],
   "TR33": [
@@ -834,6 +1005,79 @@
       "type": "Diğer",
       "address": "Почтовый адрес: Mersin-10,Kuzey Kıbrıs Türk, Cümhuriyeti, 3 Tebebaşı, Türkiye",
       "website": "www.cyprusrusschool.com",
+      "image": ""
+    },
+    {
+      "plaka": "TR33",
+      "name": "Общество русской культуры, образования,  науки \"Авангард\"",
+      "description": "Контактный адрес: rusavangart@gmail.com",
+      "type": "Dernekler",
+      "address": "Мерсин/Силифке",
+      "website": "-",
+      "image": ""
+    }
+  ],
+  "TR16": [
+    {
+      "plaka": "TR16",
+      "name": "Центр русской культуры Бурсы",
+      "description": "Контактный адрес: liudmila.mutlu@gmail.com",
+      "type": "Dernekler",
+      "address": "Бурса",
+      "website": "-",
+      "image": ""
+    }
+  ],
+  "TR50": [
+    {
+      "plaka": "TR50",
+      "name": "Каппадокийская русская ассоциация культуры",
+      "description": "Контактный адрес: helinym@gmail.com",
+      "type": "Dernekler",
+      "address": "Невшехир",
+      "website": "-",
+      "image": ""
+    }
+  ],
+  "TR41": [
+    {
+      "plaka": "TR41",
+      "name": "Ассоциация любителей русского языка и культуры",
+      "description": "Контактный адрес: rusdernekkocaeli@gmail.com",
+      "type": "Dernekler",
+      "address": "Коджаэли",
+      "website": "-",
+      "image": ""
+    }
+  ],
+  "TR55": [
+    {
+      "plaka": "TR55",
+      "name": "Русскоязычная ассоциация образования, культуры и дружбы черноморского побережья",
+      "description": "Контактный адрес: katrus55@yandex.ru",
+      "type": "Dernekler",
+      "address": "Самсун",
+      "website": "-",
+      "image": ""
+    }
+  ],
+  "TR00": [
+    {
+      "plaka": "TR00",
+      "name": "Правовая поддержка соотечественников",
+      "description": "Контактный адрес: av.elfiyakanbekova@gmail.com",
+      "type": "Dernekler",
+      "address": "-",
+      "website": "-",
+      "image": ""
+    },
+    {
+      "plaka": "TR00",
+      "name": "Эксперт по русскому языку и русским школам",
+      "description": "Контактный адрес: sv-5.10@mail.ru",
+      "type": "Dernekler",
+      "address": "-",
+      "website": "-",
       "image": ""
     }
   ]
