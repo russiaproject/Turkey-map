@@ -244,7 +244,7 @@ const TurkeyMap = () => {
       transition: "all 0.3s ease-in-out",
       transform: isHovered ? 'scale(1.008)' : 'scale(1)',
       fill: isSelected ? '#0032A0' 
-           : isHovered ? '#5C9E31' 
+           : isHovered ? '#5C9E31' // Rengi kırmızıdan (#DA291C) açık yeşile (#5C9E31) değiştirdik
            : '#a0aec0', 
       stroke: '#4a5568', 
       strokeWidth: 0.5,
@@ -263,6 +263,11 @@ const TurkeyMap = () => {
       case 'Diğer': return '#525252'; 
       default: return '#525252'; 
     }
+  };
+
+  // Kurum tipi etiketleri için boyut belirleyen fonksiyon ekledik
+  const getMarkerSize = () => {
+    return currentZoomLevel > 2 ? "8px" : "6px"; // Etiket boyutlarını küçülttük
   };
 
   const getCenterCount = (cityID) => {
@@ -373,72 +378,8 @@ const TurkeyMap = () => {
   const isDataEmpty = !provincePaths || provincePaths.length === 0 || 
                       !provincePaths[0]?.d || provincePaths[0]?.d === "";
 
+  // Harita üzerindeki sayılara tıklama olayını düzeltmek için eventListener ekliyoruz
   useEffect(() => {
-    const numberCircles = document.querySelectorAll('circle[cx][cy]');
-  
-  numberCircles.forEach(circle => {
-    circle.addEventListener('click', (e) => {
-      e.stopPropagation(); // Event'in diğer elementlere geçmesini önle
-      const cityId = circle.getAttribute('data-city-id');
-      if (cityId) {
-        handleCityClick(cityId);
-      }
-    });
-
-    const textElement = circle.nextElementSibling;
-    if (textElement && textElement.tagName === 'text') {
-      textElement.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const cityId = circle.getAttribute('data-city-id');
-        if (cityId) {
-          handleCityClick(cityId);
-        }
-      });
-    }
-  });
-
-  return () => {
-    // Temizleme fonksiyonu
-    numberCircles.forEach(circle => {
-      circle.removeEventListener('click', () => {});
-      const textElement = circle.nextElementSibling;
-      if (textElement && textElement.tagName === 'text') {
-        textElement.removeEventListener('click', () => {});
-      }
-    });
-  };
-}, [zoomedCity, provincePaths, filteredInstitutions]);
-
-return (
-  <g onClick={() => handleCityClick(cityID)}>
-    <circle
-      cx={cx + circleOffsetX}
-      cy={cy + circleOffsetY}
-      r="10"
-      fill="#14b8a6" 
-      fillOpacity="0.8"
-      stroke="white"
-      strokeWidth="2"
-      data-city-id={cityID} // Bu attribute'u ekledik
-      style={{ 
-        cursor: 'pointer', 
-        transition: 'all 0.2s ease',
-      }}
-    />
-    <text
-      x={cx + textOffsetX}
-      y={cy + textOffsetY}
-      textAnchor="middle"
-      fill="white"
-      fontSize="10"
-      fontWeight="bold"
-      style={{ pointerEvents: 'none' }}
-    >
-      {centerCount}
-    </text>
-  </g>
-);
-    
     if (svgRef.current && gRef.current) {
       const cityPaths = document.querySelectorAll('.city-path');
       
@@ -465,6 +406,45 @@ return (
       };
     }
   }, [zoomedCity, provincePaths]);
+
+  // Harita üzerindeki sayılara tıklama olayını düzeltmek için eventListener ekliyoruz
+  useEffect(() => {
+    // Harita yüklendikten sonra sayılara tıklama olayını ekle
+    const numberCircles = document.querySelectorAll('circle[cx][cy]');
+    
+    numberCircles.forEach(circle => {
+      circle.addEventListener('click', (e) => {
+        e.stopPropagation(); // Event'in diğer elementlere geçmesini önle
+        const cityId = circle.getAttribute('data-city-id');
+        if (cityId) {
+          handleCityClick(cityId);
+        }
+      });
+      
+      // Sayının içindeki text elementine de tıklama özelliği ekle
+      const textElement = circle.nextElementSibling;
+      if (textElement && textElement.tagName === 'text') {
+        textElement.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cityId = circle.getAttribute('data-city-id');
+          if (cityId) {
+            handleCityClick(cityId);
+          }
+        });
+      }
+    });
+    
+    return () => {
+      // Temizleme fonksiyonu
+      numberCircles.forEach(circle => {
+        circle.removeEventListener('click', () => {});
+        const textElement = circle.nextElementSibling;
+        if (textElement && textElement.tagName === 'text') {
+          textElement.removeEventListener('click', () => {});
+        }
+      });
+    };
+  }, [zoomedCity, provincePaths, filteredInstitutions]);
 
   return (
     <div className='mt-4 container'>
@@ -731,6 +711,7 @@ return (
                     </div>
                   )}
                   
+                  {/* Web sitesi linkini göster - geliştirdik */}
                   {selectedInstitution.website && selectedInstitution.website !== "_" && (
                     <div className="mb-3 text-center">
                       <a 
@@ -749,6 +730,7 @@ return (
                           textDecoration: 'none'
                         }}
                       >
+                        <i className="fa-solid fa-globe me-2"></i>
                         Websitesini Ziyaret Et
                       </a>
                     </div>
@@ -832,8 +814,8 @@ return (
                         cityName: plakaToCity[zoomedCity]
                       })}
                       style={{
-                        padding: '12px 15px',
-                        margin: '8px 0',
+                        padding: "10px 12px", // Padding'i azalttık
+                        margin: "6px 0", // Margin'i azalttık
                         backgroundColor: 'white',
                         border: '1px solid #eee',
                         borderRadius: '8px',
@@ -854,29 +836,29 @@ return (
                     >
                       <div 
                         style={{ 
-                          width: '24px', 
-                          height: '24px', 
+                          width: "20px", // Boyutu küçülttük (önceden 24px)
+                          height: "20px", // Boyutu küçülttük (önceden 24px)
                           backgroundColor: getMarkerColor(institution.type),
                           borderRadius: '50%',
-                          marginRight: '15px',
+                          marginRight: '12px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: 'white',
                           fontWeight: 'bold',
-                          fontSize: '12px'
+                          fontSize: '10px' // Font boyutunu küçülttük (önceden 12px)
                         }}
                       >
                         {index + 1}
                       </div>
                       <div style={{ flex: '1' }}>
-                        <div style={{ fontWeight: '500', color: '#333' }}>{institution.name}</div>
-                        <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
+                        <div style={{ fontWeight: '500', color: '#333', fontSize: '14px' }}>{institution.name}</div>
+                        <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}> {/* Font boyutunu küçülttük */}
                           {institution.type}
                         </div>
                       </div>
                       <div>
-                        <i className="fas fa-chevron-right" style={{ color: '#ccc', fontSize: '12px' }}></i>
+                        <i className="fas fa-chevron-right" style={{ color: '#ccc', fontSize: '10px' }}></i>
                       </div>
                     </div>
                   ))}
@@ -952,67 +934,68 @@ return (
             bottom: '20px',
             right: '20px',
             backgroundColor: 'white',
-            padding: '15px',
+            padding: '12px', // Padding'i azalttık
             borderRadius: '8px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             zIndex: '100',
-            minWidth: '200px',
-            fontSize: '0.875rem'
+            minWidth: '180px', // Genişliği azalttık
+            fontSize: '0.8rem' // Font boyutunu küçülttük
           }}>
             <h3 className="legend-title" style={{
               fontWeight: '600',
               color: '#444',
-              marginBottom: '12px',
+              marginBottom: '10px',
               paddingBottom: '4px',
-              borderBottom: '1px solid #eee'
+              borderBottom: '1px solid #eee',
+              fontSize: '0.9rem' // Font boyutunu küçülttük
             }}>Kurum Tipleri</h3>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '8px 0' }}>
+            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color city-legend" style={{ 
-                width: '16px', 
-                height: '16px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
-                marginRight: '10px',
+                marginRight: '8px',
                 backgroundColor: '#14b8a6',
                 border: '1px solid rgba(0,0,0,0.1)'
               }}></span>
-              <span className="legend-label" style={{ fontSize: '0.8rem', color: '#555' }}>Şehir (Kurum Sayısı)</span>
+              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Şehir (Kurum Sayısı)</span>
             </div>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '8px 0' }}>
+            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '16px', 
-                height: '16px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
-                marginRight: '10px',
+                marginRight: '8px',
                 backgroundColor: '#DA291C', 
                 border: '1px solid rgba(0,0,0,0.1)'
               }}></span>
-              <span className="legend-label" style={{ fontSize: '0.8rem', color: '#555' }}>Konsolosluk/Büyükelçilik</span>
+              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Konsolosluk/Büyükelçilik</span>
             </div>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '8px 0' }}>
+            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '16px', 
-                height: '16px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
-                marginRight: '10px',
+                marginRight: '8px',
                 backgroundColor: '#0032A0', 
                 border: '1px solid rgba(0,0,0,0.1)'
               }}></span>
-              <span className="legend-label" style={{ fontSize: '0.8rem', color: '#555' }}>Kültür/Ticaret Kurumları</span>
+              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Kültür/Ticaret Kurumları</span>
             </div>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '8px 0' }}>
+            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '16px', 
-                height: '16px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
-                marginRight: '10px',
+                marginRight: '8px',
                 backgroundColor: '#5C9E31', 
                 border: '1px solid rgba(0,0,0,0.1)'
               }}></span>
-              <span className="legend-label" style={{ fontSize: '0.8rem', color: '#555' }}>Üniversite/Eğitim</span>
+              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Üniversite/Eğitim</span>
             </div>
           </div>
 
@@ -1115,6 +1098,7 @@ return (
                               fillOpacity="0.8"
                               stroke="white"
                               strokeWidth="2"
+                              data-city-id={cityCode} // Bu attribute'u ekledik
                               style={{ 
                                 cursor: 'pointer', 
                                 transition: 'all 0.2s ease',
@@ -1213,7 +1197,7 @@ return (
         }
         
         .city-path:hover {
-          fill: #DA291C !important;
+          fill: #5C9E31 !important;
         }
         
         /* Facility Points */
