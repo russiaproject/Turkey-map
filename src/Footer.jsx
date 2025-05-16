@@ -8,8 +8,8 @@ import ludmila from "./images/RussiaFlag.svg"; // Buraya resim gelecek
 const Credit = () => {
   return (
     <div className="container p-5">
-      <div className="row creditRow">
-        <div className="col-lg-3 shadowCredit rounded-5 p-5">
+      <div className="row creditRow gap-4">
+        <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
             <img src={emir} alt="Emir Kesimoğlu" className="creditFoto" />
           </div>
@@ -58,7 +58,7 @@ const Credit = () => {
             </div>
           </div>
         </div>
-        <div className="col-lg-3 shadowCredit rounded-5 p-5">
+        <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
             <img src={mustafa} alt="Mustafa Türkmen" className="creditFoto" />
           </div>
@@ -106,7 +106,7 @@ const Credit = () => {
           </div>
         </div>
         
-        <div className="col-lg-3 shadowCredit rounded-5 p-5">
+        <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
             <img src={ludmila} alt="Ludmila Hanım" className="creditFoto" />
           </div>
@@ -134,9 +134,8 @@ const Credit = () => {
               </a>
             </div>
           </div>
-        </div>
 
-        <div className="col-lg-3 shadowCredit rounded-5 p-5">
+        <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
             <img src={yelkanat} alt="Berkay Yelkanat" className="creditFoto" />
           </div>
@@ -164,6 +163,8 @@ const Credit = () => {
               </a>
             </div>
           </div>
+        </div>
+          
         </div>
       </div>
     </div>
