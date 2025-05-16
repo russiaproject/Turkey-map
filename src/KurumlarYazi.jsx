@@ -95,7 +95,7 @@ const KurumlarYazi = () => {
                           <i className="fa-solid fa-user-tie me-2 text-primary"></i>
                           Aleksandr Sotniçenko
                         </h5>
-                        <p className="text-muted mb-2 fst-italic">Rus Evinin Kıymetli Müdürü</p>
+                        <p className="text-muted mb-2 fst-italic">Rus Evinin Kıymetli Başkanı</p>
                         <div className="quote-container my-3 p-2 border-start border-4 border-primary ps-3">
                           <p className="mb-1">
                             <i className="fa-solid fa-quote-left me-2 text-primary"></i>
