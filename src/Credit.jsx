@@ -134,6 +134,7 @@ const Credit = () => {
               </a>
             </div>
           </div>
+        </div>
 
         <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
@@ -165,7 +166,6 @@ const Credit = () => {
           </div>
         </div>
           
-        </div>
       </div>
     </div>
   );
