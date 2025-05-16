@@ -42,7 +42,7 @@ const Footer = () => {
             <h5 className="footer-title mb-3">Rusevi Sosyalde!</h5>
             <div className="d-flex flex-column align-items-center align-items-md-start">
                <a href="https://x.com/rusevi_ankara" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
-                 <i className="fa-brands fa-x me-2"></i>Twitter
+                 <i className="fa-brands fa-twitter me-2"></i>X
                </a>
                <a href="https://www.instagram.com/rusevi_ankara/" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
                  <i className="fa-brands fa-instagram me-2"></i>Instagram
