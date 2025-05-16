@@ -54,7 +54,7 @@ const Footer = () => {
                  <i className="fa-brands fa-telegram me-2"></i>Telegram(RU)
                </a>
                 <a href="https://vk.com/rusevi" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
-                 <i className="fa-brands fa-telegram me-2"></i>VK
+                 <i className="fa-brands fa-vk me-2"></i>VK
                </a>
             </div>
           </div>
