@@ -1,174 +1,72 @@
-import React from "react";
-import ornekFoto from "./images/ruseviBina.jpg";
-import emir from "./images/emir.jpg";
-import mustafa from "./images/mustafa.jpg";
-import yelkanat from "./images/yelkanat.jpg";
-import ludmila from "./images/RussiaFlag.svg"; // Buraya resim gelecek
+import React from 'react';
+import matrushka from "./images/matrushka.png";
+import anitkabir from "./images/anitkabir.png";
+import red from "./images/red.png";
+import { Link } from 'react-router-dom';
 
-const Credit = () => {
+const Footer = () => {
   return (
-    <div className="container p-5">
-      <div className="row creditRow gap-4">
-        <div className="col-lg shadowCredit rounded-5 p-5">
-          <div>
-            <img src={emir} alt="Emir Kesimoğlu" className="creditFoto" />
-          </div>
-          <div>
-            <p className="meslekCredit mt-3">
-              Full-Stack Developer & Development Team
+    <footer className="footer-custom position-relative py-5 mt-5">
+      <div class="position-absolute bottom-0 start-25 ms-5">
+        <img src={red} alt="" className='redBina'/>
+        </div>
+        <div class="position-absolute top-0 end-0 me-5 rotateMat">
+        <img src={matrushka} alt="" className='matrushka'/>
+        </div>
+      <div className="container">
+        <div className="row gy-4">
+          <div className="col-12 col-md-4">
+            <h5 className="footer-title mb-3">Русский Дом Анкара</h5>
+            <p className="footer-text">Hilal mah., Rabindranath Tagore cad., n.68 Çankaya, Ankara</p>
+            <p className="footer-text">
+              <a href="mailto:turkey@rs.gov.ru" className="footer-link">
+                turkey@rs.gov.ru
+              </a>
             </p>
-            <p className="isimCredit">Emir Kesimoğlu</p>
-            <div className="gap-2 d-flex ikonKredit">
-             <a
-                href="https://www.instagram.com/emirk_oglu/"
-                className="credit-icon-link"
-                aria-label="Instagram"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-instagram"></i>
+            <p className="footer-text">
+              <a href="tel:+903124420218" className="footer-link">
+                +90 312 442 02 18
               </a>
-              <a
-                href="https://www.linkedin.com/in/emirkesimoglu/"
-                className="credit-icon-link"
-                aria-label="Linkedin"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-linkedin"></i>
-              </a>
-             <a
-                href="https://github.com/emxis"
-                className="credit-icon-link"
-                aria-label="Github"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-github"></i>
-              </a>
-              <a
-                href="mailto:emirkesimoglu.923@gmail.com"
-                className="credit-icon-link"
-                aria-label="Email"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-solid fa-envelope"></i>
-              </a>
+            </p>
+          </div>
+          <div className="col-12 col-md-4 text-center text-md-start">
+            <h5 className="footer-title mb-3">Hızlı Gezinme</h5>
+            <nav className="d-flex flex-column align-items-center align-items-md-start">
+              <a href="#" className="footer-link mb-1">Ana Sayfa</a>
+              <a href="#" className="footer-link mb-1">Rusevi Türkiye Hakkında</a>
+              <a href="#" className="footer-link mb-1">Harita</a>
+              <a href="#" className="footer-link mb-1">İletişim</a>
+            </nav>
+          </div>
+          <div className="col-12 col-md-4 text-center text-md-start">
+            <h5 className="footer-title mb-3">Rusevi Sosyalde!</h5>
+            <div className="d-flex flex-column align-items-center align-items-md-start">
+               <a href="https://x.com/rusevi_ankara" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
+                 <i className="fa-brands fa-x me-2"></i>Twitter
+               </a>
+               <a href="https://www.instagram.com/rusevi_ankara/" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
+                 <i className="fa-brands fa-instagram me-2"></i>Instagram
+               </a>
+               <a href="https://t.me/ankara_rusevi" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
+                 <i className="fa-brands fa-telegram me-2"></i>Telegram(TR)
+               </a>
+                <a href="https://t.me/ankara_rusdom" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
+                 <i className="fa-brands fa-telegram me-2"></i>Telegram(RU)
+               </a>
+                <a href="https://vk.com/rusevi" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
+                 <i className="fa-brands fa-vk me-2"></i>VK
+               </a>
             </div>
           </div>
         </div>
-        <div className="col-lg shadowCredit rounded-5 p-5">
-          <div>
-            <img src={mustafa} alt="Mustafa Türkmen" className="creditFoto" />
-          </div>
-          <div>
-            <p className="meslekCredit mt-3">Proje Takım Lideri</p>
-            <p className="isimCredit">Mustafa Türkmen</p>
-            <div className="gap-2 d-flex ikonKredit">
-             <a
-                href="https://vk.com/mustafa0002312"
-                className="credit-icon-link"
-                aria-label="VK"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-vk"></i>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/mustafa-t-334890296/"
-                className="credit-icon-link"
-                aria-label="Linkedin"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-linkedin"></i>
-              </a>
-             <a
-                href="https://github.com/MustafaTurkmen06"
-                className="credit-icon-link"
-                aria-label="Github"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-github"></i>
-              </a>
-              <a
-                href="mailto:turkmen.mustafa@yandex.com"
-                className="credit-icon-link"
-                aria-label="Email"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-solid fa-envelope"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <div className="col-lg shadowCredit rounded-5 p-5">
-          <div>
-            <img src={ludmila} alt="Ludmila Hanım" className="creditFoto" />
-          </div>
-          <div>
-            <p className="meslekCredit mt-3">Proje Fikir Sahibi</p>
-            <p className="isimCredit">Ludmila Çalışkan</p>
-            <div className="gap-2 d-flex ikonKredit">
-              <a
-                href=""
-                className="credit-icon-link"
-                aria-label="Email"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-solid fa-envelope"></i>
-              </a>
-              <a
-                href="https://www.instagram.com/rusevi_ankara/"
-                className="credit-icon-link"
-                aria-label="Instagram"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-instagram"></i>
-              </a>
-            </div>
-          </div>
-
-        <div className="col-lg shadowCredit rounded-5 p-5">
-          <div>
-            <img src={yelkanat} alt="Berkay Yelkanat" className="creditFoto" />
-          </div>
-          <div>
-            <p className="meslekCredit mt-3">Scrum Master & Development Team</p>
-            <p className="isimCredit">Berkay Yelkanat</p>
-            <div className="gap-2 d-flex ikonKredit">
-              <a
-                href="https://www.linkedin.com/in/berkay-yelkanat-3b1a64316/"
-                className="credit-icon-link"
-                aria-label="Linkedin"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-linkedin"></i>
-              </a>
-             <a
-                href="https://github.com/xberkayio"
-                className="credit-icon-link"
-                aria-label="Github"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-github"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-          
+        <div className="footer-copyright text-center mt-5 pt-4">
+          © {new Date().getFullYear()} Русский Дом Анкара. Tüm hakları saklıdır.
+          <br />
+          <Link to="/credit" className='katki'>Bu Siteye Katkısı Olanları Görün!</Link>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 
-export default Credit;
+export default Footer;
