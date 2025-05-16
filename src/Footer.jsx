@@ -41,18 +41,14 @@ const Footer = () => {
           <div className="col-12 col-md-4 text-center text-md-start">
             <h5 className="footer-title mb-3">Rusevi Sosyalde!</h5>
             <div className="d-flex flex-column align-items-center align-items-md-start">
-               {/* Sosyal medya linklerini güncelledik - resmi hesaplara yönlendiriliyor */}
-               <a href="https://twitter.com/rusankara" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
+               <a href="https://x.com/RusEviAnkara" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
                  <i className="fa-brands fa-twitter me-2"></i>Twitter
                </a>
                <a href="https://www.instagram.com/rusevi_ankara/" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
                  <i className="fa-brands fa-instagram me-2"></i>Instagram
                </a>
-               <a href="https://t.me/ankara_rusevi" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
+               <a href="https://t.me/rusya_burslari_bot" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
                  <i className="fa-brands fa-telegram me-2"></i>Telegram
-               </a>
-               <a href="https://vk.com/rusevi" target="_blank" rel="noopener noreferrer" className="footer-link mb-1">
-                 <i className="fa-brands fa-vk me-2"></i>VK
                </a>
             </div>
           </div>
