@@ -244,7 +244,7 @@ const TurkeyMap = () => {
       transition: "all 0.3s ease-in-out",
       transform: isHovered ? 'scale(1.008)' : 'scale(1)',
       fill: isSelected ? '#0032A0' 
-           : isHovered ? '#DA291C' 
+           : isHovered ? '#5C9E31' 
            : '#a0aec0', 
       stroke: '#4a5568', 
       strokeWidth: 0.5,
@@ -374,6 +374,71 @@ const TurkeyMap = () => {
                       !provincePaths[0]?.d || provincePaths[0]?.d === "";
 
   useEffect(() => {
+    const numberCircles = document.querySelectorAll('circle[cx][cy]');
+  
+  numberCircles.forEach(circle => {
+    circle.addEventListener('click', (e) => {
+      e.stopPropagation(); // Event'in diğer elementlere geçmesini önle
+      const cityId = circle.getAttribute('data-city-id');
+      if (cityId) {
+        handleCityClick(cityId);
+      }
+    });
+
+    const textElement = circle.nextElementSibling;
+    if (textElement && textElement.tagName === 'text') {
+      textElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const cityId = circle.getAttribute('data-city-id');
+        if (cityId) {
+          handleCityClick(cityId);
+        }
+      });
+    }
+  });
+
+  return () => {
+    // Temizleme fonksiyonu
+    numberCircles.forEach(circle => {
+      circle.removeEventListener('click', () => {});
+      const textElement = circle.nextElementSibling;
+      if (textElement && textElement.tagName === 'text') {
+        textElement.removeEventListener('click', () => {});
+      }
+    });
+  };
+}, [zoomedCity, provincePaths, filteredInstitutions]);
+
+return (
+  <g onClick={() => handleCityClick(cityID)}>
+    <circle
+      cx={cx + circleOffsetX}
+      cy={cy + circleOffsetY}
+      r="10"
+      fill="#14b8a6" 
+      fillOpacity="0.8"
+      stroke="white"
+      strokeWidth="2"
+      data-city-id={cityID} // Bu attribute'u ekledik
+      style={{ 
+        cursor: 'pointer', 
+        transition: 'all 0.2s ease',
+      }}
+    />
+    <text
+      x={cx + textOffsetX}
+      y={cy + textOffsetY}
+      textAnchor="middle"
+      fill="white"
+      fontSize="10"
+      fontWeight="bold"
+      style={{ pointerEvents: 'none' }}
+    >
+      {centerCount}
+    </text>
+  </g>
+);
+    
     if (svgRef.current && gRef.current) {
       const cityPaths = document.querySelectorAll('.city-path');
       
