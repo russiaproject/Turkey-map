@@ -3,7 +3,7 @@ import ornekFoto from "./images/ruseviBina.jpg";
 import emir from "./images/emir.jpg";
 import mustafa from "./images/mustafa.jpg";
 import yelkanat from "./images/yelkanat.jpg";
-// import ludmila from "./images/"; // Buraya resim gelecek
+import ludmila from "./images/RussiaFlag.svg"; // Buraya resim gelecek
 
 const Credit = () => {
   return (
