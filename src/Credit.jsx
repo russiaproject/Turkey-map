@@ -144,7 +144,7 @@ const Credit = () => {
             <p className="isimCredit">Ludmila Çalışkan</p>
             <div className="gap-2 d-flex ikonKredit">
               <a
-                href="mailto:ludmila@rusevi.org"
+                href=""
                 className="credit-icon-link"
                 aria-label="Email"
                 target="_blank"
