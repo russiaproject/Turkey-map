@@ -15,7 +15,7 @@ const Credit = () => {
           </div>
           <div>
             <p className="meslekCredit mt-3">
-              Front-End Developer & Backend Developer
+              Full-Stack Developer & Development Team
             </p>
             <p className="isimCredit">Emir Kesimoğlu</p>
             <div className="gap-2 d-flex ikonKredit">
@@ -110,7 +110,7 @@ const Credit = () => {
             <img src={yelkanat} alt="Berkay Yelkanat" className="creditFoto" />
           </div>
           <div>
-            <p className="meslekCredit mt-3">Bilmem ne developer</p>
+            <p className="meslekCredit mt-3">Scrum Master & Development Team</p>
             <p className="isimCredit">Berkay Yelkanat</p>
             <div className="gap-2 d-flex ikonKredit">
               <a
@@ -140,8 +140,8 @@ const Credit = () => {
             <img src={ludmila} alt="Ludmila Hanım" className="creditFoto" />
           </div>
           <div>
-            <p className="meslekCredit mt-3">Rusça Eğitmen & Koordinatör</p>
-            <p className="isimCredit">Ludmila Hanım</p>
+            <p className="meslekCredit mt-3">Proje Fikir Sahibi</p>
+            <p className="isimCredit">Ludmila </p>
             <div className="gap-2 d-flex ikonKredit">
               <a
                 href="mailto:ludmila@rusevi.org"
