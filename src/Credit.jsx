@@ -109,7 +109,7 @@ const Credit = () => {
             <img src={yelkanat} alt="" className="creditFoto" />
           </div>
           <div>
-            <p className="meslekCredit mt-3">Bilmem ne developer</p>
+            <p className="meslekCredit mt-3">Full-Stack Developer</p>
             <p className="isimCredit">Berkay Yelkanat</p>
             <div className="gap-2 d-flex ikonKredit">
               <a
