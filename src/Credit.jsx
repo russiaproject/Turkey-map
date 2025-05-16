@@ -3,6 +3,7 @@ import ornekFoto from "./images/ruseviBina.jpg";
 import emir from "./images/emir.jpg";
 import mustafa from "./images/mustafa.jpg";
 import yelkanat from "./images/yelkanat.jpg";
+import ludmila from "./images/"; // Buraya resim gelecek
 
 const Credit = () => {
   return (
@@ -10,7 +11,7 @@ const Credit = () => {
       <div className="row creditRow gap-4">
         <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
-            <img src={emir} alt="" className="creditFoto" />
+            <img src={emir} alt="Emir Kesimoğlu" className="creditFoto" />
           </div>
           <div>
             <p className="meslekCredit mt-3">
@@ -59,7 +60,7 @@ const Credit = () => {
         </div>
         <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
-            <img src={mustafa} alt="" className="creditFoto" />
+            <img src={mustafa} alt="Mustafa Türkmen" className="creditFoto" />
           </div>
           <div>
             <p className="meslekCredit mt-3">Proje Takım Lideri</p>
@@ -106,10 +107,10 @@ const Credit = () => {
         </div>
         <div className="col-lg shadowCredit rounded-5 p-5">
           <div>
-            <img src={yelkanat} alt="" className="creditFoto" />
+            <img src={yelkanat} alt="Berkay Yelkanat" className="creditFoto" />
           </div>
           <div>
-            <p className="meslekCredit mt-3">Full-Stack Developer</p>
+            <p className="meslekCredit mt-3">Bilmem ne developer</p>
             <p className="isimCredit">Berkay Yelkanat</p>
             <div className="gap-2 d-flex ikonKredit">
               <a
@@ -129,6 +130,36 @@ const Credit = () => {
                 rel="noopener noreferrer"
               >
                 <i className="fa-brands fa-github"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-lg shadowCredit rounded-5 p-5">
+          <div>
+            <img src={ludmila} alt="Ludmila Hanım" className="creditFoto" />
+          </div>
+          <div>
+            <p className="meslekCredit mt-3">Rusça Eğitmen & Koordinatör</p>
+            <p className="isimCredit">Ludmila Hanım</p>
+            <div className="gap-2 d-flex ikonKredit">
+              <a
+                href="mailto:ludmila@rusevi.org"
+                className="credit-icon-link"
+                aria-label="Email"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fa-solid fa-envelope"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/rusevi_ankara/"
+                className="credit-icon-link"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fa-brands fa-instagram"></i>
               </a>
             </div>
           </div>
