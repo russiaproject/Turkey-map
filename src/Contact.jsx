@@ -3,7 +3,7 @@ import rusEviBina from "./images/red.png";
 import akkuyuFoto2 from "./images/akkuyuFoto2.jpg";
 import SidebarKurum from './SidebarKurum';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLandmarkFlag, } from '@fortawesome/free-solid-svg-icons';
+import { faLandmarkFlag } from '@fortawesome/free-solid-svg-icons';
 
 const KurumlarYazi = ({akkuyuFoto}) => {
   return (
