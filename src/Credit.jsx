@@ -141,7 +141,7 @@ const Credit = () => {
           </div>
           <div>
             <p className="meslekCredit mt-3">Proje Fikir Sahibi</p>
-            <p className="isimCredit">Ludmila </p>
+            <p className="isimCredit">Ludmila Çalışkan</p>
             <div className="gap-2 d-flex ikonKredit">
               <a
                 href="mailto:ludmila@rusevi.org"
