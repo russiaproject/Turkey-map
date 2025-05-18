@@ -24,7 +24,7 @@
     "react-leaflet": "^5.0.0",
     "react-leaflet-markercluster": "^5.0.0-rc.0",
     "react-router-dom": "^7.5.2",
-    "axios"
+    "axios": "^1.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
