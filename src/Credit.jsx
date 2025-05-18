@@ -133,6 +133,8 @@ const Credit = () => {
                 <i className="fa-brands fa-instagram"></i>
               </a>
             </div>
+            </div>
+          </div>
         </div>
           </div>
         </div>
