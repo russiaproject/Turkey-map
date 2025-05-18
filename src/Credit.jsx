@@ -136,33 +136,6 @@ const Credit = () => {
           </div>
         </div>
 
-        <div className="col-lg-3 shadowCredit rounded-5 p-5">
-          <div>
-            <img src={yelkanat} alt="Berkay Yelkanat" className="creditFoto" />
-          </div>
-          <div>
-            <p className="meslekCredit mt-3">Scrum Master & Development Team</p>
-            <p className="isimCredit">Berkay Yelkanat</p>
-            <div className="gap-2 d-flex ikonKredit">
-              <a
-                href="https://www.linkedin.com/in/berkay-yelkanat-3b1a64316/"
-                className="credit-icon-link"
-                aria-label="Linkedin"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-linkedin"></i>
-              </a>
-             <a
-                href="https://github.com/xberkayio"
-                className="credit-icon-link"
-                aria-label="Github"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fa-brands fa-github"></i>
-              </a>
-            </div>
           </div>
         </div>
       </div>
