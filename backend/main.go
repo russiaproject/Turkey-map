@@ -77,7 +77,7 @@ const institutionsFile = "frontend/src/data/russian_institutions.json"
 
 func init() {
 	godotenv.Load()
-	jwtKey = []byte(getEnv("JWT_SECRET", "rusevi_super_secret_key_change_in_production"))
+	jwtKey = []byte(getEnv("JWT_SECRET", "jwt_secret_rusevi"))
 
 	var err error
 	db, err = gorm.Open(sqlite.Open("rusevi.db"), &gorm.Config{})
@@ -161,8 +161,8 @@ func createAdminIfNotExists() {
 	var count int64
 	db.Model(&User{}).Where("is_admin = ?", true).Count(&count)
 	if count == 0 {
-		adminUsername := getEnv("ADMIN_USERNAME", "admin")
-		adminPassword := getEnv("ADMIN_PASSWORD", "ruseviAdmin2025")
+		adminUsername := getEnv("ADMIN_USERNAME", "ruseviadmin")
+		adminPassword := getEnv("ADMIN_PASSWORD", "admin")
 
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(adminPassword), bcrypt.DefaultCost)
 		if err != nil {
