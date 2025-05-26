@@ -15,7 +15,7 @@ const KayitOl = () => {
   const handleChange = (e) => {
     const { id, value } = e.target;
     
-    // Form field id'leri ile API field'larını eşleştir
+    
     const fieldMap = {
       isimForm: "isim",
       soyisimForm: "soyisim",
