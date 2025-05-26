@@ -114,6 +114,7 @@ const Admin = () => {
   const [partnershipApplications, setPartnershipApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [token, setToken] = useState('');
   const [username, setUsername] = useState('');
   const [institutions, setInstitutions] = useState([]);
@@ -131,7 +132,6 @@ const Admin = () => {
     image: ''
   });
 
-  // Login kontrolü
   useEffect(() => {
     const savedToken = localStorage.getItem('adminToken');
     const savedUsername = localStorage.getItem('adminUsername');
@@ -142,26 +142,18 @@ const Admin = () => {
     }
   }, []);
 
-  // Başvuruları yükle
   useEffect(() => {
     if (isLoggedIn && token) {
       fetchApplications();
-      loadInstitutionsFromStorage();
+      fetchInstitutions();
     }
   }, [isLoggedIn, token]);
 
-  // Kurum arama
   useEffect(() => {
     if (searchTerm === '') {
       setFilteredInstitutions(institutions);
     } else {
-      const filtered = institutions.filter(inst => 
-        inst.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        inst.plaka.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        inst.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        inst.address.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredInstitutions(filtered);
+      performSearch(searchTerm);
     }
   }, [searchTerm, institutions]);
 
@@ -181,55 +173,80 @@ const Admin = () => {
     localStorage.removeItem('adminUsername');
   };
 
-  // Kurumları localStorage'dan yükle (JSON dosyası simülasyonu)
-  const loadInstitutionsFromStorage = () => {
-    try {
-      const storedInstitutions = localStorage.getItem('russian_institutions');
-      if (storedInstitutions) {
-        const parsed = JSON.parse(storedInstitutions);
-        setInstitutions(parsed);
-        setFilteredInstitutions(parsed);
-      } else {
-        // Örnek veri
-        const sampleInstitutions = [
-          {
-            ID: 1,
-            plaka: "TR06",
-            name: "Ankara Büyükelçiliği",
-            description: "Türkiye'deki Rus Büyükelçiliği",
-            type: "Büyükelçilik",
-            address: "Ankara, Türkiye",
-            website: "www.turkey.mid.ru",
-            image: "",
-            CreatedAt: new Date().toISOString()
-          }
-        ];
-        setInstitutions(sampleInstitutions);
-        setFilteredInstitutions(sampleInstitutions);
-        localStorage.setItem('russian_institutions', JSON.stringify(sampleInstitutions));
-      }
-    } catch (error) {
-      console.error('Kurumlar yüklenirken hata:', error);
-      setInstitutions([]);
-      setFilteredInstitutions([]);
+  const showMessage = (message, type = 'success') => {
+    if (type === 'success') {
+      setSuccess(message);
+      setError('');
+      setTimeout(() => setSuccess(''), 3000);
+    } else {
+      setError(message);
+      setSuccess('');
+      setTimeout(() => setError(''), 5000);
     }
   };
 
-  // Kurumları localStorage'a kaydet (JSON dosyası simülasyonu)
-  const saveInstitutionsToStorage = (institutionsList) => {
+  const fetchInstitutions = async () => {
+    console.log('🔍 Kurumlar yükleniyor, token:', token ? 'Var' : 'Yok');
     try {
-      localStorage.setItem('russian_institutions', JSON.stringify(institutionsList));
+      const response = await fetch('http://localhost:8080/api/admin/institutions', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('📡 Kurumlar API yanıtı:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Hatası:', errorText);
+        throw new Error(`Kurumlar alınamadı: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('📋 Yüklenen kurumlar:', data);
+      setInstitutions(data || []);
+      setFilteredInstitutions(data || []);
+      showMessage(`✅ ${data?.length || 0} kurum yüklendi`);
     } catch (error) {
-      console.error('Kurumlar kaydedilirken hata:', error);
+      console.error('❌ Kurumlar yüklenirken hata:', error);
+      showMessage(`Kurumlar yüklenirken hata: ${error.message}`, 'error');
+    }
+  };
+
+  const performSearch = async (searchQuery) => {
+    if (!searchQuery) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Arama başarısız');
+      }
+      
+      const data = await response.json();
+      setFilteredInstitutions(data.results || []);
+    } catch (error) {
+      console.error('Arama hatası:', error);
+      const filtered = institutions.filter(inst => 
+        inst.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        inst.plaka.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        inst.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        inst.address.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredInstitutions(filtered);
     }
   };
 
   const fetchApplications = async () => {
     setLoading(true);
-    setError('');
+    console.log('📊 Başvurular yükleniyor...');
     
     try {
-      // Ekip başvurularını al
       const teamResponse = await fetch('http://localhost:8080/api/admin/team-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -242,8 +259,8 @@ const Admin = () => {
       
       const teamData = await teamResponse.json();
       setTeamApplications(teamData || []);
+      console.log('👥 Ekip başvuruları:', teamData?.length || 0);
 
-      // İşbirliği başvurularını al
       const partnershipResponse = await fetch('http://localhost:8080/api/admin/partnership-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -256,13 +273,14 @@ const Admin = () => {
       
       const partnershipData = await partnershipResponse.json();
       setPartnershipApplications(partnershipData || []);
+      console.log('🤝 İşbirliği başvuruları:', partnershipData?.length || 0);
       
     } catch (error) {
-      console.error('Başvurular yüklenirken hata:', error);
-      setError('Başvurular yüklenirken hata oluştu');
+      console.error('❌ Başvurular yüklenirken hata:', error);
+      showMessage('Başvurular yüklenirken hata oluştu: ' + error.message, 'error');
       
-      // Token geçersizse çıkış yap
       if (error.message.includes('401')) {
+        console.log('🔑 Token geçersiz, çıkış yapılıyor...');
         handleLogout();
       }
     } finally {
@@ -289,20 +307,47 @@ const Admin = () => {
   const handleInstitutionSubmit = async (e) => {
     e.preventDefault();
     
+    console.log('➕ Kurum ekleniyor:', newInstitution);
+    console.log('🔑 Token:', token ? 'Var' : 'Yok');
+    
+    if (!newInstitution.plaka || !newInstitution.name || !newInstitution.description || 
+        !newInstitution.type || !newInstitution.address) {
+      showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
+      return;
+    }
+    
     try {
-      const newInst = {
-        ...newInstitution,
-        ID: Date.now(), // Basit ID oluşturma
-        CreatedAt: new Date().toISOString()
+      const institutionData = {
+        plaka: newInstitution.plaka,
+        name: newInstitution.name,
+        description: newInstitution.description,
+        type: newInstitution.type,
+        address: newInstitution.address,
+        website: newInstitution.website || '',
+        image: newInstitution.image || ''
       };
       
-      const updatedInstitutions = [...institutions, newInst];
-      setInstitutions(updatedInstitutions);
-      saveInstitutionsToStorage(updatedInstitutions);
+      const response = await fetch('http://localhost:8080/api/admin/institution', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(institutionData)
+      });
       
-      alert('Kurum başarıyla JSON dosyasına eklendi!');
+      console.log('📡 Kurum ekleme API yanıtı:', response.status, response.statusText);
       
-      // Formu temizle
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Hatası:', errorText);
+        throw new Error(`Kurum eklenemedi: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Kurum eklendi:', data);
+      showMessage('Kurum başarıyla eklendi!');
+      
       setNewInstitution({
         plaka: '',
         name: '',
@@ -313,9 +358,11 @@ const Admin = () => {
         image: ''
       });
       
+      fetchInstitutions();
+      
     } catch (error) {
-      console.error('Kurum eklenirken hata:', error);
-      alert('Kurum eklenirken hata oluştu');
+      console.error('❌ Kurum eklenirken hata:', error);
+      showMessage(`Kurum eklenirken hata: ${error.message}`, 'error');
     }
   };
 
@@ -324,24 +371,33 @@ const Admin = () => {
     setShowEditModal(true);
   };
 
-  const handleUpdateInstitution = (e) => {
+  const handleUpdateInstitution = async (e) => {
     e.preventDefault();
     
     try {
-      const updatedInstitutions = institutions.map(inst => 
-        inst.ID === editingInstitution.ID ? editingInstitution : inst
-      );
+      const response = await fetch(`http://localhost:8080/api/admin/institution/${editingInstitution.ID}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editingInstitution)
+      });
       
-      setInstitutions(updatedInstitutions);
-      saveInstitutionsToStorage(updatedInstitutions);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Kurum güncellenemedi: ${response.status} - ${errorText}`);
+      }
       
-      alert('Kurum bilgileri güncellendi!');
+      showMessage('Kurum bilgileri güncellendi!');
       setShowEditModal(false);
       setEditingInstitution(null);
       
+      fetchInstitutions();
+      
     } catch (error) {
       console.error('Kurum güncellenirken hata:', error);
-      alert('Kurum güncellenirken hata oluştu');
+      showMessage(`Kurum güncellenirken hata: ${error.message}`, 'error');
     }
   };
 
@@ -351,28 +407,48 @@ const Admin = () => {
     }
     
     try {
-      const updatedInstitutions = institutions.filter(inst => inst.ID !== id);
-      setInstitutions(updatedInstitutions);
-      saveInstitutionsToStorage(updatedInstitutions);
+      const response = await fetch(`http://localhost:8080/api/admin/institution/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
-      alert('Kurum JSON dosyasından silindi!');
+      if (!response.ok) {
+        throw new Error('Kurum silinemedi');
+      }
+      
+      showMessage('Kurum silindi!');
+      fetchInstitutions();
     } catch (error) {
       console.error('Kurum silinirken hata:', error);
-      alert('Kurum silinirken hata oluştu');
+      showMessage('Kurum silinirken hata oluştu', 'error');
     }
   };
 
-  // JSON dosyasını indirme fonksiyonu
-  const downloadJsonFile = () => {
-    const dataStr = JSON.stringify(institutions, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'russian_institutions.json';
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
+  const downloadJsonFile = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/institutions');
+      if (!response.ok) {
+        throw new Error('JSON indirilemedi');
+      }
+      
+      const data = await response.json();
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = 'russian_institutions.json';
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      showMessage('JSON dosyası indirildi!');
+    } catch (error) {
+      console.error('JSON indirme hatası:', error);
+      showMessage('JSON dosyası indirilemedi', 'error');
+    }
   };
 
   const updateApplicationStatus = async (id, status, type) => {
@@ -394,12 +470,11 @@ const Admin = () => {
         throw new Error('Durum güncellenemedi');
       }
       
-      // Başvuruları yeniden yükle
       fetchApplications();
-      alert('Başvuru durumu güncellendi!');
+      showMessage('Başvuru durumu güncellendi!');
     } catch (error) {
       console.error('Durum güncellenirken hata:', error);
-      alert('Durum güncellenirken hata oluştu');
+      showMessage('Durum güncellenirken hata oluştu', 'error');
     }
   };
 
@@ -424,12 +499,11 @@ const Admin = () => {
         throw new Error('Silme işlemi başarısız');
       }
       
-      // Başvuruları yeniden yükle
       fetchApplications();
-      alert('Başvuru silindi!');
+      showMessage('Başvuru silindi!');
     } catch (error) {
       console.error('Silme işlemi sırasında hata:', error);
-      alert('Silme işlemi sırasında hata oluştu');
+      showMessage('Silme işlemi sırasında hata oluştu', 'error');
     }
   };
 
@@ -448,7 +522,6 @@ const Admin = () => {
     return <span className={`badge ${badges[status]}`}>{labels[status]}</span>;
   };
 
-  // Login değilse login formunu göster
   if (!isLoggedIn) {
     return <Login onLoginSuccess={handleLoginSuccess} isAdmin={true} />;
   }
@@ -471,6 +544,13 @@ const Admin = () => {
             <div className="alert alert-danger alert-dismissible fade show" role="alert">
               {error}
               <button type="button" className="btn-close" onClick={() => setError('')}></button>
+            </div>
+          )}
+          
+          {success && (
+            <div className="alert alert-success alert-dismissible fade show" role="alert">
+              {success}
+              <button type="button" className="btn-close" onClick={() => setSuccess('')}></button>
             </div>
           )}
           
@@ -676,7 +756,7 @@ const Admin = () => {
                   {/* Kurum Ekleme Formu */}
                   <div className="card mb-4">
                     <div className="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                      <h5 className="mb-0">➕ Yeni Kurum Ekle</h5>
+                      <h5 className="mb-0">➕ Kurum Ekleme</h5>
                       <button 
                         className="btn btn-light btn-sm"
                         onClick={downloadJsonFile}
@@ -686,9 +766,6 @@ const Admin = () => {
                       </button>
                     </div>
                     <div className="card-body">
-                      <div className="alert alert-info">
-                        <strong>📢 Bilgi:</strong> Kurumlar şu anda localStorage'da saklanmaktadır. JSON dosyası gerçek dosya sistemi işlemleri için backend endpoint'leri gereklidir.
-                      </div>
                       <div className="row">
                         <div className="col-md-6 mb-3">
                           <label className="form-label">🗺️ Plaka Kodu</label>
@@ -796,7 +873,7 @@ const Admin = () => {
                     <div className="card-header bg-success text-white">
                       <div className="row align-items-center">
                         <div className="col-md-6">
-                          <h5 className="mb-0">📋 Mevcut Kurumlar ({institutions.length})</h5>
+                          <h5 className="mb-0">📋 Kurumlar ({institutions.length})</h5>
                         </div>
                         <div className="col-md-6">
                           <input
@@ -828,7 +905,7 @@ const Admin = () => {
                             {filteredInstitutions.length === 0 ? (
                               <tr>
                                 <td colSpan="8" className="text-center">
-                                  {searchTerm ? '🔍 Arama sonucunda kurum bulunamadı' : '📋 Henüz kurum eklenmemiş'}
+                                  {searchTerm ? '🔍 Arama sonucunda kurum bulunamadı' : '📋 Kurum bulunamadı'}
                                 </td>
                               </tr>
                             ) : (
