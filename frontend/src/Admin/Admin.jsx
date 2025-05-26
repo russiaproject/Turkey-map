@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const Admin = () => {
-  // Admin girişini bypass et - her zaman giriş yapmış olarak başlat
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [activeTab, setActiveTab] = useState('team');
   const [teamApplications, setTeamApplications] = useState([]);
@@ -9,8 +8,8 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [token, setToken] = useState('dummy-token'); // Dummy token
-  const [username, setUsername] = useState('Admin'); // Dummy username
+  const [token, setToken] = useState('dummy-token'); 
+  const [username, setUsername] = useState('Admin'); 
   const [institutions, setInstitutions] = useState([]);
   const [filteredInstitutions, setFilteredInstitutions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,7 +25,6 @@ const Admin = () => {
     image: ''
   });
 
-  // Mock data - backend yokken örnek veriler
   const mockTeamApplications = [
     {
       ID: 1,
@@ -91,7 +89,6 @@ const Admin = () => {
   ];
 
   useEffect(() => {
-    // Mock data'yı yükle
     setTeamApplications(mockTeamApplications);
     setPartnershipApplications(mockPartnershipApplications);
     setInstitutions(mockInstitutions);
@@ -114,7 +111,6 @@ const Admin = () => {
   }, [searchTerm, institutions]);
 
   const handleLogout = () => {
-    // Demo modunda çıkış yapmayı devre dışı bırak
     showMessage('Demo modunda çıkış yapılamaz', 'error');
   };
 
@@ -155,7 +151,6 @@ const Admin = () => {
       return;
     }
     
-    // Mock ekleme - gerçek API yok
     const newInst = {
       ID: institutions.length + 1,
       ...newInstitution,
@@ -186,7 +181,6 @@ const Admin = () => {
   const handleUpdateInstitution = async (e) => {
     e.preventDefault();
     
-    // Mock güncelleme
     setInstitutions(prev => 
       prev.map(inst => inst.ID === editingInstitution.ID ? editingInstitution : inst)
     );
@@ -204,7 +198,6 @@ const Admin = () => {
       return;
     }
     
-    // Mock silme
     setInstitutions(prev => prev.filter(inst => inst.ID !== id));
     setFilteredInstitutions(prev => prev.filter(inst => inst.ID !== id));
     
@@ -212,7 +205,6 @@ const Admin = () => {
   };
 
   const downloadJsonFile = async () => {
-    // Mock JSON indirme
     const dataStr = JSON.stringify(institutions, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
@@ -227,7 +219,6 @@ const Admin = () => {
   };
 
   const updateApplicationStatus = async (id, status, type) => {
-    // Mock güncelleme
     if (type === 'team') {
       setTeamApplications(prev => 
         prev.map(app => app.ID === id ? {...app, status} : app)
@@ -246,7 +237,6 @@ const Admin = () => {
       return;
     }
     
-    // Mock silme
     if (type === 'team') {
       setTeamApplications(prev => prev.filter(app => app.ID !== id));
     } else {
