@@ -31,6 +31,7 @@ import ChatBotRusevi from './ChatBotRusevi'
 import Admin from './Admin/Admin'
 import Rostec from './KurumRos'
 import Rosatom from './Rosatom'
+import IsStaj from './IsStaj'
 
 
 
@@ -141,6 +142,11 @@ const AnimatedRoutes = () => {
         <Route path="/Admin" element={
           <AnimatedPage>
             <Admin />
+          </AnimatedPage>
+        } />
+        <Route path="/IsStaj" element={
+          <AnimatedPage>
+            <IsStaj />
           </AnimatedPage>
         } />
         <Route path="/Rostec" element={
