@@ -141,6 +141,11 @@ const AnimatedRoutes = () => {
             <Admin />
           </AnimatedPage>
         } />
+        <Route path="/Gazprom" element={
+          <AnimatedPage>
+            <Gazprom />
+          </AnimatedPage>
+        } />
         <Route path="/sotnicenko" element={
   <AnimatedPage>
     <Sotnicenko />
