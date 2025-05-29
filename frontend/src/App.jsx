@@ -29,6 +29,7 @@ import KayitOl from './KayitOl'
 import Konsolosluklar from './Konsolosluklar'
 import ChatBotRusevi from './ChatBotRusevi'
 import Admin from './Admin/Admin'
+import Rostec from './KurumRos'
 
 
 
@@ -139,6 +140,11 @@ const AnimatedRoutes = () => {
         <Route path="/Admin" element={
           <AnimatedPage>
             <Admin />
+          </AnimatedPage>
+        } />
+        <Route path="/Rostec" element={
+          <AnimatedPage>
+            <Rostec />
           </AnimatedPage>
         } />
         <Route path="/sotnicenko" element={
