@@ -76,6 +76,12 @@ const Navbar = ({ rusevi, turkiyePng }) => {
                 Русский Дом
                 <i className="fa-solid fa-arrow-right mainpageRight ms-1"></i>
               </a>
+
+            <Link to="/IsStaj" className="nav-link-item text-white text-decoration-none">İş/Staj</Link>
+              <a href="https://turkiye.rs.gov.ru/" className="nav-link-item text-white text-decoration-none text-uppercase rusLink d-lg-none" target="_blank" rel="noreferrer">
+                İş/Staj
+                <i className="fa-solid fa-arrow-right mainpageRight ms-1"></i>
+              </a>
           </div>
 
           <div className='navbarSocial d-lg-flex justify-content-end ms-auto gap-3'>
