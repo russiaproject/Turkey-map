@@ -115,29 +115,29 @@ const KurumlarYazi = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Website Button */}
-              <div className="mb-3 text-center">
-                <a 
-                  href="https://rusevi.org.tr" 
-                  className="btn btn-sm mt-2" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ 
-                    backgroundColor: '#0032A0', 
-                    color: '#FFFFFF',
-                    borderColor: 'transparent',
-                    padding: '8px 15px',
-                    borderRadius: '5px',
-                    fontWeight: 'bold',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <i className="fa-solid fa-globe me-2"></i>
-                  Websitesini Ziyaret Et
-                </a>
+                
+                {/* Website Button */}
+                <div className="mb-3 text-center">
+                  <a 
+                    href="https://ankara.rs.gov.ru/" 
+                    className="btn btn-sm mt-2" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ 
+                      backgroundColor: '#0032A0', 
+                      color: '#FFFFFF',
+                      borderColor: 'transparent',
+                      padding: '8px 15px',
+                      borderRadius: '5px',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <i className="fa-solid fa-globe me-2"></i>
+                    Websitesini Ziyaret Et
+                  </a>
+                </div>
               </div>
             </div>
           </div>
