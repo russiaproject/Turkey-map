@@ -39,6 +39,8 @@ const TurkeyMap = () => {
 
   const getFallbackIcon = (type) => {
     switch(type) {
+      case 'Rusevi':
+        return faLandmarkFlag;
       case 'Büyükelçilik':
         return faLandmarkFlag;
       case 'Konsolosluk':
@@ -254,6 +256,7 @@ const TurkeyMap = () => {
 
   const getMarkerColor = (type) => {
     switch(type) {
+      case 'Rusevi': return '#DA291C'; 
       case 'Büyükelçilik': return '#DA291C'; 
       case 'Konsolosluk': return '#DA291C'; 
       case 'Ticaret': return '#0032A0'; 
