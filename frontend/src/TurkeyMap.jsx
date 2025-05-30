@@ -711,7 +711,6 @@ const TurkeyMap = () => {
                     </div>
                   )}
                   
-                  {/* Web sitesi linkini göster - geliştirdik */}
                   {selectedInstitution.website && selectedInstitution.website !== "_" && (
                     <div className="mb-3 text-center">
                       <a 
@@ -738,18 +737,18 @@ const TurkeyMap = () => {
                   
                   <div className="text-center">
                     <button 
-                      className="btn btn-sm mt-4" /* Buton aralığını artırdım */
+                      className="btn btn-sm mt-4" 
                       onClick={() => setSelectedInstitution(null)}
                       style={{ 
                         backgroundColor: "#f0f0f0", 
                         color: "#333", 
                         border: "none", 
-                        padding: '8px 16px', /* Butonu biraz büyüttüm */
+                        padding: '8px 16px', 
                         borderRadius: "5px",
                         fontWeight: "500",
                         fontSize: "13px",
                         transition: "all 0.2s ease",
-                        marginTop: "15px" /* Ek margin ekledim */
+                        marginTop: "15px" 
                       }}
                       onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#e0e0e0"}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
@@ -814,8 +813,8 @@ const TurkeyMap = () => {
                         cityName: plakaToCity[zoomedCity]
                       })}
                       style={{
-                        padding: "10px 12px", // Padding'i azalttık
-                        margin: "6px 0", // Margin'i azalttık
+                        padding: "10px 12px", 
+                        margin: "6px 0", 
                         backgroundColor: 'white',
                         border: '1px solid #eee',
                         borderRadius: '8px',
@@ -836,8 +835,8 @@ const TurkeyMap = () => {
                     >
                       <div 
                         style={{ 
-                          width: "20px", // Boyutu küçülttük (önceden 24px)
-                          height: "20px", // Boyutu küçülttük (önceden 24px)
+                          width: "20px", 
+                          height: "20px", 
                           backgroundColor: getMarkerColor(institution.type),
                           borderRadius: '50%',
                           marginRight: '12px',
@@ -846,14 +845,14 @@ const TurkeyMap = () => {
                           justifyContent: 'center',
                           color: 'white',
                           fontWeight: 'bold',
-                          fontSize: '10px' // Font boyutunu küçülttük (önceden 12px)
+                          fontSize: '10px' 
                         }}
                       >
                         {index + 1}
                       </div>
                       <div style={{ flex: '1' }}>
                         <div style={{ fontWeight: '500', color: '#333', fontSize: '14px' }}>{institution.name}</div>
-                        <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}> {/* Font boyutunu küçülttük */}
+                        <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}> 
                           {institution.type}
                         </div>
                       </div>
@@ -934,12 +933,12 @@ const TurkeyMap = () => {
             bottom: '20px',
             right: '20px',
             backgroundColor: 'white',
-            padding: '12px', // Padding'i azalttık
+            padding: '12px', 
             borderRadius: '8px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             zIndex: '100',
-            minWidth: '180px', // Genişliği azalttık
-            fontSize: '0.8rem' // Font boyutunu küçülttük
+            minWidth: '180px', 
+            fontSize: '0.8rem' 
           }}>
             <h3 className="legend-title" style={{
               fontWeight: '600',
@@ -947,13 +946,13 @@ const TurkeyMap = () => {
               marginBottom: '10px',
               paddingBottom: '4px',
               borderBottom: '1px solid #eee',
-              fontSize: '0.9rem' // Font boyutunu küçülttük
+              fontSize: '0.9rem' 
             }}>Kurum Tipleri</h3>
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color city-legend" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
+                width: '12px', 
+                height: '12px', 
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#14b8a6',
@@ -964,8 +963,8 @@ const TurkeyMap = () => {
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
+                width: '12px', 
+                height: '12px', 
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#DA291C', 
@@ -976,8 +975,8 @@ const TurkeyMap = () => {
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
+                width: '12px', 
+                height: '12px', 
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#0032A0', 
@@ -988,8 +987,8 @@ const TurkeyMap = () => {
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
+                width: '12px', 
+                height: '12px', 
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#5C9E31', 
