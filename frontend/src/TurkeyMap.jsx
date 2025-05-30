@@ -1052,9 +1052,9 @@ const TurkeyMap = () => {
                         
                         if (cityCode === "35") {
                           circleOffsetX = 3;
-                          circleOffsetY = 18; 
+                          circleOffsetY = 20; 
                           textOffsetX = 3; 
-                          textOffsetY = 22;
+                          textOffsetY = 23;
                         }
                         
                         else if (cityCode === "06") {
