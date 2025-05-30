@@ -1072,9 +1072,9 @@ const TurkeyMap = () => {
                         }
                         
                         else if (cityCode === "42") {
-                          circleOffsetX = -5; 
-                          circleOffsetY = -5; 
-                          textOffsetX = -5;
+                          circleOffsetX = -17; 
+                          circleOffsetY = -4; 
+                          textOffsetX = -17;
                           textOffsetY = -1;
                         }
                         
@@ -1088,6 +1088,34 @@ const TurkeyMap = () => {
                         else if (cityCode === "07") {
                           circleOffsetY = -15; 
                           textOffsetY = -11;
+                        }
+
+                        else if (cityCode === "17") {
+                          circleOffsetX = 8; 
+                          circleOffsetY = 4; 
+                          textOffsetX = 8;
+                          textOffsetY = 8;
+                        }
+
+                        else if (cityCode === "55") {
+                          circleOffsetX = -4; 
+                          circleOffsetY = 4; 
+                          textOffsetX = -4;
+                          textOffsetY = 7;
+                        }
+
+                        else if (cityCode === "36") {
+                          circleOffsetX = 6; 
+                          circleOffsetY = 4; 
+                          textOffsetX = 6;
+                          textOffsetY = 7;
+                        }
+
+                        else if (cityCode === "22") {
+                          circleOffsetX = 4; 
+                          circleOffsetY = 2; 
+                          textOffsetX = 4;
+                          textOffsetY = 6;
                         }
                         
                         return (
