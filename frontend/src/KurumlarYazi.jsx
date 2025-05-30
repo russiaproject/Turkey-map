@@ -85,7 +85,7 @@ const KurumlarYazi = () => {
               {/* Website Button */}
               <div className="mb-3 text-center mt-4">
                 <a 
-                  href="https://ankara.rs.gov.ru/" 
+                  href="https://turkiye.rs.gov.ru/" 
                   className="btn btn-sm mt-2" 
                   target="_blank"
                   rel="noopener noreferrer"
