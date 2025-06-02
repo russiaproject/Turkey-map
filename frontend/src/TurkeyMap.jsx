@@ -39,8 +39,6 @@ const TurkeyMap = () => {
 
   const getFallbackIcon = (type) => {
     switch(type) {
-      case 'Rusevi':
-        return faLandmarkFlag;
       case 'Büyükelçilik':
         return faLandmarkFlag;
       case 'Konsolosluk':
@@ -256,7 +254,6 @@ const TurkeyMap = () => {
 
   const getMarkerColor = (type) => {
     switch(type) {
-      case 'Rusevi': return '#DA291C'; 
       case 'Büyükelçilik': return '#DA291C'; 
       case 'Konsolosluk': return '#DA291C'; 
       case 'Ticaret': return '#0032A0'; 
@@ -714,6 +711,7 @@ const TurkeyMap = () => {
                     </div>
                   )}
                   
+                  {/* Web sitesi linkini göster - geliştirdik */}
                   {selectedInstitution.website && selectedInstitution.website !== "_" && (
                     <div className="mb-3 text-center">
                       <a 
@@ -740,18 +738,18 @@ const TurkeyMap = () => {
                   
                   <div className="text-center">
                     <button 
-                      className="btn btn-sm mt-4" 
+                      className="btn btn-sm mt-4" /* Buton aralığını artırdım */
                       onClick={() => setSelectedInstitution(null)}
                       style={{ 
                         backgroundColor: "#f0f0f0", 
                         color: "#333", 
                         border: "none", 
-                        padding: '8px 16px', 
+                        padding: '8px 16px', /* Butonu biraz büyüttüm */
                         borderRadius: "5px",
                         fontWeight: "500",
                         fontSize: "13px",
                         transition: "all 0.2s ease",
-                        marginTop: "15px" 
+                        marginTop: "15px" /* Ek margin ekledim */
                       }}
                       onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#e0e0e0"}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
@@ -816,8 +814,8 @@ const TurkeyMap = () => {
                         cityName: plakaToCity[zoomedCity]
                       })}
                       style={{
-                        padding: "10px 12px", 
-                        margin: "6px 0", 
+                        padding: "10px 12px", // Padding'i azalttık
+                        margin: "6px 0", // Margin'i azalttık
                         backgroundColor: 'white',
                         border: '1px solid #eee',
                         borderRadius: '8px',
@@ -838,8 +836,8 @@ const TurkeyMap = () => {
                     >
                       <div 
                         style={{ 
-                          width: "20px", 
-                          height: "20px", 
+                          width: "20px", // Boyutu küçülttük (önceden 24px)
+                          height: "20px", // Boyutu küçülttük (önceden 24px)
                           backgroundColor: getMarkerColor(institution.type),
                           borderRadius: '50%',
                           marginRight: '12px',
@@ -848,14 +846,14 @@ const TurkeyMap = () => {
                           justifyContent: 'center',
                           color: 'white',
                           fontWeight: 'bold',
-                          fontSize: '10px' 
+                          fontSize: '10px' // Font boyutunu küçülttük (önceden 12px)
                         }}
                       >
                         {index + 1}
                       </div>
                       <div style={{ flex: '1' }}>
                         <div style={{ fontWeight: '500', color: '#333', fontSize: '14px' }}>{institution.name}</div>
-                        <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}> 
+                        <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}> {/* Font boyutunu küçülttük */}
                           {institution.type}
                         </div>
                       </div>
@@ -936,12 +934,12 @@ const TurkeyMap = () => {
             bottom: '20px',
             right: '20px',
             backgroundColor: 'white',
-            padding: '12px', 
+            padding: '12px', // Padding'i azalttık
             borderRadius: '8px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             zIndex: '100',
-            minWidth: '180px', 
-            fontSize: '0.8rem' 
+            minWidth: '180px', // Genişliği azalttık
+            fontSize: '0.8rem' // Font boyutunu küçülttük
           }}>
             <h3 className="legend-title" style={{
               fontWeight: '600',
@@ -949,13 +947,13 @@ const TurkeyMap = () => {
               marginBottom: '10px',
               paddingBottom: '4px',
               borderBottom: '1px solid #eee',
-              fontSize: '0.9rem' 
+              fontSize: '0.9rem' // Font boyutunu küçülttük
             }}>Kurum Tipleri</h3>
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color city-legend" style={{ 
-                width: '12px', 
-                height: '12px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#14b8a6',
@@ -966,8 +964,8 @@ const TurkeyMap = () => {
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '12px', 
-                height: '12px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#DA291C', 
@@ -978,8 +976,8 @@ const TurkeyMap = () => {
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '12px', 
-                height: '12px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#0032A0', 
@@ -990,8 +988,8 @@ const TurkeyMap = () => {
             
             <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
               <span className="legend-color" style={{ 
-                width: '12px', 
-                height: '12px', 
+                width: '12px', // Boyutu küçülttük (önceden 16px)
+                height: '12px', // Boyutu küçülttük (önceden 16px)
                 borderRadius: '50%', 
                 marginRight: '8px',
                 backgroundColor: '#5C9E31', 
@@ -1052,9 +1050,9 @@ const TurkeyMap = () => {
                         
                         if (cityCode === "35") {
                           circleOffsetX = 3;
-                          circleOffsetY = 20; 
+                          circleOffsetY = 10; 
                           textOffsetX = 3; 
-                          textOffsetY = 23;
+                          textOffsetY = 14;
                         }
                         
                         else if (cityCode === "06") {
@@ -1072,9 +1070,9 @@ const TurkeyMap = () => {
                         }
                         
                         else if (cityCode === "42") {
-                          circleOffsetX = -17; 
-                          circleOffsetY = -4; 
-                          textOffsetX = -17;
+                          circleOffsetX = -5; 
+                          circleOffsetY = -5; 
+                          textOffsetX = -5;
                           textOffsetY = -1;
                         }
                         
@@ -1088,34 +1086,6 @@ const TurkeyMap = () => {
                         else if (cityCode === "07") {
                           circleOffsetY = -15; 
                           textOffsetY = -11;
-                        }
-
-                        else if (cityCode === "17") {
-                          circleOffsetX = 8; 
-                          circleOffsetY = 4; 
-                          textOffsetX = 8;
-                          textOffsetY = 8;
-                        }
-
-                        else if (cityCode === "55") {
-                          circleOffsetX = -4; 
-                          circleOffsetY = 4; 
-                          textOffsetX = -4;
-                          textOffsetY = 7;
-                        }
-
-                        else if (cityCode === "36") {
-                          circleOffsetX = 6; 
-                          circleOffsetY = 4; 
-                          textOffsetX = 6;
-                          textOffsetY = 7;
-                        }
-
-                        else if (cityCode === "22") {
-                          circleOffsetX = 4; 
-                          circleOffsetY = 2; 
-                          textOffsetX = 4;
-                          textOffsetY = 6;
                         }
                         
                         return (
