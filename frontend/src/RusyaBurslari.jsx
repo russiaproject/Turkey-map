@@ -55,6 +55,7 @@ const RusyaBurslari = () => {
               <div className="d-flex gap-2">
                 <a href="https://www.instagram.com/rusevi_ankara" target="_blank" className="p-2 px-3 rusyaBurslariContact">İnstagram <i className="fa-brands fa-instagram"></i></a>
                 <a href="https://t.me/ankara_rusevi" target="_blank" className="p-2 px-3 rusyaBurslariContact">Telegram <i className="fa-brands fa-telegram"></i></a>
+                 <a href="https://t.me/rusya_burslari_bot" target="_blank" className="p-2 px-3 rusyaBurslariContact">Rusya Bursları Bilgilendirme Botu <i className="fa-solid fa-robot"></i></a>
                 <a href="https://vk.com/rusevi" target="_blank" className="p-2 px-3 rusyaBurslariContact">VK <i className="fa-brands fa-vk"></i></a>
               </div>
           </div>

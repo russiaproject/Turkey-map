@@ -6,6 +6,7 @@ import mustafa from "./images/mustafa.jpg";
 import yelkanat from "./images/yelkanat.jpg";
 import turkeyFlag from "./images/Turkey_flag_300.png";
 import russiaFlag from "./images/RussiaFlag.svg";
+import LudmilaKralice from "./images/ludmila_kralice.jpg"
 
 const Credit = () => {
   const [formData, setFormData] = useState({
@@ -215,61 +216,25 @@ const Credit = () => {
           <div className="katedralLudmila position-absolute"></div>
           <div className="row g-5">
             <div className="col-lg-4">
-              <img src={ornekFoto} className="ludmilaFoto" alt="Ludmila Çalışkan" />
+              <img src={LudmilaKralice} className="ludmilaFoto" alt="Ludmila Çalışkan" />
             </div>
             <div className="col-lg-8">
               <h2 className="">Ludmila Çalışkan</h2>
-              <p className="meslekCredit mb-4">Rus Evi Kraliçesi & Projenin Fikir Önderi</p>
+              <p className="meslekCredit mb-4">Projenin Kurucu Vizyoneri</p>
               <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem
-                deserunt vel perferendis accusantium? Quaerat numquam placeat
-                possimus aspernatur earum laudantium soluta rerum, quas natus
-                nesciunt fugit atque tempora suscipit cupiditate!
+                Ludmila Çalışkan, birkaç yıldır Rus Evi Ankara de çalışmakta ve Rusya bursları  yürütülmesiyle ilgilenmektedir. Hem katılmak isteyen adaylarla hem de burs hakkı kazanmış kişilerle yakından iletişim kurarak sürecin her aşamasında destek sağlamaktadır.
+
               </p>
               <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem
-                deserunt vel perferendis accusantium? Quaerat numquam placeat
-                possimus aspernatur earum laudantium soluta rerum, quas natus
-                nesciunt fugit atque tempora suscipit cupiditate!
+               Kurucusu olduğu bu proje, yıllar süren adaylar ve burs sahipleriyle yapılan çalışmaların bir sonucudur. Ludmila Çalışkan, onların ihtiyaçlarını dikkatle dinleyerek, sorunlarına çözüm bulmaya çalışarak ve hepsini tek bir ekip halinde birleştirmeyi amaçlayarak onlarla sürekli iletişim halinde olmaktadır. Bu nedenle, ortak hedeflerin gerçekleştirilmesi ve etkili bir iş birliği için bu platformu oluşturmuştur.
+
               </p>
-              <div className="gap-2 d-flex ikonKreditLudmila">
-                <a
-                  href="https://www.instagram.com/emirk_oglu/"
-                  className="credit-icon-link"
-                  aria-label="Instagram"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fa-brands fa-instagram"></i>
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/emirkesimoglu/"
-                  className="credit-icon-link"
-                  aria-label="Linkedin"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fa-brands fa-linkedin"></i>
-                </a>
-                <a
-                  href="https://github.com/emxis"
-                  className="credit-icon-link"
-                  aria-label="Github"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fa-brands fa-github"></i>
-                </a>
-                <a
-                  href="mailto:emirkesimoglu.923@gmail.com"
-                  className="credit-icon-link"
-                  aria-label="Email"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fa-solid fa-envelope"></i>
-                </a>
-              </div>
+              <p>
+               Eğer siz de bu iş birliğine katılmak, ekibimizin bir parçası olmak ve projeye katkı sağlamak istiyorsanız bizimle iletişime geçin. Sizi ekibimizde görmekten memnuniyet duyarız!
+
+              </p>
+              <br />
+<a href="https://t.me/ankara_rusevi" target="_blank" className="p-2 px-3 creditRussianDom">Русский Дом <i className="fa-solid fa-arrow-right"></i></a>
             </div>
           </div>
         </div>

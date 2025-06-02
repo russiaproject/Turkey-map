@@ -7,7 +7,7 @@ import { faLandmarkFlag } from '@fortawesome/free-solid-svg-icons';
 
 const KurumlarYazi = ({akkuyuFoto}) => {
   return (
-    <div className="container my-5 p-5 py-3">
+    <div className="container my-5 py-3">
       {/* Breadcrumb */}
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
@@ -31,22 +31,24 @@ const KurumlarYazi = ({akkuyuFoto}) => {
             <div className="col-lg">
                 <div className='iletisimSolYazılar'>
                 <p className='d-inline'>Adres:</p>
-                <p>Hilal, Rabindranath Tagore Cd. No:68, 06550 Çankaya/Ankara</p>
+                <p>Hilal Mahallesi, Rabindranath Tagore Caddesi, No:68, 06550 Çankaya/Ankara</p>
                 <p className='d-inline'>Çalışma Saatleri:</p>
                 <p>
-                Pazar   10:00 – 20:00
+                Pazar   09:00 – 18:00
                 <br />
-                Pazartesi   08:30 – 21:00
+                Pazartesi   09:00 – 18:00
                 <br />
-                Salı    08:30 – 21:00
+                Salı    09:00 – 18:00
                 <br />
-                Çarşamba    08:30 – 21:00
+                Çarşamba    09:00 – 18:00
                 <br />
-                Perşembe 08:30 – 21:00
+                Perşembe 09:00 – 18:00
                 <br />
-                Cuma    08:30 – 21:00
+                Cuma    09:00 – 18:00
                 <br />
-                Cumartesi   10:00 – 20:00
+                Cumartesi   09:00 – 18:00
+                <br/>
+(Bayram ve Hafta Sonlarında Mesai Saatleri Farklılık Gösterebilir.) 
                 </p>
                 </div>
             </div>

@@ -39,6 +39,8 @@ const TurkeyMap = () => {
 
   const getFallbackIcon = (type) => {
     switch(type) {
+      case 'Rusevi':
+        return faLandmarkFlag;
       case 'Büyükelçilik':
         return faLandmarkFlag;
       case 'Konsolosluk':
@@ -70,7 +72,6 @@ const TurkeyMap = () => {
   };
 
   useEffect(() => {
-    console.log("Harita verileri yükleniyor...");
     setProvincePaths(pathData);
     
     const plakaMapping = {};
@@ -90,12 +91,11 @@ const TurkeyMap = () => {
     
     setPlakaToCity(plakaMapping);
     setCityToPlaka(cityMapping);
-    console.log("Plaka mapingi oluşturuldu:", plakaMapping);
     
     const categories = new Set(['Hepsi']);
-    Object.keys(russianInstitutionsData).forEach(cityCode => {
-      if (russianInstitutionsData[cityCode] && Array.isArray(russianInstitutionsData[cityCode])) {
-        russianInstitutionsData[cityCode].forEach(institution => {
+    Object.keys(russianInstitutionsData).forEach(cityCodeKey => {
+      if (russianInstitutionsData[cityCodeKey] && Array.isArray(russianInstitutionsData[cityCodeKey])) {
+        russianInstitutionsData[cityCodeKey].forEach(institution => {
           if (institution.type) {
             categories.add(institution.type);
           }
@@ -108,28 +108,24 @@ const TurkeyMap = () => {
 
   useEffect(() => {
     if (Object.keys(plakaToCity).length > 0) {
-      console.log("Plaka mapingi hazır, kurumlar filtreleniyor...");
       filterByCategory('Hepsi');
     }
   }, [plakaToCity]);
 
   const filterByCategory = (category) => {
     setSelectedCategory(category);
-    console.log("Kategori filtreleniyor:", category);
     
     const institutionsByPlaka = {};
     
-    Object.keys(russianInstitutionsData).forEach(plaka => {
-      const normalizedPlaka = normalizeCode(plaka);
-      
-      const cityName = plakaToCity[plaka] || plakaToCity[normalizedPlaka];
+    Object.keys(russianInstitutionsData).forEach(plakaKey => {
+      const normalizedPlakaFromData = normalizeCode(plakaKey); 
+      const cityName = plakaToCity[plakaKey] || plakaToCity[normalizedPlakaFromData] || plakaToCity[`TR-${normalizedPlakaFromData}`] || plakaToCity[`TR${normalizedPlakaFromData}`];
       
       if (!cityName) {
-        console.warn(`Plaka karşılığı bulunamadı: ${plaka} / ${normalizedPlaka}`);
         return;
       }
       
-      const institutions = russianInstitutionsData[plaka];
+      const institutions = russianInstitutionsData[plakaKey];
       
       if (!institutions || !Array.isArray(institutions)) {
         return;
@@ -140,11 +136,11 @@ const TurkeyMap = () => {
         : institutions.filter(inst => inst.type === category);
       
       if (filteredList.length > 0) {
-        institutionsByPlaka[normalizedPlaka] = filteredList;
+        const mapPlakaCode = cityToPlaka[cityName] || normalizedPlakaFromData;
+        institutionsByPlaka[mapPlakaCode] = filteredList; 
       }
     });
     
-    console.log("Filtrelenmiş kurumlar:", institutionsByPlaka);
     setFilteredInstitutions(institutionsByPlaka);
   };
 
@@ -162,15 +158,19 @@ const TurkeyMap = () => {
         setCurrentZoomLevel(event.transform.k);
       })
       .filter(event => {
+        if (event.type && event.type.startsWith('touch') && event.touches && event.touches.length > 1) {
+          return true; // Allow pinch-zoom
+        }
+        if (!event.type) return true; // Allow programmatic zoom
         return !event.type.includes('wheel') && 
-               !event.type.includes('mouse') &&
+               !event.type.includes('mouse') && // blocks mousedown/mousemove for panning
                !event.type.includes('dblclick');
       });
 
     svg.call(zoomHandler);
     zoomBehaviorRef.current = zoomHandler;
     
-    svg.style("cursor", "pointer");
+    svg.style("cursor", "grab"); 
     
     svg.transition()
       .duration(750)
@@ -182,8 +182,6 @@ const TurkeyMap = () => {
   }, []);
 
   const handleCityClick = (cityID) => {
-    console.log("Şehre tıklandı:", cityID);
-    
     if (zoomedCity && zoomedCity !== cityID) {
       return;
     }
@@ -193,21 +191,25 @@ const TurkeyMap = () => {
     } else {
       setSelectedCity(cityID);
       setZoomedCity(cityID);
-      setShowSideMenu(true);
+      setShowSideMenu(true); 
       
       const cityPath = document.getElementById(cityID);
       if (cityPath && zoomBehaviorRef.current) {
         const bbox = cityPath.getBBox();
         const svg = select(svgRef.current);
-        const svgWidth = 800;
+        
+        const svgWidth = 800; 
         const svgHeight = 350;
-        const targetScale = 2;
+        
+        const targetScale = 2; 
+        
         const targetX = svgWidth / 2 - (bbox.x + bbox.width / 2) * targetScale;
         const targetY = svgHeight / 2 - (bbox.y + bbox.height / 2) * targetScale;
+        
         const targetTransform = zoomIdentity.translate(targetX, targetY).scale(targetScale);
         
         svg.transition()
-          .duration(1000)
+          .duration(1000) 
           .call(zoomBehaviorRef.current.transform, targetTransform)
           .on('end', () => {
             setCurrentZoomLevel(targetScale);
@@ -229,7 +231,7 @@ const TurkeyMap = () => {
         .duration(750)
         .call(zoomBehaviorRef.current.transform, zoomIdentity)
         .on('end', () => {
-          setCurrentZoomLevel(1);
+          setCurrentZoomLevel(1); 
         });
     }
   };
@@ -237,23 +239,24 @@ const TurkeyMap = () => {
   const pathStyles = (cityID) => {
     const isSelected = selectedCity === cityID;
     const isHovered = hoverCity === cityID;
-    const isZoomed = zoomedCity && zoomedCity !== cityID;
+    const isZoomedAndNotSelected = zoomedCity && zoomedCity !== cityID; 
     
     return {
       cursor: "pointer",
       transition: "all 0.3s ease-in-out",
-      transform: isHovered ? 'scale(1.008)' : 'scale(1)',
+      transform: isHovered && !zoomedCity ? 'scale(1.008)' : 'scale(1)', 
       fill: isSelected ? '#0032A0' 
-           : isHovered ? '#5C9E31' // Rengi kırmızıdan (#DA291C) açık yeşile (#5C9E31) değiştirdik
-           : '#a0aec0', 
+            : isHovered && !zoomedCity ? '#14b8a6' // Original hover color (Red)
+            : '#a0aec0', 
       stroke: '#4a5568', 
       strokeWidth: 0.5,
-      opacity: isZoomed ? 0.3 : 1,
+      opacity: isZoomedAndNotSelected ? 0.3 : 1, 
     };
   };
 
   const getMarkerColor = (type) => {
     switch(type) {
+      case 'Rusevi': return '#DA291C'; 
       case 'Büyükelçilik': return '#DA291C'; 
       case 'Konsolosluk': return '#DA291C'; 
       case 'Ticaret': return '#0032A0'; 
@@ -265,16 +268,14 @@ const TurkeyMap = () => {
     }
   };
 
-  // Kurum tipi etiketleri için boyut belirleyen fonksiyon ekledik
   const getMarkerSize = () => {
-    return currentZoomLevel > 2 ? "8px" : "6px"; // Etiket boyutlarını küçülttük
+    return currentZoomLevel > 2 ? "8px" : "6px";
   };
 
   const getCenterCount = (cityID) => {
     if (!cityID || !filteredInstitutions[cityID]) {
       return 0;
     }
-    
     return filteredInstitutions[cityID].length;
   };
 
@@ -284,7 +285,6 @@ const TurkeyMap = () => {
 
   const getInstitutionsList = () => {
     if (!zoomedCity) return [];
-    
     return filteredInstitutions[zoomedCity] || [];
   };
 
@@ -292,7 +292,7 @@ const TurkeyMap = () => {
     if (e) e.stopPropagation(); 
 
     setSelectedInstitution(institution);
-    setShowSideMenu(true);
+    setShowSideMenu(true); 
   };
 
   const handleSearch = (e) => {
@@ -307,18 +307,20 @@ const TurkeyMap = () => {
     const searchTermLower = term.toLowerCase();
     
     const allInstitutions = [];
-    Object.keys(russianInstitutionsData).forEach(plaka => {
-      const normalizedPlaka = normalizeCode(plaka);
-      const cityName = plakaToCity[plaka] || plakaToCity[normalizedPlaka];
+    Object.keys(russianInstitutionsData).forEach(plakaKey => {
+      const normalizedPlakaFromData = normalizeCode(plakaKey);
+      const cityName = plakaToCity[plakaKey] || plakaToCity[normalizedPlakaFromData];
       
       if (!cityName) return;
       
-      if (russianInstitutionsData[plaka] && Array.isArray(russianInstitutionsData[plaka])) {
-        russianInstitutionsData[plaka].forEach(institution => {
+      const mapPlakaCode = cityToPlaka[cityName] || normalizedPlakaFromData;
+
+      if (russianInstitutionsData[plakaKey] && Array.isArray(russianInstitutionsData[plakaKey])) {
+        russianInstitutionsData[plakaKey].forEach(institution => {
           allInstitutions.push({
             ...institution,
             cityName,
-            plaka: normalizedPlaka
+            plaka: mapPlakaCode 
           });
         });
       }
@@ -337,130 +339,116 @@ const TurkeyMap = () => {
       );
     });
     
-    setSuggestions(matches.slice(0, 5));
+    setSuggestions(matches.slice(0, 5)); 
   };
 
   const handleMapClick = (e) => {
     if (zoomedCity) {
-      const isInsideG = e.target.closest('g[ref]') === gRef.current;
+      const isInsideG = e.target.closest('g#map-interactive-area') === gRef.current; 
       
-      if (isInsideG && showSideMenu) {
-        setSelectedInstitution(null);
+      if (isInsideG && showSideMenu && selectedInstitution) {
+        if (e.target.tagName === 'path' || e.target.tagName === 'circle' || e.target.tagName === 'text') {
+            return; 
+        }
+        setSelectedInstitution(null); 
       }
-      
-      return;
+      return; 
     }
-    
     setSelectedInstitution(null);
-    setShowSideMenu(false);
   };
 
   const handleCloseSideMenu = (e) => {
     e.stopPropagation();
-    resetMap();
+    resetMap(); 
   };
 
   const handleSuggestionClick = (institution) => {
     setSearchTerm('');
     setSuggestions([]);
-    
+
+    const selectInstitutionAfterZoom = () => {
+        setTimeout(() => {
+            const instInList = (filteredInstitutions[institution.plaka] || []).find(i => i.name === institution.name && i.address === institution.address);
+            setSelectedInstitution(instInList || institution);
+        }, 1000); 
+    };
+
     if (zoomedCity && zoomedCity !== institution.plaka) {
-      return;
+        resetMap();
+        setTimeout(() => {
+            handleCityClick(institution.plaka);
+            selectInstitutionAfterZoom();
+        }, 750); 
+    } else if (!zoomedCity) {
+        handleCityClick(institution.plaka);
+        selectInstitutionAfterZoom();
+    } else { 
+        const instInList = (filteredInstitutions[institution.plaka] || []).find(i => i.name === institution.name && i.address === institution.address);
+        setSelectedInstitution(instInList || institution);
     }
-    
-    handleCityClick(institution.plaka);
-    
-    setTimeout(() => {
-      setSelectedInstitution(institution);
-    }, 1000);
   };
+
 
   const isDataEmpty = !provincePaths || provincePaths.length === 0 || 
                       !provincePaths[0]?.d || provincePaths[0]?.d === "";
 
-  // Harita üzerindeki sayılara tıklama olayını düzeltmek için eventListener ekliyoruz
   useEffect(() => {
     if (svgRef.current && gRef.current) {
-      const cityPaths = document.querySelectorAll('.city-path');
-      
-      const clickHandlers = new Map();
-      
-      cityPaths.forEach(cityPath => {
-        const handler = (e) => {
-          if (e.target === cityPath && !e.defaultPrevented) {
-            handleCityClick(cityPath.id);
+      const gElement = gRef.current;
+      const cityPathClickHandler = (e) => {
+        const pathElement = e.target.closest('.city-path');
+        if (pathElement && gElement.contains(pathElement)) {
+          if (!e.defaultPrevented) {
+             handleCityClick(pathElement.id);
           }
-        };
-        
-        clickHandlers.set(cityPath, handler);
-        cityPath.addEventListener('click', handler);
-      });
+        }
+      };
+
+      gElement.addEventListener('click', cityPathClickHandler);
       
       return () => {
-        cityPaths.forEach(cityPath => {
-          const handler = clickHandlers.get(cityPath);
-          if (handler) {
-            cityPath.removeEventListener('click', handler);
-          }
-        });
+        gElement.removeEventListener('click', cityPathClickHandler);
       };
     }
-  }, [zoomedCity, provincePaths]);
+  }, [zoomedCity, provincePaths, handleCityClick]); 
 
-  // Harita üzerindeki sayılara tıklama olayını düzeltmek için eventListener ekliyoruz
   useEffect(() => {
-    // Harita yüklendikten sonra sayılara tıklama olayını ekle
-    const numberCircles = document.querySelectorAll('circle[cx][cy]');
-    
-    numberCircles.forEach(circle => {
-      circle.addEventListener('click', (e) => {
-        e.stopPropagation(); // Event'in diğer elementlere geçmesini önle
-        const cityId = circle.getAttribute('data-city-id');
-        if (cityId) {
-          handleCityClick(cityId);
-        }
-      });
-      
-      // Sayının içindeki text elementine de tıklama özelliği ekle
-      const textElement = circle.nextElementSibling;
-      if (textElement && textElement.tagName === 'text') {
-        textElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const cityId = circle.getAttribute('data-city-id');
-          if (cityId) {
-            handleCityClick(cityId);
-          }
-        });
-      }
-    });
-    
-    return () => {
-      // Temizleme fonksiyonu
-      numberCircles.forEach(circle => {
-        circle.removeEventListener('click', () => {});
-        const textElement = circle.nextElementSibling;
-        if (textElement && textElement.tagName === 'text') {
-          textElement.removeEventListener('click', () => {});
-        }
-      });
-    };
-  }, [zoomedCity, provincePaths, filteredInstitutions]);
+    const gElement = gRef.current;
+
+    if (gElement) {
+        const numberElementClickHandler = (e) => {
+            const targetCircle = e.target.closest('circle[data-city-id]');
+            const targetText = e.target.closest('text[data-city-id-text]');
+            let cityId = null;
+
+            if (targetCircle) {
+                cityId = targetCircle.getAttribute('data-city-id');
+            } else if (targetText) {
+                cityId = targetText.getAttribute('data-city-id-text');
+            }
+
+            if (cityId) {
+                e.stopPropagation();
+                handleCityClick(cityId);
+            }
+        };
+
+        gElement.addEventListener('click', numberElementClickHandler);
+
+        return () => {
+            gElement.removeEventListener('click', numberElementClickHandler);
+        };
+    }
+  }, [zoomedCity, provincePaths, filteredInstitutions, handleCityClick]);
+
 
   return (
-    <div className='mt-5 container'>
+    <div className='turkey-map-app-container container'>
       <h2 className="text-center mb-4 mt-5">Türkiye'deki Rus Kurumları Haritası</h2>
 
-      <div className="search-filter-container mb-4" style={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '15px',
-        backgroundColor: 'white',
-        padding: '15px',
-        borderRadius: '10px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
-      }}>
-        <div className="category-filter" style={{ flex: '0 0 200px' }}>
-          <label htmlFor="category-select" className="mb-1 d-block" style={{ fontSize: '14px', color: '#555' }}>
+      <div className="search-filter-container mb-4">
+        <div className="category-filter">
+          <label htmlFor="category-select" className="mb-1 d-block">
             Kategori Seç:
           </label>
           <select 
@@ -468,14 +456,6 @@ const TurkeyMap = () => {
             className="form-select"
             value={selectedCategory}
             onChange={(e) => filterByCategory(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '8px 10px',
-              borderRadius: '6px',
-              border: '1px solid #ddd',
-              backgroundColor: '#f8f9fa',
-              fontSize: '14px'
-            }}
           >
             {allCategories.map(category => (
               <option key={category} value={category}>{category}</option>
@@ -483,8 +463,8 @@ const TurkeyMap = () => {
           </select>
         </div>
         
-        <div className="search-box" style={{ flex: '1 1 auto', position: 'relative' }}>
-          <label htmlFor="search-input" className="mb-1 d-block" style={{ fontSize: '14px', color: '#555' }}>
+        <div className="search-box">
+          <label htmlFor="search-input" className="mb-1 d-block">
             Kurum Ara:
           </label>
           <input
@@ -495,58 +475,23 @@ const TurkeyMap = () => {
             placeholder="Kurum adı, şehir veya adres ara..."
             value={searchTerm}
             onChange={handleSearch}
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              border: '1px solid #ddd',
-              fontSize: '14px'
-            }}
           />
           
           {suggestions.length > 0 && (
-            <div className="suggestions-list" style={{
-              position: 'absolute',
-              top: '100%',
-              left: '0',
-              right: '0',
-              backgroundColor: 'white',
-              borderRadius: '0 0 6px 6px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              zIndex: '1000',
-              maxHeight: '250px',
-              overflowY: 'auto',
-              border: '1px solid #ddd',
-              borderTop: 'none'
-            }}>
+            <div className="suggestions-list">
               {suggestions.map((suggestion, index) => (
                 <div
                   key={`suggestion-${index}`}
                   className="suggestion-item"
                   onClick={() => handleSuggestionClick(suggestion)}
-                  style={{
-                    padding: '10px 12px',
-                    cursor: 'pointer',
-                    borderBottom: index < suggestions.length - 1 ? '1px solid #eee' : 'none',
-                    transition: 'background-color 0.2s',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   <div 
-                    style={{ 
-                      width: '12px', 
-                      height: '12px', 
-                      backgroundColor: getMarkerColor(suggestion.type),
-                      borderRadius: '50%',
-                      marginRight: '10px' 
-                    }} 
+                    className="suggestion-marker-color"
+                    style={{ backgroundColor: getMarkerColor(suggestion.type)}} 
                   />
                   <div>
-                    <div style={{ fontWeight: '500', fontSize: '14px' }}>{suggestion.name}</div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>
+                    <div className="suggestion-name">{suggestion.name}</div>
+                    <div className="suggestion-details">
                       {suggestion.cityName} - {suggestion.type}
                     </div>
                   </div>
@@ -559,20 +504,8 @@ const TurkeyMap = () => {
       
       {zoomedCity && (
         <button 
-          className="btn btn-sm mb-3"
+          className="btn btn-sm mb-3 reset-map-button"
           onClick={resetMap}
-          style={{ 
-            backgroundColor: "#0032A0",
-            color: "white", 
-            fontWeight: "500", 
-            border: "none", 
-            borderRadius: "6px",
-            padding: "8px 16px",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            transition: "all 0.3s ease"
-          }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#002780"}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0032A0"}
         >
           <span style={{ marginRight: "5px" }}>&#8592;</span> Türkiye Haritasına Dön
         </button>
@@ -585,44 +518,12 @@ const TurkeyMap = () => {
         </div>
       )}
       
-      <div className='position-relative' style={{ display: 'flex' }}>
+      <div className='main-layout-wrapper'>
         {showSideMenu && zoomedCity && (
-          <div className='side-menu' style={{
-            width: '30%',
-            minWidth: '250px',
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-            padding: '20px',
-            marginRight: '15px',
-            height: '600px',
-            overflowY: 'auto',
-            transition: 'all 0.3s ease',
-            position: 'relative',
-            animation: 'slideIn 0.3s ease-out'
-          }}>
+          <div className='side-menu'>
             <button 
-              className="btn btn-sm" 
+              className="btn btn-sm side-menu-close-button" 
               onClick={handleCloseSideMenu}
-              style={{ 
-                fontSize: '14px', 
-                padding: '4px 9px', 
-                position: 'absolute', 
-                top: '10px', 
-                right: '10px',
-                zIndex: 10,
-                backgroundColor: "#DA291C", 
-                color: "white",
-                border: "none",
-                borderRadius: "50%",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s ease"
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#c42419"}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#DA291C"}
             >
               <span>&times;</span>
             </button>
@@ -630,27 +531,16 @@ const TurkeyMap = () => {
             {selectedInstitution ? (
               <>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h4 style={{ color: '#DA291C', marginBottom: '0' }}>Kurum Bilgileri</h4>
+                  <h4 className="side-menu-title-selected">Kurum Bilgileri</h4>
                 </div>
                 
                 <div className="text-center mb-4">
-                  {/* Resim varsa göster */}
                   {selectedInstitution.image && selectedInstitution.image !== "" ? (
-                    <div
-                      style={{
-                        width: '60px',
-                        height: '60px',
-                        margin: '0 auto 10px',
-                        overflow: 'hidden',
-                        borderRadius: '50%',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                        border: `2px solid ${getMarkerColor(selectedInstitution.type)}`
-                      }}
-                    >
+                    <div className="institution-image-wrapper">
                       <img
                         src={selectedInstitution.image}
                         alt={selectedInstitution.name}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        className="institution-image"
                         onError={(e) => {
                           e.target.style.display = 'none'; 
                           const fallbackDiv = e.target.closest('div').nextElementSibling; 
@@ -665,38 +555,25 @@ const TurkeyMap = () => {
                   ) : null}
                   
                   <div
+                    className="institution-fallback-icon-wrapper"
                     style={{
-                      width: '60px',
-                      height: '60px',
                       backgroundColor: getMarkerColor(selectedInstitution.type),
-                      borderRadius: '50%',
-                      margin: '0 auto 10px',
-                      
                       display: (!selectedInstitution.image || selectedInstitution.image === "") ? 'flex' : 'none',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white', 
-                      boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
                     }}
                   >
                     <FontAwesomeIcon icon={getFallbackIcon(selectedInstitution.type)} size="2x" />
                   </div>
-                  <h5 style={{ color: '#333' }}>{selectedInstitution.name}</h5>
-                  <div style={{ 
-                    backgroundColor: getMarkerColor(selectedInstitution.type),
-                    color: '#FFFFFF', 
-                    display: 'inline-block',
-                    padding: '3px 10px',
-                    borderRadius: '15px',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                  }}>
+                  <h5 className="institution-name-selected">{selectedInstitution.name}</h5>
+                  <div 
+                    className="institution-type-badge-selected"
+                    style={{ backgroundColor: getMarkerColor(selectedInstitution.type)}}
+                  >
                     {selectedInstitution.type}
                   </div>
                 </div>
                 
                 <div className="info-section mb-3">
-                  <h6 style={{ color: '#0032A0', borderBottom: '1px solid #f0f0f0', paddingBottom: '5px' }}>Kurum Bilgileri</h6>
+                  <h6 className="info-section-title">Kurum Bilgileri</h6>
                   <p className="mb-1">
                     <strong>Şehir:</strong> {selectedInstitution.cityName || plakaToCity[zoomedCity] || ''}
                   </p>
@@ -706,29 +583,18 @@ const TurkeyMap = () => {
 
                   {selectedInstitution.description && (
                     <div className="mb-3">
-                      <h6 style={{ color: '#0032A0', borderBottom: '1px solid #f0f0f0', paddingBottom: '5px' }}>Açıklama</h6>
-                      <p style={{ fontSize: '14px' }}>{selectedInstitution.description}</p>
+                      <h6 className="info-section-title">Açıklama</h6>
+                      <p className="institution-description">{selectedInstitution.description}</p>
                     </div>
                   )}
                   
-                  {/* Web sitesi linkini göster - geliştirdik */}
                   {selectedInstitution.website && selectedInstitution.website !== "_" && (
                     <div className="mb-3 text-center">
                       <a 
                         href={selectedInstitution.website.startsWith('http') ? selectedInstitution.website : `https://${selectedInstitution.website}`} 
-                        className="btn btn-sm mt-2" 
+                        className="btn btn-sm mt-2 institution-website-button" 
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ 
-                          backgroundColor: '#0032A0', 
-                          color: '#FFFFFF',
-                          borderColor: 'transparent',
-                          padding: '8px 15px',
-                          borderRadius: '5px',
-                          fontWeight: 'bold',
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                          textDecoration: 'none'
-                        }}
                       >
                         <i className="fa-solid fa-globe me-2"></i>
                         Websitesini Ziyaret Et
@@ -738,21 +604,8 @@ const TurkeyMap = () => {
                   
                   <div className="text-center">
                     <button 
-                      className="btn btn-sm mt-4" /* Buton aralığını artırdım */
+                      className="btn btn-sm mt-4 back-to-list-button" 
                       onClick={() => setSelectedInstitution(null)}
-                      style={{ 
-                        backgroundColor: "#f0f0f0", 
-                        color: "#333", 
-                        border: "none", 
-                        padding: '8px 16px', /* Butonu biraz büyüttüm */
-                        borderRadius: "5px",
-                        fontWeight: "500",
-                        fontSize: "13px",
-                        transition: "all 0.2s ease",
-                        marginTop: "15px" /* Ek margin ekledim */
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#e0e0e0"}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
                     >
                       &larr; Kurum Listesine Dön
                     </button>
@@ -762,27 +615,16 @@ const TurkeyMap = () => {
             ) : (
               <>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h4 style={{ color: '#0032A0', marginBottom: '0' }}>
+                  <h4 className="side-menu-title-list">
                     {plakaToCity[zoomedCity] || 'Şehir'} Kurumları
                   </h4>
-                  <span className="badge" style={{ 
-                    backgroundColor: '#0032A0', 
-                    color: 'white', 
-                    fontSize: '14px',
-                    padding: '5px 10px',
-                    borderRadius: '10px',
-                    marginRight: '1.4rem',
-                  }}>
+                  <span className="badge institution-count-badge">
                     {getInstitutionsList().length} tane kurum mevcut
                   </span>
                 </div>
 
-                <div className="institution-filter mb-3" style={{
-                  backgroundColor: '#f8f9fa',
-                  padding: '10px',
-                  borderRadius: '8px'
-                }}>
-                  <label htmlFor="institution-type-filter" className="mb-1 d-block" style={{ fontSize: '13px', fontWeight: '500', color: '#555' }}>
+                <div className="institution-filter mb-3">
+                  <label htmlFor="institution-type-filter" className="mb-1 d-block">
                     Kurum Tipine Göre Filtrele:
                   </label>
                   <select 
@@ -790,13 +632,6 @@ const TurkeyMap = () => {
                     className="form-select form-select-sm"
                     value={selectedCategory}
                     onChange={(e) => filterByCategory(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '6px 8px',
-                      borderRadius: '5px',
-                      border: '1px solid #ddd',
-                      fontSize: '13px'
-                    }}
                   >
                     {allCategories.map(category => (
                       <option key={category} value={category}>{category}</option>
@@ -813,70 +648,32 @@ const TurkeyMap = () => {
                         ...institution,
                         cityName: plakaToCity[zoomedCity]
                       })}
-                      style={{
-                        padding: "10px 12px", // Padding'i azalttık
-                        margin: "6px 0", // Margin'i azalttık
-                        backgroundColor: 'white',
-                        border: '1px solid #eee',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                        transition: 'all 0.2s ease',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f8f9fa';
-                        e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = 'white';
-                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-                      }}
                     >
                       <div 
-                        style={{ 
-                          width: "20px", // Boyutu küçülttük (önceden 24px)
-                          height: "20px", // Boyutu küçülttük (önceden 24px)
-                          backgroundColor: getMarkerColor(institution.type),
-                          borderRadius: '50%',
-                          marginRight: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                          fontWeight: 'bold',
-                          fontSize: '10px' // Font boyutunu küçülttük (önceden 12px)
-                        }}
+                        className="institution-item-marker"
+                        style={{ backgroundColor: getMarkerColor(institution.type)}}
                       >
                         {index + 1}
                       </div>
-                      <div style={{ flex: '1' }}>
-                        <div style={{ fontWeight: '500', color: '#333', fontSize: '14px' }}>{institution.name}</div>
-                        <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}> {/* Font boyutunu küçülttük */}
+                      <div className="institution-item-info">
+                        <div className="institution-item-name">{institution.name}</div>
+                        <div className="institution-item-type">
                           {institution.type}
                         </div>
                       </div>
                       <div>
-                        <i className="fas fa-chevron-right" style={{ color: '#ccc', fontSize: '10px' }}></i>
+                        <i className="fas fa-chevron-right institution-item-chevron"></i>
                       </div>
                     </div>
                   ))}
                   
                   {getInstitutionsList().length === 0 && (
-                    <div style={{
-                      padding: '20px',
-                      textAlign: 'center',
-                      color: '#666',
-                      backgroundColor: '#f8f9fa',
-                      borderRadius: '8px',
-                      margin: '20px 0'
-                    }}>
-                      <div style={{ fontSize: '40px', color: '#ccc', marginBottom: '10px' }}>
+                    <div className="no-institutions-found">
+                      <div className="no-institutions-icon">
                         &#x1F50D;
                       </div>
-                      <p style={{ margin: '0', fontWeight: '500' }}>Bu filtreyle kurum bulunamadı</p>
-                      <p style={{ fontSize: '13px', margin: '5px 0 0' }}>Farklı bir kurum tipi seçiniz</p>
+                      <p className="no-institutions-text-primary">Bu filtreyle kurum bulunamadı</p>
+                      <p className="no-institutions-text-secondary">Farklı bir kurum tipi seçiniz</p>
                     </div>
                   )}
                 </div>
@@ -886,127 +683,46 @@ const TurkeyMap = () => {
         )}
 
         <div 
-          className='map-container' 
+          className='map-container'
+          style={{width: showSideMenu && zoomedCity ? '70%' : '100%'}}
           onClick={handleMapClick}
-          style={{ 
-            width: showSideMenu ? '70%' : '100%', 
-            transition: 'all 0.3s ease',
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            padding: '20px',
-            marginBottom: '30px',
-            position: 'relative',
-            overflow: 'hidden'
-          }}
         >
-
-          <div className="title-box" style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            backgroundColor: 'white',
-            padding: '12px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            zIndex: '100',
-            minWidth: '180px'
-          }}>
-            <h3 className="title-box-heading" style={{
-              fontWeight: '600',
-              fontSize: '1rem',
-              color: '#333',
-              marginBottom: '2px'
-            }}>
+          <div className="title-box">
+            <h3 className="title-box-heading">
               Türkiye'deki Rus Kurumları
             </h3>
-            <p className="title-box-subheading" style={{
-              fontSize: '0.75rem',
-              color: '#666',
-              margin: 0
-            }}>
+            <p className="title-box-subheading">
               {zoomedCity ? plakaToCity[zoomedCity] : 'Görüntülemek için şehirlere tıklayın'}
             </p>
           </div>
 
-          <div className="map-legend" style={{
-            position: 'absolute',
-            bottom: '20px',
-            right: '20px',
-            backgroundColor: 'white',
-            padding: '12px', // Padding'i azalttık
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            zIndex: '100',
-            minWidth: '180px', // Genişliği azalttık
-            fontSize: '0.8rem' // Font boyutunu küçülttük
-          }}>
-            <h3 className="legend-title" style={{
-              fontWeight: '600',
-              color: '#444',
-              marginBottom: '10px',
-              paddingBottom: '4px',
-              borderBottom: '1px solid #eee',
-              fontSize: '0.9rem' // Font boyutunu küçülttük
-            }}>Kurum Tipleri</h3>
+          <div className="map-legend">
+            <h3 className="legend-title">Kurum Tipleri</h3>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
-              <span className="legend-color city-legend" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
-                borderRadius: '50%', 
-                marginRight: '8px',
-                backgroundColor: '#14b8a6',
-                border: '1px solid rgba(0,0,0,0.1)'
-              }}></span>
-              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Şehir (Kurum Sayısı)</span>
+            <div className="legend-item">
+              <span className="legend-color city-legend"></span>
+              <span className="legend-label">Şehir (Kurum Sayısı)</span>
             </div>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
-              <span className="legend-color" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
-                borderRadius: '50%', 
-                marginRight: '8px',
-                backgroundColor: '#DA291C', 
-                border: '1px solid rgba(0,0,0,0.1)'
-              }}></span>
-              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Konsolosluk/Büyükelçilik</span>
+            <div className="legend-item">
+              <span className="legend-color" style={{ backgroundColor: '#DA291C'}}></span>
+              <span className="legend-label">Konsolosluk/Büyükelçilik/Rusevi</span>
             </div>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
-              <span className="legend-color" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
-                borderRadius: '50%', 
-                marginRight: '8px',
-                backgroundColor: '#0032A0', 
-                border: '1px solid rgba(0,0,0,0.1)'
-              }}></span>
-              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Kültür/Ticaret Kurumları</span>
+            <div className="legend-item">
+              <span className="legend-color" style={{ backgroundColor: '#0032A0'}}></span>
+              <span className="legend-label">Kültür/Ticaret Kurumları</span>
             </div>
             
-            <div className="legend-item" style={{ display: 'flex', alignItems: 'center', margin: '6px 0' }}>
-              <span className="legend-color" style={{ 
-                width: '12px', // Boyutu küçülttük (önceden 16px)
-                height: '12px', // Boyutu küçülttük (önceden 16px)
-                borderRadius: '50%', 
-                marginRight: '8px',
-                backgroundColor: '#5C9E31', 
-                border: '1px solid rgba(0,0,0,0.1)'
-              }}></span>
-              <span className="legend-label" style={{ fontSize: '0.7rem', color: '#555' }}>Üniversite/Eğitim</span>
+            <div className="legend-item">
+              <span className="legend-color" style={{ backgroundColor: '#5C9E31'}}></span>
+              <span className="legend-label">Üniversite/Eğitim</span>
             </div>
           </div>
 
-          <svg ref={svgRef} viewBox="0 0 800 350" className="turkey-svg" style={{
-            width: '100%',
-            height: '100%',
-            display: 'block',
-            cursor: 'pointer'
-          }}>
+          <svg ref={svgRef} viewBox="0 0 800 350" className="turkey-svg mt-4">
             <rect x="0" y="0" width="800" height="350" fill="transparent" className="zoom-capture-rect" />
-            <g ref={gRef}>
+            <g ref={gRef} id="map-interactive-area">
               <rect x="0" y="0" width="800" height="350" className="map-background" fill="#ffffff" />
               
               {provincePaths.map((province, index) => {
@@ -1040,78 +756,63 @@ const TurkeyMap = () => {
                           cx = bbox.x + bbox.width / 2;
                           cy = bbox.y + bbox.height / 2;
                         } catch (e) {
-                          console.error(`Error getting bbox for ${cityCode}:`, e);
+                          // console.error(`Error getting bbox for ${cityCode}:`, e);
                         }
                         
                         let circleOffsetX = 0;
                         let circleOffsetY = 0;
                         let textOffsetX = 0;
-                        let textOffsetY = 4;
+                        let textOffsetY = 4; 
                         
-                        if (cityCode === "35") {
+                        // City-specific offsets from the user's provided code
+                        if (cityCode === "35") { // Izmir
                           circleOffsetX = 3;
-                          circleOffsetY = 10; 
+                          circleOffsetY = 20; 
                           textOffsetX = 3; 
-                          textOffsetY = 14;
-                        }
-                        
-                        else if (cityCode === "06") {
-                          circleOffsetX = 5; 
-                          circleOffsetY = -5; 
-                          textOffsetX = 5;
-                          textOffsetY = -1;
-                        }
-                        
-                        else if (cityCode === "38") {
-                          circleOffsetX = -5; 
-                          circleOffsetY = -8; 
-                          textOffsetX = -5;
-                          textOffsetY = -4;
-                        }
-                        
-                        else if (cityCode === "42") {
-                          circleOffsetX = -5; 
-                          circleOffsetY = -5; 
-                          textOffsetX = -5;
-                          textOffsetY = -1;
-                        }
-                        
-                        else if (cityCode === "04") {
-                          circleOffsetX = -15; 
-                          circleOffsetY = -10; 
-                          textOffsetX = -15;
-                          textOffsetY = -6;
-                        }
-                        
-                        else if (cityCode === "07") {
-                          circleOffsetY = -15; 
-                          textOffsetY = -11;
+                          textOffsetY = 20 + 3; 
+                        } else if (cityCode === "06") { // Ankara
+                          circleOffsetX = 5; circleOffsetY = -5; 
+                          textOffsetX = 5; textOffsetY = -1; 
+                        } else if (cityCode === "38") { // Kayseri
+                            circleOffsetX = -5; circleOffsetY = -8;
+                            textOffsetX = -5; textOffsetY = -4;
+                        } else if (cityCode === "42") { // Konya
+                            circleOffsetX = -17; circleOffsetY = -4; 
+                            textOffsetX = -17; textOffsetY = -1;
+                        } else if (cityCode === "04") { // Agri
+                            circleOffsetX = -15; circleOffsetY = -10;
+                            textOffsetX = -15; textOffsetY = -6;
+                        } else if (cityCode === "07") { // Antalya
+                            circleOffsetY = -15; 
+                            textOffsetY = -11;
+                        } else if (cityCode === "17") { // Canakkale
+                            circleOffsetX = 8; circleOffsetY = 4; 
+                            textOffsetX = 8; textOffsetY = 8;
+                        } else if (cityCode === "55") { // Samsun
+                            circleOffsetX = -4; circleOffsetY = 4; 
+                            textOffsetX = -4; textOffsetY = 7;
+                        } else if (cityCode === "36") { // Kars
+                            circleOffsetX = 6; circleOffsetY = 4; 
+                            textOffsetX = 6; textOffsetY = 7;
+                        } else if (cityCode === "22") { // Edirne
+                            circleOffsetX = 4; circleOffsetY = 2; 
+                            textOffsetX = 4; textOffsetY = 6;
                         }
                         
                         return (
-                          <g onClick={() => handleCityClick(cityCode)}>
+                          <g className="city-marker-group" data-city-id-group={cityCode} style={{cursor: 'pointer'}}>
                             <circle
                               cx={cx + circleOffsetX}
                               cy={cy + circleOffsetY}
                               r="10"
-                              fill="#14b8a6" 
-                              fillOpacity="0.8"
-                              stroke="white"
-                              strokeWidth="2"
-                              data-city-id={cityCode} // Bu attribute'u ekledik
-                              style={{ 
-                                cursor: 'pointer', 
-                                transition: 'all 0.2s ease',
-                              }}
+                              className="city-center-count-circle"
+                              data-city-id={cityCode} 
                             />
                             <text
                               x={cx + textOffsetX}
                               y={cy + textOffsetY}
-                              textAnchor="middle"
-                              fill="white"
-                              fontSize="10"
-                              fontWeight="bold"
-                              style={{ pointerEvents: 'none' }}
+                              className="city-center-count-text"
+                              data-city-id-text={cityCode}
                             >
                               {centerCount}
                             </text>
@@ -1125,96 +826,640 @@ const TurkeyMap = () => {
             </g>
           </svg>
           
-          <div className="zoom-instructions" style={{
-            position: 'absolute',
-            bottom: '60px',
-            right: '12px',
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            color: 'white',
-            fontSize: '0.7rem',
-            padding: '3px 8px',
-            borderRadius: '4px',
-            pointerEvents: 'none',
-            zIndex: '90',
-            display: 'none' 
-          }}>
+          <div className="zoom-instructions">
             Yakınlaşmak için iki parmağınızla uzaklaştırın.
           </div>
 
           {!showSideMenu && zoomedCity && (
-            <div className="info-title" style={{ 
-              position: 'absolute', 
-              top: '100px', 
-              left: '20px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              padding: '8px',
-              borderRadius: '5px',
-              boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-              borderLeft: '4px solid #14b8a6',
-              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-              fontSize: '12px',
-              color: '#555'
-            }}>
-              <div style={{ margin: '0 0 3px', color: '#14b8a6', fontSize: '14px', fontWeight: 'bold' }}>
+            <div className="info-title">
+              <div className="info-title-cityname">
                 {plakaToCity[zoomedCity]}
               </div>
-              <p style={{ fontSize: '11px', margin: '2px 0' }}>Bilgi için kurum noktalarına tıklayınız</p>
+              <p className="info-title-instruction">Bilgi için kurum noktalarına tıklayınız</p>
             </div>
           )}
         </div>
       </div>
       
       <style jsx>{`
-        .map-container {
+        .turkey-map-app-container {
+          font-family: 'Inter', sans-serif;
+        }
+        .search-filter-container {
+          display: flex;
+          flex-direction: row;
+          gap: 15px;
+          background-color: white;
+          padding: 15px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .category-filter {
+          flex: 0 0 200px;
+        }
+        .category-filter label, .search-box label {
+          font-size: 14px;
+          color: #555;
+          margin-bottom: 0.25rem;
+        }
+        .category-filter select, .search-box input {
+          width: 100%;
+          padding: 8px 10px;
+          border-radius: 6px;
+          border: 1px solid #ddd;
+          background-color: #f8f9fa;
+          font-size: 14px;
+        }
+        .search-box {
+          flex: 1 1 auto;
+          position: relative;
+        }
+        .suggestions-list {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background-color: white;
+          border-radius: 0 0 6px 6px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          z-index: 1000;
+          max-height: 250px;
+          overflow-y: auto;
+          border: 1px solid #ddd;
+          border-top: none;
+        }
+        .suggestion-item {
+          padding: 10px 12px;
+          cursor: pointer;
+          border-bottom: 1px solid #eee;
+          transition: background-color 0.2s;
+          display: flex;
+          align-items: center;
+        }
+        .suggestion-item:hover {
+          background-color: #f8f9fa;
+        }
+        .suggestion-item:last-child {
+          border-bottom: none;
+        }
+        .suggestion-marker-color {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          margin-right: 10px;
+          flex-shrink: 0;
+        }
+        .suggestion-name {
+          font-weight: 500;
+          font-size: 14px;
+        }
+        .suggestion-details {
+          font-size: 12px;
+          color: #666;
+        }
+
+        .reset-map-button {
+          background-color: #0032A0;
+          color: white;
+          font-weight: 500;
+          border: none;
+          border-radius: 6px;
+          padding: 8px 16px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          transition: background-color 0.3s ease;
+        }
+        .reset-map-button:hover {
+          background-color: #002780;
+        }
+
+        .main-layout-wrapper {
+          display: flex;
+          position: relative;
+        }
+        
+        .side-menu {
+          width: 30%;
+          min-width: 280px;
           background-color: white;
           border-radius: 12px;
           box-shadow: 0 4px 15px rgba(0,0,0,0.1);
           padding: 20px;
-          margin-bottom: 30px;
+          margin-right: 15px;
+          height: 600px; 
+          overflow-y: auto;
+          transition: width 0.3s ease, margin-right 0.3s ease, opacity 0.3s ease, padding 0.3s ease, min-width 0.3s ease;
           position: relative;
-          height: 600px;
-        }
-        
-        .side-menu {
           animation: slideIn 0.3s ease-out;
         }
-        
-        @keyframes slideIn {
-          from {
-            transform: translateX(-20px);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
+        .side-menu-close-button {
+          font-size: 14px;
+          padding: 0;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          z-index: 10;
+          background-color: #DA291C;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s ease;
+          width: 28px;
+          height: 28px;
+          line-height: 28px;
         }
-        
-        /* City path transitions */
+        .side-menu-close-button:hover {
+          background-color: #c42419;
+          color: #fff;
+        }
+        .side-menu-title-selected {
+          color: #DA291C;
+          margin-bottom: 0;
+          font-size: 1.25rem;
+        }
+        .institution-image-wrapper {
+          width: 60px;
+          height: 60px;
+          margin: 0 auto 10px;
+          overflow: hidden;
+          border-radius: 50%;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .institution-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .institution-fallback-icon-wrapper {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          margin: 0 auto 10px;
+          display: flex; 
+          align-items: center;
+          justify-content: center;
+          color: white;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .institution-name-selected {
+          color: #333;
+          font-size: 1.1rem;
+          margin-top: 5px;
+          margin-bottom: 5px;
+        }
+        .institution-type-badge-selected {
+          color: #FFFFFF;
+          display: inline-block;
+          padding: 3px 10px;
+          border-radius: 15px;
+          font-size: 12px;
+          font-weight: bold;
+        }
+        .info-section {
+          margin-top: 1rem;
+        }
+        .info-section-title {
+          color: #0032A0;
+          border-bottom: 1px solid #f0f0f0;
+          padding-bottom: 5px;
+          font-size: 0.95rem;
+          margin-bottom: 0.5rem;
+        }
+        .institution-description {
+          font-size: 14px;
+          line-height: 1.5;
+        }
+        .institution-website-button {
+          background-color: #0032A0;
+          color: #FFFFFF;
+          border-color: transparent;
+          padding: 8px 15px;
+          border-radius: 5px;
+          font-weight: bold;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          text-decoration: none;
+          font-size: 0.8rem;
+          transition: background-color 0.2s ease;
+        }
+        .institution-website-button:hover {
+          background-color: #002780;
+        }
+        .back-to-list-button {
+          background-color: #f0f0f0;
+          color: #333;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 5px;
+          font-weight: 500;
+          font-size: 13px;
+          transition: background-color 0.2s ease;
+          margin-top: 15px;
+        }
+        .back-to-list-button:hover {
+          background-color: #e0e0e0;
+        }
+        .side-menu-title-list {
+          color: #0032A0;
+          margin-bottom: 0;
+          font-size: 1.2rem;
+        }
+        .institution-count-badge {
+          background-color: #0032A0;
+          color: white;
+          font-size: 14px;
+          padding: 5px 10px;
+          border-radius: 10px;
+          margin-right: 1.4rem; 
+        }
+        .institution-filter {
+          background-color: #f8f9fa;
+          padding: 10px;
+          border-radius: 8px;
+        }
+        .institution-filter label {
+          font-size: 13px;
+          font-weight: 500;
+          color: #555;
+          margin-bottom: 0.25rem;
+        }
+        .institution-filter select {
+          width: 100%;
+          padding: 6px 8px;
+          border-radius: 5px;
+          border: 1px solid #ddd;
+          font-size: 13px;
+        }
+        .institutions-list {
+          margin-top: 1rem;
+        }
+        .institution-item {
+          padding: 10px 12px;
+          margin: 6px 0;
+          background-color: white;
+          border: 1px solid #eee;
+          border-radius: 8px;
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+        }
+        .institution-item:hover {
+          background-color: #f8f9fa;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .institution-item-marker {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          margin-right: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 10px;
+          flex-shrink: 0;
+        }
+        .institution-item-info {
+          flex: 1;
+          min-width: 0; 
+        }
+        .institution-item-name {
+          font-weight: 500;
+          color: #333;
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .institution-item-type {
+          font-size: 11px;
+          color: #666;
+          margin-top: 2px;
+        }
+        .institution-item-chevron {
+          color: #ccc;
+          font-size: 10px;
+          margin-left: 8px;
+        }
+        .no-institutions-found {
+          padding: 20px;
+          text-align: center;
+          color: #666;
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          margin: 20px 0;
+        }
+        .no-institutions-icon {
+          font-size: 40px;
+          color: #ccc;
+          margin-bottom: 10px;
+        }
+        .no-institutions-text-primary {
+          margin: 0;
+          font-weight: 500;
+        }
+        .no-institutions-text-secondary {
+          font-size: 13px;
+          margin: 5px 0 0;
+        }
+
+        .map-container {
+          transition: width 0.3s ease;
+          background-color: white;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          padding: 20px;
+          margin-bottom: 30px;
+          position: relative;
+          overflow: hidden;
+          height: 600px;
+        }
+        .title-box {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          background-color: rgba(255, 255, 255, 0.9);
+          padding: 12px;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+          z-index: 100;
+          min-width: 180px;
+        }
+        .title-box-heading {
+          font-weight: 600;
+          font-size: 1rem;
+          color: #333;
+          margin-bottom: 2px;
+        }
+        .title-box-subheading {
+          font-size: 0.75rem;
+          color: #666;
+          margin: 0;
+        }
+        .map-legend {
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          background-color: rgba(255, 255, 255, 0.9);
+          padding: 12px;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+          z-index: 100;
+          min-width: 180px;
+          font-size: 0.8rem;
+        }
+        .legend-title {
+          font-weight: 600;
+          color: #444;
+          margin-bottom: 10px;
+          padding-bottom: 4px;
+          border-bottom: 1px solid #eee;
+          font-size: 0.9rem;
+        }
+        .legend-item {
+          display: flex;
+          align-items: center;
+          margin: 6px 0;
+        }
+        .legend-color {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          margin-right: 8px;
+          border: 1px solid rgba(0,0,0,0.1);
+          flex-shrink: 0;
+        }
+        .legend-color.city-legend {
+          background-color: #14b8a6;
+        }
+        .legend-label {
+          font-size: 0.7rem;
+          color: #555;
+        }
+        .turkey-svg {
+          width: 100%;
+          height: 100%;
+          display: block;
+          cursor: grab; 
+        }
+         .turkey-svg:active {
+            cursor: grabbing;
+        }
+        .map-background {
+          pointer-events: all; 
+        }
         .city-path {
           transition: fill 0.15s ease-in-out, stroke-width 0.15s ease-in-out, transform 0.2s ease-out;
           cursor: pointer;
         }
-        
-        .city-path:hover {
-          fill: rgb(20, 184, 166) !important;
+        /* .city-path:hover is handled by pathStyles function */
+
+        .city-center-count-circle {
+            fill: #14b8a6;
+            fill-opacity: 0.8;
+            stroke: white;
+            stroke-width: 2;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .city-center-count-circle:hover {
+            fill-opacity: 1;
+            r: 11;
+        }
+        .city-center-count-text {
+            text-anchor: middle;
+            fill: white;
+            font-size: 10px;
+            font-weight: bold;
+            pointer-events: none; 
+        }
+        .zoom-instructions {
+          position: absolute;
+          bottom: 60px; 
+          right: 12px;
+          background-color: rgba(0, 0, 0, 0.6);
+          color: white;
+          font-size: 0.7rem;
+          padding: 3px 8px;
+          border-radius: 4px;
+          pointer-events: none;
+          z-index: 90;
+          display: none; 
+        }
+        .info-title {
+          position: absolute;
+          top: 100px;
+          left: 20px;
+          background-color: rgba(255, 255, 255, 0.95);
+          padding: 8px;
+          border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.2);
+          border-left: 4px solid #14b8a6;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          font-size: 12px;
+          color: #555;
+          z-index: 50;
+        }
+        .info-title-cityname {
+          margin: 0 0 3px;
+          color: #14b8a6;
+          font-size: 14px;
+          font-weight: bold;
+        }
+        .info-title-instruction {
+          font-size: 11px;
+          margin: 2px 0;
         }
         
-        /* Facility Points */
-        .facility-point {
-          transition: r 0.2s ease-out, fill 0.15s ease-in-out, stroke-width 0.15s ease-in-out;
+        @keyframes slideIn {
+          from { transform: translateX(-20px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
         }
         
-        .facility-point:hover {
-          stroke-width: 2;
-        }
-        
-        /* Mobile Touch Instructions */
         @media (pointer: coarse) {
           .zoom-instructions {
             display: block !important;
           }
         }
+
+        @media (min-width: 768px) {
+          .side-menu {
+            width: ${showSideMenu && zoomedCity ? '30%' : '0px'};
+            margin-right: ${showSideMenu && zoomedCity ? '15px' : '0px'};
+            padding: ${showSideMenu && zoomedCity ? '20px' : '0px'};
+            opacity: ${showSideMenu && zoomedCity ? '1' : '0'};
+            overflow: ${showSideMenu && zoomedCity ? 'auto' : 'hidden'};
+            min-width: ${showSideMenu && zoomedCity ? '280px' : '0px'};
+          }
+        }
+
+        @media (max-width: 767.98px) {
+          .turkey-map-app-container.container {
+            padding-left: 10px;
+            padding-right: 10px;
+          }
+          .search-filter-container {
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+          }
+          .category-filter {
+            flex: 1 1 100%;
+          }
+          .category-filter label, .search-box label {
+            font-size: 13px;
+          }
+          .category-filter select, .search-box input {
+            font-size: 13px;
+            padding: 7px 9px;
+          }
+          .reset-map-button {
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            width: 100%;
+            margin-bottom: 10px;
+          }
+          .main-layout-wrapper {
+            flex-direction: column;
+          }
+          .side-menu {
+            width: 100% !important; 
+            margin-right: 0 !important;
+            margin-bottom: 15px;
+            height: auto;
+            max-height: 45vh; 
+            min-width: unset !important;
+            padding: 15px !important;
+            opacity: 1 !important;
+            overflow-y: auto !important;
+          }
+          .side-menu-title-selected, .side-menu-title-list {
+            font-size: 1.1rem;
+          }
+          .institution-count-badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            margin-right: 0; /* Adjusted for smaller screens */
+          }
+          .institution-item-name { font-size: 13px; }
+          .institution-item-type { font-size: 10px; }
+
+          .map-container {
+            width: 100% !important; 
+            height: 50vh; 
+            min-height: 350px; 
+            padding: 10px;
+          }
+          .title-box {
+            top: 10px;
+            left: 10px;
+            padding: 8px;
+            min-width: auto; 
+            max-width: calc(100% - 20px); 
+          }
+          .title-box-heading { font-size: 0.85rem; }
+          .title-box-subheading { font-size: 0.65rem; }
+          .map-legend {
+            bottom: 10px;
+            right: 10px;
+            padding: 8px;
+            min-width: auto; 
+            max-width: calc(100% - 20px); 
+            font-size: 0.7rem;
+          }
+          .legend-title { font-size: 0.75rem; margin-bottom: 6px; }
+          .legend-color { width: 10px; height: 10px; margin-right: 6px;}
+          .legend-label { font-size: 0.6rem; }
+          .zoom-instructions {
+            bottom: 10px; 
+            right: 10px;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+          }
+           .info-title {
+            top: 10px; 
+            left: 10px;
+            padding: 6px;
+            max-width: calc(100% - 20px);
+          }
+          .info-title-cityname { font-size: 12px; }
+          .info-title-instruction { font-size: 10px; }
+        }
+         @media (max-width: 480px) {
+            .side-menu {
+              max-height: 50vh; 
+            }
+            .map-container {
+                min-height: 300px; 
+            }
+            .title-box-heading { font-size: 0.75rem; }
+            .title-box-subheading { font-size: 0.6rem; }
+            .legend-title { font-size: 0.7rem; }
+            .legend-label { font-size: 0.55rem; }
+            .zoom-instructions {
+                bottom: 5px;
+                right: 5px;
+            }
+             .map-legend {
+                max-width: 130px; 
+             }
+             .legend-item {
+                 margin: 4px 0;
+             }
+             .institution-website-button {
+                 font-size: 0.75rem;
+                 padding: 6px 12px;
+             }
+             .back-to-list-button {
+                 font-size: 12px;
+                 padding: 7px 14px;
+             }
+         }
       `}</style>
     </div>
   );

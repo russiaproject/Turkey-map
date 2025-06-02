@@ -77,7 +77,7 @@ const KayitOl = () => {
     <div className="kayitContainer">
       <div className="kayitWrapper">
         <div className="kayitForm">
-          <h2 className="kayitBaslik">İşletmeniz İle İş Birliği Yapalım!</h2>
+          <h2 className="kayitBaslik">Haritaya Kurumunuzu Ekleyin!</h2>
           
           {/* onSubmit ekleyin */}
           <form onSubmit={handleSubmit}>
@@ -168,7 +168,7 @@ const KayitOl = () => {
             
             <div className="kayitTekCol">
               <button type="submit" className="kayitButon">
-                Hemen İŞBİRLİĞİ Yapın!
+                Hemen Kurumunuzu Ekleyin!
               </button>
             </div>
           </form>

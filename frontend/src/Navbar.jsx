@@ -19,11 +19,8 @@ const Navbar = ({ rusevi, turkiyePng }) => {
           </div>
 
           <div className="d-flex align-items-center gap-2">
-            <Link to="/Admin" className="btn p-1 kayitOl p-2 px-3">
-                admine gir
-              </Link>
               <Link to="/KayıtOl" className="btn p-1 kayitOl p-2 px-3">
-              Bizimle İş Birliği Yapın!
+              Haritaya Kurumunuzu Ekleyin
               </Link>
               <Link to="/harita" className="btn p-1">
                 <img src={turkiyePng} className="turkiyePng" alt="TurkeyMap" />
@@ -63,10 +60,13 @@ const Navbar = ({ rusevi, turkiyePng }) => {
         >
           <div className='navbarLink d-lg-flex gap-3'>
             <Link to="/" className="nav-link-item text-white text-decoration-none">Ana Sayfa</Link>
-            <Link to="/rusevi" className="nav-link-item text-white text-decoration-none">Rusevi Türkiye Hakkında</Link>
+            <Link to="/rusevi" className="nav-link-item text-white text-decoration-none">Rus Evi Ankara Hakkında</Link>
             <Link to="/harita" className="nav-link-item text-white text-decoration-none">Harita</Link>
             <Link to="/makale" className="nav-link-item text-white text-decoration-none">Makaleler</Link>
             <Link to="/credit" className="nav-link-item text-white text-decoration-none">Ekibe Katılın!</Link>
+             <Link to="/konsolosluklar" className="nav-link-item text-white text-decoration-none">Konsolosluklar</Link>
+             <Link to="/" className="nav-link-item text-white text-decoration-none">Mezuniyet Klübü</Link>
+
             <Link to="/IsStaj" className="nav-link-item text-white text-decoration-none">İş/Staj</Link>
 
             <Link to="/rusyaburslari" className="nav-link-item text-white text-decoration-none">Rusya Bursları</Link>
@@ -75,11 +75,6 @@ const Navbar = ({ rusevi, turkiyePng }) => {
             <Link to="/contact" className="nav-link-item text-white text-decoration-none">İletişim</Link>
               <a href="https://turkiye.rs.gov.ru/" className="nav-link-item text-white text-decoration-none text-uppercase rusLink d-lg-none" target="_blank" rel="noreferrer">
                 Русский Дом
-                <i className="fa-solid fa-arrow-right mainpageRight ms-1"></i>
-              </a>
-
-              <a href="https://turkiye.rs.gov.ru/" className="nav-link-item text-white text-decoration-none text-uppercase rusLink d-lg-none" target="_blank" rel="noreferrer">
-                İş/Staj
                 <i className="fa-solid fa-arrow-right mainpageRight ms-1"></i>
               </a>
           </div>

@@ -83,7 +83,7 @@ const KurumlarYazi = () => {
               </p>
 
               {/* Website Button */}
-              <div className="mb-3 text-center mt-4">
+              <div className="mb-3 mt-4">
                 <a 
                   href="https://turkiye.rs.gov.ru/" 
                   className="btn btn-sm mt-2" 
@@ -106,39 +106,39 @@ const KurumlarYazi = () => {
               </div>
 
               {/* Director Profile Card - Enhanced */}
-              <div className="mt-5" style={{width:"60%"}}>
-                <div className="card border-0 p-2 shadow-sm mb-3 director-card">
-                  <div className="row g-0">
-                    <div className="col-md-4">
-                      <img src={sotnichenko} className="img-fluid rounded-3" alt="Aleksandr Sotniçenko" />
-                    </div>
-                    <div className="col-md-8">
-                      <div className="card-body">
-                        <h5 className="card-title fw-bold">
-                          <i className="fa-solid fa-user-tie me-2 text-primary"></i>
-                          Aleksandr Sotniçenko
-                        </h5>
-                        <p className="text-muted mb-2 fst-italic">Rus Evinin Kıymetli Başkanı</p>
-                        <div className="quote-container my-3 p-2 border-start border-4 border-primary ps-3">
-                          <p className="mb-1">
-                            <i className="fa-solid fa-quote-left me-2 text-primary"></i>
-                            Türkiye Rusya'dan Rusya da Türkiye'den vazgeçmeyecek. Biz birlikte daha güçlüyüz. Biz bağımsız kalmak istiyoruz. Bunun için iş birliği yapmamız lazım.
-                          </p>
-                          
-                        </div>
-                        <p className="altIsim2 text-start">
-                          Bu Değerli Sözün Sahibi Aleksandr Sotniçenko
-                          </p>
-                        <Link to="/sotnicenko" className="btn btn-outline-primary hoverSotn mt-2">
-                          <i className="fa-solid fa-user me-2"></i>
-                          Rus Evi Başkanını Tanıyın
-                          <i className="fa-solid fa-arrow-right ms-2"></i>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div className="mt-5 w-full px-2 md:w-3/5 mx-auto">
+  <div className="card border-0 p-2 shadow-sm mb-3 director-card">
+    <div className="row g-0">
+      <div className="col-12 col-md-3">
+        <img src={sotnichenko} className="img-fluid rounded-3 w-full" alt="Aleksandr Sotniçenko" />
+      </div>
+      <div className="col-12 col-md-9">
+        <div className="card-body">
+          <h5 className="card-title fw-bold">
+            <i className="fa-solid fa-user-tie me-2 text-primary"></i>
+            Aleksandr Sotniçenko
+          </h5>
+          <p className="text-muted mb-2 fst-italic">Rus Evinin Kıymetli Başkanı</p>
+          <div className="quote-container my-3 p-2 border-start border-4 border-primary ps-3">
+            <p className="mb-1">
+              <i className="fa-solid sotnicenkoYazi fa-quote-left me-2 text-primary"></i>
+              Türkiye Rusya'dan Rusya da Türkiye'den vazgeçmeyecek. Biz birlikte daha güçlüyüz. Biz bağımsız kalmak istiyoruz. Bunun için iş birliği yapmamız lazım.
+            </p>
+          </div>
+          <p className="altIsim2 text-start">
+            Bu Değerli Sözün Sahibi Aleksandr Sotniçenko
+          </p>
+          <Link to="/sotnicenko" className="btn btn-outline-primary hoverSotn mt-2">
+            <i className="fa-solid fa-user me-2"></i>
+            Rus Evi Başkanını Tanıyın
+            <i className="fa-solid fa-arrow-right ms-2"></i>
+          </Link>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
             </div>
           </div>
         </div>
