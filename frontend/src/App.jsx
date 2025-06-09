@@ -36,7 +36,15 @@ import Gazprom from './Gazprom'
 import Rusmer from './Rusmer'
 import Sputnik from './Sputnik'
 import Rusen from './Rusen'
-
+import turkiyeRusyaBayrak from "./images/turkiye-rusya-bayrak.jpg"
+import Dostluk from './Dostluk'
+import Evize from './Evize'
+import Rt from "./Rt"
+import Sberbank from './Sberbank'
+import Tass from "./Tass"
+import Vize from './Vize'
+import RusIzleri from './Rusizleri'
+import RusIziEkle from './RusIziEkle'
 
 // Animated page wrapper component
 const AnimatedPage = ({ children }) => {
@@ -186,6 +194,46 @@ const AnimatedRoutes = () => {
             <Sputnik />
           </AnimatedPage>
         } />
+         <Route path="/turkiye-rusya-dostlugu" element={
+          <AnimatedPage>
+            <Dostluk />
+          </AnimatedPage>
+        } />
+         <Route path="/e-vize" element={
+          <AnimatedPage>
+            <Evize />
+          </AnimatedPage>
+        } />
+        <Route path="/RT" element={
+          <AnimatedPage>
+            <Rt />
+          </AnimatedPage>
+        } />
+         <Route path="/SberBank" element={
+          <AnimatedPage>
+            <Sberbank />
+          </AnimatedPage>
+        } />
+         <Route path="/Tass" element={
+          <AnimatedPage>
+            <Tass />
+          </AnimatedPage>
+        } />
+           <Route path="/vize" element={
+          <AnimatedPage>
+            <Vize />
+          </AnimatedPage>
+        } />
+         <Route path="/Rus-izi-ekle" element={
+          <AnimatedPage>
+            <RusIziEkle />
+          </AnimatedPage>
+        } />
+        <Route path="/turkiyede-rus-izleri" element={
+          <AnimatedPage>
+            <RusIzleri />
+          </AnimatedPage>
+        } />
         <Route path="/sotnicenko" element={
   <AnimatedPage>
     <Sotnicenko />
@@ -216,7 +264,7 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar rusevi={rusevi} turkiyePng={turkiyePng} />
+      <Navbar rusevi={rusevi} turkiyeRusyaBayrak={turkiyeRusyaBayrak} />
       <AnimatedRoutes/>
       <ChatBotRusevi/>
       <Footer/>

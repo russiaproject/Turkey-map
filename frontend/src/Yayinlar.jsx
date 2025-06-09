@@ -1,13 +1,9 @@
-import React from 'react'
-
-import akkuyuFoto from "./images/akkuyuFoto.jpg";
-import konsolosluk from "./images/konsolosluk.jpg";
-import ruseviYatay from "./images/ruseviYatay.jpg";
+import React from "react";
+import BarKurum from "./BarKurum";
 
 const Yayinlar = () => {
   return (
     <div className="container my-5 py-3">
-      {/* Breadcrumb */}
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
@@ -21,120 +17,184 @@ const Yayinlar = () => {
         </ol>
       </nav>
 
-      {/* Page Title with Icon */}
       <div className="d-flex align-items-center mb-4">
-        <i className="fa-solid fa-landmark text-primary me-3 fs-2"></i>
-        <h2 className="fw-bold text-primary m-0">
-          Yayınlar
-        </h2>
+        <i className="fa-solid fa-book-open text-primary me-3 fs-2"></i>
+        <h2 className="fw-bold text-primary m-0">Yayınlar</h2>
       </div>
 
-      {/* Main Content Column */}
-      <div className="card shadow-sm border-0 h-100 kurum-card">
+      <div className="card shadow-sm border-0 mb-4">
         <div className="card-body p-4">
-
-        
-          <div className="row g-4">
-      <a href="" className='col-lg-7 text-decoration-none'>
-      <div className="">
-        <div className="featured-post">
-          <div className="featured-image-wrapper">
-            <img src={ruseviYatay} className="featured-image" alt="Featured blog post" />
-            <div className="category-badge">
-              <p className="m-0">IT Alanı</p>
+          <div className="row g-3 align-items-end">
+            <div className="col-lg-7 col-md-12">
+              <label htmlFor="searchInput" className="form-label fw-bold">
+                Yayın Ara
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="searchInput"
+                placeholder="Makale adı, yazar, anahtar kelime..."
+              />
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <label htmlFor="typeSelect" className="form-label fw-bold">
+                Yayın Türü
+              </label>
+              <select className="form-select" id="typeSelect">
+                <option selected>Tümü</option>
+                <option value="1">Makale</option>
+                <option value="2">Bildiri</option>
+                <option value="3">Kitap</option>
+                <option value="4">Tez</option>
+              </select>
+            </div>
+            <div className="col-lg-2 col-md-6">
+              <button className="btn btn-primary w-100">
+                <i className="fa-solid fa-filter me-2"></i>Filtrele
+              </button>
             </div>
           </div>
-          
-          <div className="featured-content">
-            <div className="post-meta mb-3">16 Haziran 2006</div>
-            <h2 className="post-title">How Tech Shapes the Future of Work in 2024</h2>
-            <p className="post-excerpt">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere enim nibh, eu condimentum erat varius non varius non...
+        </div>
+      </div>
+
+      <div className="row g-4">
+        <div className="col-lg-6">
+          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+              <p className="p-2 m-0">Makale</p>
+            </div>
+            <h4 className="fw-bold text-primary mt-5">
+              Türkiye-Rusya İlişkilerinde Enerji Faktörü
+            </h4>
+            <p className="text-muted small">
+              <i className="fa-solid fa-user me-2"></i>Ahmet Yılmaz, Ayşe Kaya
             </p>
-          </div>
-        </div>
-      </div>
-      </a>
-      
-      {/* Right Side Posts */}
-      <div className="col-lg-5">
-        {/* First Right Post */}
-        <a href="" className='text-decoration-none'>
-        <div className="side-post mb-3">
-          <div className="row g-0">
-            <div className="col-7">
-              <div className="side-post-content">
-                <div className="post-meta mb-1">16 Haziran 2006</div>
-                <h3 className="side-post-title">How Tech Shapes the Future of Work in 2024</h3>
-                <p className="side-post-excerpt">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere enim nibh...
-                </p>
-                <div className="category-badge-small">
-                  <p className="m-0">IT Alanı</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-5">
-              <div className="side-image-wrapper">
-                <img src={akkuyuFoto} className="side-image" alt="Blog post" />
-              </div>
+            <p className="fst-italic small">
+              Uluslararası İlişkiler Dergisi, Cilt 18, Sayı 71, 2021, ss. 45-60.
+            </p>
+            <p className="text-secondary">
+              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
+              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
+              almaktadır...
+            </p>
+            <div className="mt-auto">
+              <a href="#" className="btn btn-sm btn-outline-primary me-2">
+                Detayları Gör
+              </a>
+              <a href="#" className="btn btn-sm btn-outline-secondary">
+                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
+              </a>
             </div>
           </div>
         </div>
-        </a>
-        <a href="" className='text-decoration-none'>
-        <div className="side-post mb-3">
-          <div className="row g-0">
-            <div className="col-7">
-              <div className="side-post-content">
-                <div className="post-meta mb-1">16 Haziran 2006</div>
-                <h3 className="side-post-title">How Tech Shapes the Future of Work in 2024</h3>
-                <p className="side-post-excerpt">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere enim nibh...
-                </p>
-                <div className="category-badge-small">
-                  <p className="m-0">IT Alanı</p>
-                </div>
-              </div>
+        <div className="col-lg-6">
+          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+              <p className="p-2 m-0">Kitap</p>
             </div>
-            <div className="col-5">
-              <div className="side-image-wrapper">
-                <img src={konsolosluk} className="side-image" alt="Blog post" />
-              </div>
-            </div>
-          </div>
-        </div>
-        </a>
-        <a href="" className='text-decoration-none'>
-        <div className="side-post mb-3">
-          <div className="row g-0">
-            <div className="col-7">
-              <div className="side-post-content">
-                <div className="post-meta mb-1">16 Haziran 2006</div>
-                <h3 className="side-post-title">How Tech Shapes the Future of Work in 2024</h3>
-                <p className="side-post-excerpt">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere enim nibh...
-                </p>
-                <div className="category-badge-small">
-                  <p className="m-0">IT Alanı</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-5">
-              <div className="side-image-wrapper">
-                <img src={ruseviYatay} className="side-image" alt="Blog post" />
-              </div>
+            <h4 className="fw-bold text-primary mt-5">
+              Soğuk Savaş Sonrası Rus Dış Politikası
+            </h4>
+            <p className="text-muted small">
+              <i className="fa-solid fa-user me-2"></i>Mehmet Öztürk
+            </p>
+            <p className="fst-italic small">
+              İnkılap Kitabevi, 2020, 320 sayfa.
+            </p>
+            <p className="text-secondary">
+              Eser, Sovyetler Birliği'nin dağılmasının ardından Rusya'nın uluslararası
+              sistemdeki yeni rolünü ve dış politika stratejilerini inceliyor...
+            </p>
+            <div className="mt-auto">
+              <a href="#" className="btn btn-sm btn-outline-primary me-2">
+                İncele
+              </a>
+              <a href="#" className="btn btn-sm btn-outline-secondary">
+                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
+              </a>
             </div>
           </div>
         </div>
-        </a>
-      </div>
-    </div>
+        <div className="col-lg-6">
+          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+              <p className="p-2 m-0">Bildiri</p>
+            </div>
+            <h4 className="fw-bold text-primary mt-5">
+              Karadeniz'de Güvenlik Mimarisi ve Türkiye'nin Rolü
+            </h4>
+            <p className="text-muted small">
+              <i className="fa-solid fa-user me-2"></i>Elif Çelik
+            </p>
+            <p className="fst-italic small">
+              3. Uluslararası Güvenlik Kongresi, İstanbul, 2022, ss. 112-125.
+            </p>
+            <p className="text-secondary">
+              Bu bildiri, Karadeniz havzasındaki değişen jeopolitik dinamikleri ve
+              Türkiye'nin bölgesel güvenlik mimarisindeki konumunu analiz
+              etmektedir...
+            </p>
+            <div className="mt-auto">
+              <a href="#" className="btn btn-sm btn-outline-primary me-2">
+                Tam Metin
+              </a>
+              <a href="#" className="btn btn-sm btn-outline-secondary">
+                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-6">
+          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+              <p className="p-2 m-0">Tez</p>
+            </div>
+            <h4 className="fw-bold text-primary mt-5">
+              Rusya'nın Suriye Politikasının Analizi (2011-2021)
+            </h4>
+            <p className="text-muted small">
+              <i className="fa-solid fa-user me-2"></i>Fatma Şahin
+            </p>
+            <p className="fst-italic small">
+              Doktora Tezi, Ankara Üniversitesi, Sosyal Bilimler Enstitüsü, 2022.
+            </p>
+            <p className="text-secondary">
+              Bu tez, 2011'de başlayan Suriye krizi sürecinde Rusya
+              Federasyonu'nun izlediği politikaları, motivasyonlarını ve
+              sonuçlarını...
+            </p>
+            <div className="mt-auto">
+              <a href="#" className="btn btn-sm btn-outline-primary me-2">
+                Tezi Görüntüle
+              </a>
+              <a href="#" className="btn btn-sm btn-outline-secondary">
+                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
-    </div>
-  )
-}
+      <BarKurum />
 
-export default Yayinlar
+      <div className="card shadow-sm border-0 mt-4">
+        <div className="card-body p-4">
+          <h4 className="card-title mb-3 fw-bold">
+            <i className="fa-solid fa-map-location-dot me-2 text-primary"></i>
+            Konum
+          </h4>
+          <div className="d-flex justify-content-center align-items-center">
+            <iframe
+              src="https://yandex.com/map-widget/v1/-/CHfKe2YW"
+              className="w-100 mt-4 rounded-4"
+              style={{ height: "75vh" }}
+              frameBorder="0"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Yayinlar;

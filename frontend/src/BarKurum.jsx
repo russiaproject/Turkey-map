@@ -20,6 +20,11 @@ import TurkeyMap from './TurkeyMap';
 import RusenFoto from "./images/rusen.jpg";
 import RusmerFoto from "./images/rusmer.jpg";
 import SputnikFoto from "./images/sputnik.jpg";
+import RTFoto from "./images/RT.png"
+import SberbankFoto from "./images/sberbank.png"
+import TassFoto from "./images/Tass.png"
+
+
 
 const BarKurum = () => {
   return (
@@ -209,6 +214,57 @@ const BarKurum = () => {
                   </div>
                 </div>
               </div>
+  {/* card 10 */}
+                            <div className='px-2'>
+                              <div className='kurumCard h-100'>
+                                <img src={SberbankFoto} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
+                                <div className='photo-dark-overlay'></div>
+                                <div className='kurumCard-content'>
+                                  <div className='custom-fit p-2 d-inline-block ms-2'>
+                                    <p className='d-inline mb-0'>Rusya Bankası</p>
+                                  </div>
+                                  <div className='kurumCardYazilar p-3'>
+                                    <h5>SberBank</h5>
+                                    <p>1841’den günümüze finansal güvenin ve teknolojik dönüşümün simgesi: Sberbank, 110 milyonu aşkın müşterisiyle küresel çapta hizmet sunan bir banka ve teknoloji ekosistemi</p>
+                                    <Link to="/Sberbank" className='btn kurumButton'>Kurumu Görün!</Link>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                               {/* card 11 */}
+                            <div className='px-2'>
+                              <div className='kurumCard h-100'>
+                                <img src={TassFoto} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
+                                <div className='photo-dark-overlay'></div>
+                                <div className='kurumCard-content'>
+                                  <div className='custom-fit p-2 d-inline-block ms-2'>
+                                    <p className='d-inline mb-0'>Haber Ajansı</p>
+                                  </div>
+                                  <div className='kurumCardYazilar p-3'>
+                                    <h5>TASS</h5>
+                                    <p>120 yıllık habercilik mirasıyla TASS, 6 dilde yayın, 54 ülkede temsilcilik ve dijital çözümleriyle küresel medyanın güvenilir bilgi kaynağı olmaya devam ediyor</p>
+                                    <Link to="/tass" className='btn kurumButton'>Kurumu Görün!</Link>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                               {/* card 12 */}
+                            <div className='px-2'>
+                              <div className='kurumCard h-100'>
+                                <img src={RTFoto} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
+                                <div className='photo-dark-overlay'></div>
+                                <div className='kurumCard-content'>
+                                  <div className='custom-fit p-2 d-inline-block ms-2'>
+                                    <p className='d-inline mb-0'>Haber Ajansı</p>
+                                  </div>
+                                  <div className='kurumCardYazilar p-3'>
+                                    <h5>RT</h5>
+                                    <p>Alternatif bakış açıları, çok dilli yayıncılık ve dijital medya projeleriyle küresel haberciliğe yön veren uluslararası televizyon ağı</p>
+                                    <Link to="/RT" className='btn kurumButton'>Kurumu Görün!</Link>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
             </Slider>
     </div>
   );

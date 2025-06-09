@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// CSS dosyasını import ettiğinizden emin olun, örneğin:
-// import './Navbar.css'; 
 
-const Navbar = ({ rusevi, turkiyePng }) => {
+const Navbar = ({ rusevi, turkiyeRusyaBayrak }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isSidebarOpen]);
 
   return (
     <>
@@ -26,8 +35,8 @@ const Navbar = ({ rusevi, turkiyePng }) => {
                 Haritaya Kurumunuzu Ekleyin
               </Link>
               
-              <Link to="/harita" className="btn p-1">
-                <img src={turkiyePng} className="turkiyePng" alt="TurkeyMap" />
+              <Link to="/turkiye-rusya-dostlugu" className="btn p-1">
+                <img src={turkiyeRusyaBayrak} className="turkiyeRusyaBayrakPng" alt="TurkeyRusyaBayrak" />
               </Link>
               <div className="dropdown dropdownİslemi">
                 <a className="btn dropdownİslemi dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -43,9 +52,8 @@ const Navbar = ({ rusevi, turkiyePng }) => {
                 <i className="fa-solid fa-arrow-right mainpageRight ms-1"></i>
               </a>
               
-              {/* Mobil için Hamburger Menü Butonu */}
               <button
-                className="btn p-1 d-lg-none" /* Sadece lg altı ekranlarda görünür */
+                className="btn p-1 d-lg-none"
                 type="button"
                 onClick={toggleSidebar}
                 aria-controls="appOffcanvasSidebar"
@@ -65,16 +73,15 @@ const Navbar = ({ rusevi, turkiyePng }) => {
               <a href="https://vk.com/rusevi" target='_blank' rel="noopener noreferrer" className="desktop-social-icon"><i className="fa-brands fa-vk"></i></a>
               <a href="https://www.instagram.com/rusevi_ankara/?hl=tr" target='_blank' rel="noopener noreferrer" className="desktop-social-icon"><i className="fa-brands fa-instagram"></i></a>
             </div>
-            {/* Masaüstü için Hamburger Menü Butonu */}
             <button
-                className="btn p-1" /* d-lg-none kaldırıldı, görünürlüğü parent div'e bağlı */
-                type="button"
-                onClick={toggleSidebar}
-                aria-controls="appOffcanvasSidebar"
-                aria-expanded={isSidebarOpen}
-                aria-label="Toggle navigation"
-              >
-                <i className={`fa-solid ${isSidebarOpen ? 'fa-times' : 'fa-bars'} text-white fs-4`}></i>
+              className="btn p-1"
+              type="button"
+              onClick={toggleSidebar}
+              aria-controls="appOffcanvasSidebar"
+              aria-expanded={isSidebarOpen}
+              aria-label="Toggle navigation"
+            >
+              <i className={`fa-solid ${isSidebarOpen ? 'fa-times' : 'fa-bars'} text-white fs-4`}></i>
             </button>
           </div>
         </div>
@@ -82,7 +89,11 @@ const Navbar = ({ rusevi, turkiyePng }) => {
 
       <div className={`app-offcanvas-sidebar ${isSidebarOpen ? 'open' : ''}`} id="appOffcanvasSidebar">
         <div className="offcanvas-header">
-          <img src={rusevi} className="ruseviLogo" alt="Rusevi logo" />
+          <div>
+            <Link to="/">
+                <img src={rusevi} className="ruseviLogo" alt="Rusevi logo" />
+              </Link>
+          </div>
           <button
             type="button"
             className="btn-close btn-close-white"
@@ -125,13 +136,25 @@ const Navbar = ({ rusevi, turkiyePng }) => {
               <Link to="/harita" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-map"></i> Harita</Link>
             </li>
             <li className="nav-item">
-              <Link to="/yayinlar" className="nav-link-item text-white text-decoration-none py-2 d-block" onClickName={toggleSidebar}><i class="fa-solid fa-book-open"></i> Yayınlar</Link>
+              <Link to="/yayinlar" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-book-open"></i> Yayınlar</Link>
             </li>
             <li className="nav-item">
               <Link to="/credit" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-user"></i> Ekibe Katılın!</Link>
             </li>
             <li className="nav-item">
               <Link to="/konsolosluklar" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-building-columns"></i> Konsolosluklar</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/turkiye-rusya-dostlugu" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> Türkiye ve Rusya Dostluğu </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/turkiyede-rus-izleri" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> Türkiye'de ki Rus İzleri </Link>
+            </li>
+             <li className="nav-item">
+              <Link to="/vize" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> Vize </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/e-vize" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> E-Vize </Link>
             </li>
             <li className="nav-item">
               <Link to="/" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-graduation-cap"></i> Mezuniyet Klübü</Link>
@@ -152,7 +175,7 @@ const Navbar = ({ rusevi, turkiyePng }) => {
               </a>
             </li>
           </ul>
-        </div>  
+        </div>  
       </div>
       {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
     </>
