@@ -32,10 +32,12 @@ const Footer = () => {
           <div className="col-12 col-md-4 text-center text-md-start">
             <h5 className="footer-title mb-3">Hızlı Gezinme</h5>
             <nav className="d-flex flex-column align-items-center align-items-md-start">
-              <a href="#" className="footer-link mb-1">Ana Sayfa</a>
-              <Link to="/rusevi" className="footer-link mb-1">Rusevi Türkiye Hakkında</Link>
+              <Link to={"/"} className="footer-link mb-1">Ana Sayfa</Link>
+              <Link to="/rusevi" className="footer-link mb-1">Rus Evi Ankara</Link>
+              <Link to="/rusyaburslari" className="footer-link mb-1">Rusya Bursları</Link>
               <Link to="/harita" className="footer-link mb-1">Harita</Link>
-              <Link to="contact" className="footer-link mb-1">İletişim</Link>
+              <Link to="/turkiye-rusya-dostlugu" className="footer-link mb-1">Türkiye ve Rusya Dostluğu</Link>
+              <Link to="/contact" className="footer-link mb-1">İletişim</Link>
             </nav>
           </div>
           <div className="col-12 col-md-4 text-center text-md-start">

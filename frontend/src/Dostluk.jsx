@@ -301,7 +301,7 @@ const Dostluk = () => {
                 <h5 className="text-primary fw-bold mb-3">
 Dostluk ve Tarafsızlık Antlaşması</h5>
                 <p className="card-text">
-               16 Mart 1921’de Moskova’da imzalanan “Dostluk ve Tarafsızlık Antlaşması”, Türkiye ile Sovyetler Birliği arasındaki diplomatik ilişkilerin başlangıcını simgeler. Antlaşmayı Sovyetler adına Dışişleri Halk Komiseri Georgiy Çiçerin, Türkiye adına ise Ankara Hükûmeti’nin Dışişleri Bakanı Yusuf Kemal Tengirşenk imzalamıştır. Taraflar birbirlerinin sınırlarını tanımış, saldırmazlık ve iç işlerine karışmama ilkelerinde uzlaşmıştır. İki ülke arasında kardeşlik ve dostluğun nişanesi sayılan bu antlaşmanın imza törenine ait fotoğraf, 16 Mart 2011’de, antlaşmanın 90. yıl dönümünde, Rusya Devlet Başkanı Dimitri Medvedev tarafından Türkiye Başbakanı Recep Tayyip Erdoğan’a hediye edilmiştir.
+               16 Mart 1921’de Moskova’da imzalanan “Dostluk ve Tarafsızlık Antlaşması”, Türkiye ile Sovyetler Birliği arasındaki diplomatik ilişkilerin başlangıcını simgeler. Antlaşmayı Sovyetler adına Dışişleri Halk Komiseri Georgiy Çiçerin, Türkiye adına ise Ankara Hükûmeti’nin Dışişleri Bakanı Yusuf Kemal Tengirşenk imzalamıştır. Taraflar birbirlerinin sınırlarını tanımış, saldırmazlık ve iç işlerine karışmama ilkelerinde uzlaşmıştır. İki ülke arasında kardeşlik ve dostluğun nişanesi sayılan bu antlaşmanın imza törenine ait fotoğraf, 16 Mart 2011’de, antlaşmanın 90. yıl dönümünde, Rusya eski Devlet Başkanı Dimitri Medvedev tarafından Türkiye Başbakanı Recep Tayyip Erdoğan’a hediye edilmiştir.
                 </p>
               </div>
             </div>

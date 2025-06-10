@@ -45,6 +45,8 @@ import Tass from "./Tass"
 import Vize from './Vize'
 import RusIzleri from './Rusizleri'
 import RusIziEkle from './RusIziEkle'
+import MezuniyetKulubu from './Mezuniyet'
+import MezuniyetUye from './MezuniyetUye'
 
 // Animated page wrapper component
 const AnimatedPage = ({ children }) => {
@@ -227,6 +229,16 @@ const AnimatedRoutes = () => {
          <Route path="/Rus-izi-ekle" element={
           <AnimatedPage>
             <RusIziEkle />
+          </AnimatedPage>
+        } />
+        <Route path="/Mezuniyet" element={
+          <AnimatedPage>
+            <MezuniyetKulubu />
+          </AnimatedPage>
+        } />
+         <Route path="/Mezuniyet-kayit" element={
+          <AnimatedPage>
+            <MezuniyetUye />
           </AnimatedPage>
         } />
         <Route path="/turkiyede-rus-izleri" element={

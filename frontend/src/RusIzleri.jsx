@@ -23,7 +23,7 @@ const RusIzleri = () => {
       <div className="d-flex align-items-center mb-4">
         <i className="fa-solid fa-landmark text-primary me-3 fs-2"></i>
         <h2 className="fw-bold text-primary m-0">
-Türkiye'de ki Rus İzleri</h2>
+Türkiye'deki Rus İzleri</h2>
       </div>
 
       {/* Main Content Column */}
@@ -32,7 +32,7 @@ Türkiye'de ki Rus İzleri</h2>
             <div className="d-flex mb-4 justify-content-between w-100    ">
                  <h4 className="card-title mb-4 fw-bold">
             <i className="fa-solid fa-info-circle me-2 text-primary"></i>
-            Vize Alma Hakkında
+            Türkiye'deki Rus İzleri
           </h4>
           <div>
                 <Link to={"/rus-izi-ekle"} className="btn rusiziButtonUst py-2 px-4">Rus İzi Ekleyin!</Link>

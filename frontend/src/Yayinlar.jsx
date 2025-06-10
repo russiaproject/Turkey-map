@@ -67,10 +67,10 @@ const Yayinlar = () => {
               Türkiye-Rusya İlişkilerinde Enerji Faktörü
             </h4>
             <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Ahmet Yılmaz, Ayşe Kaya
+              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat, Mustafa Türkmen
             </p>
             <p className="fst-italic small">
-              Uluslararası İlişkiler Dergisi, Cilt 18, Sayı 71, 2021, ss. 45-60.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
             </p>
             <p className="text-secondary">
               Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
@@ -81,94 +81,83 @@ const Yayinlar = () => {
               <a href="#" className="btn btn-sm btn-outline-primary me-2">
                 Detayları Gör
               </a>
-              <a href="#" className="btn btn-sm btn-outline-secondary">
-                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
+            </div>
+          </div>
+        </div>
+          <div className="col-lg-6">
+          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+              <p className="p-2 m-0">Makale</p>
+            </div>
+            <h4 className="fw-bold text-primary mt-5">
+              Türkiye-Rusya İlişkilerinde Enerji Faktörü
+            </h4>
+            <p className="text-muted small">
+              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat, Mustafa Türkmen
+            </p>
+            <p className="fst-italic small">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
+            </p>
+            <p className="text-secondary">
+              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
+              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
+              almaktadır...
+            </p>
+            <div className="mt-auto">
+              <a href="#" className="btn btn-sm btn-outline-primary me-2">
+                Detayları Gör
               </a>
             </div>
           </div>
         </div>
-        <div className="col-lg-6">
+          <div className="col-lg-6">
           <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
             <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
-              <p className="p-2 m-0">Kitap</p>
+              <p className="p-2 m-0">Makale</p>
             </div>
             <h4 className="fw-bold text-primary mt-5">
-              Soğuk Savaş Sonrası Rus Dış Politikası
+              Türkiye-Rusya İlişkilerinde Enerji Faktörü
             </h4>
             <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Mehmet Öztürk
+              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat
             </p>
             <p className="fst-italic small">
-              İnkılap Kitabevi, 2020, 320 sayfa.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
             </p>
             <p className="text-secondary">
-              Eser, Sovyetler Birliği'nin dağılmasının ardından Rusya'nın uluslararası
-              sistemdeki yeni rolünü ve dış politika stratejilerini inceliyor...
+              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
+              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
+              almaktadır...
             </p>
             <div className="mt-auto">
               <a href="#" className="btn btn-sm btn-outline-primary me-2">
-                İncele
-              </a>
-              <a href="#" className="btn btn-sm btn-outline-secondary">
-                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
+                Detayları Gör
               </a>
             </div>
           </div>
         </div>
-        <div className="col-lg-6">
+          <div className="col-lg-6">
           <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
             <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
-              <p className="p-2 m-0">Bildiri</p>
+              <p className="p-2 m-0">Makale</p>
             </div>
             <h4 className="fw-bold text-primary mt-5">
-              Karadeniz'de Güvenlik Mimarisi ve Türkiye'nin Rolü
+              Türkiye-Rusya İlişkilerinde Enerji Faktörü
             </h4>
             <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Elif Çelik
+              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat
             </p>
             <p className="fst-italic small">
-              3. Uluslararası Güvenlik Kongresi, İstanbul, 2022, ss. 112-125.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
             </p>
             <p className="text-secondary">
-              Bu bildiri, Karadeniz havzasındaki değişen jeopolitik dinamikleri ve
-              Türkiye'nin bölgesel güvenlik mimarisindeki konumunu analiz
-              etmektedir...
+              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
+              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
+              almaktadır...
             </p>
             <div className="mt-auto">
               <a href="#" className="btn btn-sm btn-outline-primary me-2">
-                Tam Metin
-              </a>
-              <a href="#" className="btn btn-sm btn-outline-secondary">
-                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-6">
-          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
-            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
-              <p className="p-2 m-0">Tez</p>
-            </div>
-            <h4 className="fw-bold text-primary mt-5">
-              Rusya'nın Suriye Politikasının Analizi (2011-2021)
-            </h4>
-            <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Fatma Şahin
-            </p>
-            <p className="fst-italic small">
-              Doktora Tezi, Ankara Üniversitesi, Sosyal Bilimler Enstitüsü, 2022.
-            </p>
-            <p className="text-secondary">
-              Bu tez, 2011'de başlayan Suriye krizi sürecinde Rusya
-              Federasyonu'nun izlediği politikaları, motivasyonlarını ve
-              sonuçlarını...
-            </p>
-            <div className="mt-auto">
-              <a href="#" className="btn btn-sm btn-outline-primary me-2">
-                Tezi Görüntüle
-              </a>
-              <a href="#" className="btn btn-sm btn-outline-secondary">
-                <i className="fa-solid fa-quote-right me-1"></i> Alıntıla
+                Detayları Gör
               </a>
             </div>
           </div>

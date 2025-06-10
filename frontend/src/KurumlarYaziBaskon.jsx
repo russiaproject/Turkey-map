@@ -179,7 +179,7 @@ const KurumlarYaziBaskon = () => {
         <div className="col-md-7 memorial-text-col d-flex flex-column">
           <h4 className="memorial-title mb-4">Anma Köşesi</h4>
           <p className="memorial-text">
-          Anma köşesini bura da bitirdikten sonra: Aziz Büyükelçimiz, Rusya Federasyonu Kahramanı Andrey Karlov’u Rahmet ve Minnetle Anıyoruz
+          Aziz Büyükelçimiz, Rusya Federasyonu Kahramanı Andrey Karlov’u Rahmet ve Minnetle Anıyoruz
           </p>
           <p className="memorial-text">
           Ekibimle birlikte, Rusya Federasyonu’nun aziz kahramanı, değerli Büyükelçimiz Andrey Karlov’u derin bir saygı, rahmet ve minnetle anıyoruz.

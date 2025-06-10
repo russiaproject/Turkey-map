@@ -1,6 +1,6 @@
 import React from "react";
 import BarKurum from "./BarKurum";
-
+import evizeAlmak from "./images/evizeAlmak.jpg"
 const Evize = () => {
   return (
     <div className="container my-5 py-3">
@@ -33,6 +33,7 @@ const Evize = () => {
             <i className="fa-solid fa-info-circle me-2 text-primary"></i>
             E-Vize Nedir ve Nasıl Alınır
           </h4>
+          <img src={evizeAlmak} className="mt-4 evizeFotoResponsive" style={{width:"70%"}} alt="E-vize Alma rehberi" />
 
           <p className="card-text">
             Rusya Federasyonu’nu kısa süreli olarak ziyaret etmek isteyen
@@ -112,6 +113,7 @@ const Evize = () => {
 
 
           </ul>
+
         </div>
       </div>
       <BarKurum />

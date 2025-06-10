@@ -175,8 +175,7 @@ const Konsolosluklar = () => {
               </div>
               <div className="col-md-7 memorial-text-col d-flex flex-column">
                 <h4 className="memorial-title mb-4">Anma Köşesi</h4>
-                <p className="memorial-text">
-                  Anma köşesini bura da bitirdikten sonra: Aziz Büyükelçimiz,
+                <p className="memorial-text">Aziz Büyükelçimiz,
                   Rusya Federasyonu Kahramanı Andrey Karlov’u Rahmet ve
                   Minnetle Anıyoruz
                 </p>

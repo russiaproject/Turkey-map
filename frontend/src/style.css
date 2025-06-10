@@ -181,6 +181,9 @@
   .ruseviLogo {
     width: 30%;
   }
+  .evizeFotoResponsive{
+    width: 100% !important;
+  }
 }
 
 @media (max-width: 575.98px) {

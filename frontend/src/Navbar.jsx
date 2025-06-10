@@ -145,19 +145,19 @@ const Navbar = ({ rusevi, turkiyeRusyaBayrak }) => {
               <Link to="/konsolosluklar" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-building-columns"></i> Konsolosluklar</Link>
             </li>
             <li className="nav-item">
-              <Link to="/turkiye-rusya-dostlugu" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> Türkiye ve Rusya Dostluğu </Link>
+              <Link to="/turkiye-rusya-dostlugu" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-handshake"></i> Türkiye ve Rusya Dostluğu </Link>
             </li>
             <li className="nav-item">
               <Link to="/turkiyede-rus-izleri" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> Türkiye'de ki Rus İzleri </Link>
             </li>
              <li className="nav-item">
-              <Link to="/vize" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> Vize </Link>
+              <Link to="/vize" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-building-columns"></i> Vize </Link>
             </li>
             <li className="nav-item">
-              <Link to="/e-vize" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-heart"></i> E-Vize </Link>
+              <Link to="/e-vize" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-building-columns"></i> E-Vize </Link>
             </li>
             <li className="nav-item">
-              <Link to="/" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-graduation-cap"></i> Mezuniyet Klübü</Link>
+              <Link to="/Mezuniyet" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-graduation-cap"></i> Mezuniyet Kulübü</Link>
             </li>
             <li className="nav-item">
               <Link to="/IsStaj" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-briefcase"></i> İş/Staj</Link>
