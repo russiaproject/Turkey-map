@@ -6,7 +6,7 @@ const path = require('path');
 dotenv.config();
 
 const { sequelize, testConnection } = require('./config/db');
-const { initAdmin } = require('./models/User'); // Büyük harf ile User
+const { initAdmin } = require('./models/user'); 
 
 // Rotaları içe aktar
 const authRoutes = require('./routes/authRoutes');
