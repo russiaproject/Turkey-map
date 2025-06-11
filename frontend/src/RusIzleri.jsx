@@ -481,7 +481,7 @@ const RusIzleri = () => {
       <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4">
         <div className="d-flex align-items-center mb-3 mb-md-0">
           <i className="fa-solid fa-landmark text-primary me-3 fs-2"></i>
-          <h2 className="fw-bold text-primary m-0">Türkiye'de ki Rus İzleri</h2>
+          <h2 className="fw-bold text-primary m-0">Türkiye'deki Rus İzleri</h2>
         </div>
         
         <Link to="/rus-izi-ekle" className="btn btn-primary btn-lg px-4 py-2">
