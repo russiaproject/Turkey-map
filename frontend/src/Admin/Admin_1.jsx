@@ -1,122 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-const Login = ({ onLoginSuccess, isAdmin }) => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({
-      ...formData,
-      [id === 'kullaniciAdi' ? 'username' : 'password']: value
-    });
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    
-    try {
-      const response = await fetch('http://localhost:8080/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Giriş başarısız');
-      }
-      
-      const data = await response.json();
-      
-      if (data && data.token) {
-        onLoginSuccess(data.token, data.username);
-      }
-    } catch (error) {
-      console.error('Giriş hatası:', error);
-      setError('Kullanıcı adı veya şifre hatalı');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  return (
-    <div className='w-100 position-relative'>
-      <div className='container'>
-        <div className='d-flex justify-content-center align-items-center w-100 vh-100'>
-          <div className='w-50 p-5 shadow-lg rounded-4'>
-            <h3 className='text-center'>Admin Girişi</h3>
-            
-            {error && (
-              <div className="alert alert-danger mt-3">{error}</div>
-            )}
-            
-            <div className='w-75 py-4 mx-auto'>
-              <label htmlFor="kullaniciAdi" style={{fontWeight:"500"}}>Kullanıcı Adı</label>
-              <input 
-                type="text" 
-                className='form-control mt-3 p-3 rounded-4' 
-                id='kullaniciAdi' 
-                placeholder='Kullanıcı Adı'
-                onChange={handleChange}
-                required
-              />
-              
-              <label htmlFor="sifre" className='mt-4' style={{fontWeight:"500"}}>Şifre</label>
-              <input 
-                type="password" 
-                className='form-control mt-3 p-3 rounded-4' 
-                id='sifre' 
-                placeholder="Şifre"
-                onChange={handleChange}
-                required
-              />
-              
-              <div className='mt-4 text-center'>
-                <button 
-                  type="button" 
-                  className='btn btn-primary text-center'
-                  disabled={loading}
-                  onClick={handleSubmit}
-                >
-                  {loading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Giriş Yapılıyor...
-                    </>
-                  ) : (
-                    'Giriş Yap'
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const Admin = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [activeTab, setActiveTab] = useState('team');
   const [teamApplications, setTeamApplications] = useState([]);
   const [partnershipApplications, setPartnershipApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [token, setToken] = useState('');
-  const [username, setUsername] = useState('');
+  const [token, setToken] = useState('dummy-token'); 
+  const [username, setUsername] = useState('Admin'); 
   const [institutions, setInstitutions] = useState([]);
   const [filteredInstitutions, setFilteredInstitutions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -146,29 +39,136 @@ const Admin = () => {
     website: ''
   });
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem('adminToken');
-    const savedUsername = localStorage.getItem('adminUsername');
-    if (savedToken) {
-      setToken(savedToken);
-      setUsername(savedUsername);
-      setIsLoggedIn(true);
+  const mockTeamApplications = [
+    {
+      ID: 1,
+      adSoyad: "Berkay Yelkanat",
+      email: "berkay@example.com",
+      egitimDurumu: "Lisans",
+      alan: "Yazılımcı",
+      yazilimUzmanlik: "React, Node.js",
+      telefon: "5555555555",
+      status: "pending",
+      CreatedAt: "2024-01-15T10:30:00Z"
+    },
+    {
+      ID: 2,
+      adSoyad: "Berkay Yelkanat",
+      email: "berkay@example.com",
+      egitimDurumu: "Yüksek Lisans",
+      alan: "Çevirmen",
+      ceviriDili: "Rusça-Türkçe",
+      telefon: "5555555556",
+      status: "approved",
+      CreatedAt: "2024-01-14T14:20:00Z"
+    },
+    {
+      ID: 3,
+      adSoyad: "Berkay Yelkanat",
+      email: "berkay@example.com",
+      egitimDurumu: "Doktora",
+      alan: "Akademisyen",
+      akademisyenUzmanlik: "Rusya Tarihi",
+      telefon: "5555555557",
+      status: "rejected",
+      CreatedAt: "2024-01-13T16:45:00Z"
     }
-  }, []);
+  ];
+
+  const mockPartnershipApplications = [
+    {
+      ID: 1,
+      isim: "Berkay",
+      soyisim: "Yelkanat",
+      email: "berkay@company.com",
+      isletme: "Sirket",
+      telefon: "5555555555",
+      status: "pending",
+      CreatedAt: "2024-01-16T09:15:00Z"
+    }
+  ];
+
+  const mockInstitutions = [
+    {
+      ID: 1,
+      plaka: "TR06",
+      name: "Rusya Federasyonu Büyükelçiliği",
+      description: "Ankara'daki Rusya Büyükelçiliği",
+      type: "Büyükelçilik",
+      address: "Karyağdı Sokak No:5, Çankaya/Ankara",
+      website: "turkey.mid.ru",
+      CreatedAt: "2024-01-10T12:00:00Z"
+    },
+    {
+      ID: 2,
+      plaka: "TR34",
+      name: "Rusya Federasyonu İstanbul Başkonsolosluğu",
+      description: "İstanbul'daki Rusya Başkonsolosluğu",
+      type: "Konsolosluk",
+      address: "İstiklal Caddesi, Beyoğlu/İstanbul",
+      website: "istanbul.mid.ru",
+      CreatedAt: "2024-01-11T15:30:00Z"
+    },
+    {
+      ID: 3,
+      plaka: "TR35",
+      name: "Rus Kültür Merkezi",
+      description: "İzmir'deki Rus kültür merkezi",
+      type: "Kültür",
+      address: "Alsancak, İzmir",
+      website: "ruskultur-izmir.com",
+      CreatedAt: "2024-01-12T10:15:00Z"
+    }
+  ];
+
+  const mockRusIzleri = [
+    {
+      "plaka": "TR36",
+      "name": "Kars Fethiye Camii",
+      "description": "19. yüzyılda Rus Ortodoks Kilisesi olarak inşa edilen bu yapı, bugün cami olarak hizmet vermektedir.",
+      "type": "Dini ve Mezhepsel İzler",
+      "address": "Fethiye, Kars",
+      "website": "https://tr.wikipedia.org/wiki/Fethiye_Camii_(Kars)"
+    },
+    {
+      "plaka": "TR36",
+      "name": "Kars Defterdarlığı",
+      "description": "19. yüzyılın sonlarında inşa edilen Kars Defterdarlığı Binası, Rus dönemi Baltık mimarisinin izlerini taşıyan tarihî bir kamu yapısıdır.",
+      "type": "Mimari ve Tarihi Yapılar",
+      "address": "Kars",
+      "website": "https://kars.gib.gov.tr/"
+    },
+    {
+      "plaka": "TR36",
+      "name": "Kars İl Sağlık Müdürlüğü Binası",
+      "description": "19. yüzyıl sonlarında inşa edilen İl Sağlık Müdürlüğü Binası, Kars'ta Rus dönemi Baltık mimarisinin sade ve işlevsel izlerini taşıyan özgün bir kamu yapısıdır.",
+      "type": "Mimari ve Tarihi Yapılar",
+      "address": "Kars",
+      "website": "https://karsism.saglik.gov.tr/"
+    }
+  ];
 
   useEffect(() => {
-    if (isLoggedIn && token) {
-      fetchApplications();
-      fetchInstitutions();
-      fetchRusIzleri();
-    }
-  }, [isLoggedIn, token]);
+    setTeamApplications(mockTeamApplications);
+    setPartnershipApplications(mockPartnershipApplications);
+    setInstitutions(mockInstitutions);
+    setFilteredInstitutions(mockInstitutions);
+    setRusIzleri(mockRusIzleri);
+    setFilteredRusIzleri(mockRusIzleri);
+    showMessage('Demo modunda çalışıyorsunuz - Backend bağlantısı yok');
+  }, []);
 
   useEffect(() => {
     if (searchTerm === '') {
       setFilteredInstitutions(institutions);
     } else {
-      performSearch(searchTerm);
+      const filtered = institutions.filter(inst => 
+        inst.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inst.plaka.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inst.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inst.address.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredInstitutions(filtered);
     }
   }, [searchTerm, institutions]);
 
@@ -176,24 +176,18 @@ const Admin = () => {
     if (searchRusIzleri === '') {
       setFilteredRusIzleri(rusIzleri);
     } else {
-      performRusIzleriSearch(searchRusIzleri);
+      const filtered = rusIzleri.filter(iz => 
+        iz.name.toLowerCase().includes(searchRusIzleri.toLowerCase()) ||
+        iz.plaka.toLowerCase().includes(searchRusIzleri.toLowerCase()) ||
+        iz.type.toLowerCase().includes(searchRusIzleri.toLowerCase()) ||
+        iz.address.toLowerCase().includes(searchRusIzleri.toLowerCase())
+      );
+      setFilteredRusIzleri(filtered);
     }
   }, [searchRusIzleri, rusIzleri]);
 
-  const handleLoginSuccess = (userToken, userUsername) => {
-    setToken(userToken);
-    setUsername(userUsername);
-    setIsLoggedIn(true);
-    localStorage.setItem('adminToken', userToken);
-    localStorage.setItem('adminUsername', userUsername);
-  };
-
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setToken('');
-    setUsername('');
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUsername');
+    showMessage('Demo modunda çıkış yapılamaz', 'error');
   };
 
   const showMessage = (message, type = 'success') => {
@@ -208,327 +202,7 @@ const Admin = () => {
     }
   };
 
-  const fetchRusIzleri = async () => {
-    console.log('🏛️ Rus İzleri yükleniyor, token:', token ? 'Var' : 'Yok');
-    try {
-      const response = await fetch('http://localhost:8080/api/admin/rus-izleri', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log('📡 Rus İzleri API yanıtı:', response.status, response.statusText);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ API Hatası:', errorText);
-        throw new Error(`Rus İzleri alınamadı: ${response.status} - ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log('📋 Yüklenen Rus İzleri:', data);
-      setRusIzleri(data || []);
-      setFilteredRusIzleri(data || []);
-      showMessage(`✅ ${data?.length || 0} Rus İzi yüklendi`);
-    } catch (error) {
-      console.error('❌ Rus İzleri yüklenirken hata:', error);
-      showMessage(`Rus İzleri yüklenirken hata: ${error.message}`, 'error');
-    }
-  };
-
-  const performRusIzleriSearch = async (searchQuery) => {
-    if (!searchQuery) return;
-    
-    try {
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izleri/search?q=${encodeURIComponent(searchQuery)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Arama başarısız');
-      }
-      
-      const data = await response.json();
-      setFilteredRusIzleri(data.results || []);
-    } catch (error) {
-      console.error('Arama hatası:', error);
-      const filtered = rusIzleri.filter(iz => 
-        iz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        iz.plaka.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        iz.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        iz.address.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredRusIzleri(filtered);
-    }
-  };
-
-  const fetchInstitutions = async () => {
-    console.log('🔍 Kurumlar yükleniyor, token:', token ? 'Var' : 'Yok');
-    try {
-      const response = await fetch('http://localhost:8080/api/admin/institutions', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log('📡 Kurumlar API yanıtı:', response.status, response.statusText);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ API Hatası:', errorText);
-        throw new Error(`Kurumlar alınamadı: ${response.status} - ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log('📋 Yüklenen kurumlar:', data);
-      setInstitutions(data || []);
-      setFilteredInstitutions(data || []);
-      showMessage(`✅ ${data?.length || 0} kurum yüklendi`);
-    } catch (error) {
-      console.error('❌ Kurumlar yüklenirken hata:', error);
-      showMessage(`Kurumlar yüklenirken hata: ${error.message}`, 'error');
-    }
-  };
-
-  const performSearch = async (searchQuery) => {
-    if (!searchQuery) return;
-    
-    try {
-      const response = await fetch(`http://localhost:8080/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Arama başarısız');
-      }
-      
-      const data = await response.json();
-      setFilteredInstitutions(data.results || []);
-    } catch (error) {
-      console.error('Arama hatası:', error);
-      const filtered = institutions.filter(inst => 
-        inst.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inst.plaka.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inst.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inst.address.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredInstitutions(filtered);
-    }
-  };
-
-  const fetchApplications = async () => {
-    setLoading(true);
-    console.log('📊 Başvurular yükleniyor...');
-    
-    try {
-      const teamResponse = await fetch('http://localhost:8080/api/admin/team-applications?status=all', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!teamResponse.ok) {
-        throw new Error('Ekip başvuruları alınamadı');
-      }
-      
-      const teamData = await teamResponse.json();
-      setTeamApplications(teamData || []);
-      console.log('👥 Ekip başvuruları:', teamData?.length || 0);
-
-      const partnershipResponse = await fetch('http://localhost:8080/api/admin/partnership-applications?status=all', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!partnershipResponse.ok) {
-        throw new Error('İşbirliği başvuruları alınamadı');
-      }
-      
-      const partnershipData = await partnershipResponse.json();
-      setPartnershipApplications(partnershipData || []);
-      console.log('🤝 İşbirliği başvuruları:', partnershipData?.length || 0);
-      
-    } catch (error) {
-      console.error('❌ Başvurular yüklenirken hata:', error);
-      showMessage('Başvurular yüklenirken hata oluştu: ' + error.message, 'error');
-      
-      if (error.message.includes('401')) {
-        console.log('🔑 Token geçersiz, çıkış yapılıyor...');
-        handleLogout();
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRusIziChange = (e) => {
-    const { name, value } = e.target;
-    setNewRusIzi(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleEditRusIziChange = (e) => {
-    const { name, value } = e.target;
-    setEditingRusIzi(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleRusIziSubmit = async (e) => {
-    e.preventDefault();
-    
-    console.log('➕ Rus İzi ekleniyor:', newRusIzi);
-    console.log('🔑 Token:', token ? 'Var' : 'Yok');
-    
-    if (!newRusIzi.plaka || !newRusIzi.name || !newRusIzi.description || 
-        !newRusIzi.type || !newRusIzi.address) {
-      showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
-      return;
-    }
-    
-    try {
-      const rusIziData = {
-        plaka: newRusIzi.plaka,
-        name: newRusIzi.name,
-        description: newRusIzi.description,
-        type: newRusIzi.type,
-        address: newRusIzi.address,
-        website: newRusIzi.website || ''
-      };
-      
-      const response = await fetch('http://localhost:8080/api/admin/rus-izi', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(rusIziData)
-      });
-      
-      console.log('📡 Rus İzi ekleme API yanıtı:', response.status, response.statusText);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ API Hatası:', errorText);
-        throw new Error(`Rus İzi eklenemedi: ${response.status} - ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log('✅ Rus İzi eklendi:', data);
-      showMessage('Rus İzi başarıyla eklendi!');
-      
-      setNewRusIzi({
-        plaka: '',
-        name: '',
-        description: '',
-        type: '',
-        address: '',
-        website: ''
-      });
-      
-      fetchRusIzleri();
-      
-    } catch (error) {
-      console.error('❌ Rus İzi eklenirken hata:', error);
-      showMessage(`Rus İzi eklenirken hata: ${error.message}`, 'error');
-    }
-  };
-
-  const handleEditRusIzi = (rusIzi) => {
-    setEditingRusIzi({ ...rusIzi });
-    setShowEditRusIziModal(true);
-  };
-
-  const handleUpdateRusIzi = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${editingRusIzi.ID}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingRusIzi)
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Rus İzi güncellenemedi: ${response.status} - ${errorText}`);
-      }
-      
-      showMessage('Rus İzi bilgileri güncellendi!');
-      setShowEditRusIziModal(false);
-      setEditingRusIzi(null);
-      
-      fetchRusIzleri();
-      
-    } catch (error) {
-      console.error('Rus İzi güncellenirken hata:', error);
-      showMessage(`Rus İzi güncellenirken hata: ${error.message}`, 'error');
-    }
-  };
-
-  const deleteRusIzi = async (id) => {
-    if (!window.confirm('Bu Rus İzini silmek istediğinize emin misiniz?')) {
-      return;
-    }
-    
-    try {
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Rus İzi silinemedi');
-      }
-      
-      showMessage('Rus İzi silindi!');
-      fetchRusIzleri();
-    } catch (error) {
-      console.error('Rus İzi silinirken hata:', error);
-      showMessage('Rus İzi silinirken hata oluştu', 'error');
-    }
-  };
-
-  const downloadRusIzleriJsonFile = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/rus-izleri');
-      if (!response.ok) {
-        throw new Error('JSON indirilemedi');
-      }
-      
-      const data = await response.json();
-      const dataStr = JSON.stringify(data, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
-      const exportFileDefaultName = 'rus_izleri.json';
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      showMessage('Rus İzleri JSON dosyası indirildi!');
-    } catch (error) {
-      console.error('JSON indirme hatası:', error);
-      showMessage('JSON dosyası indirilemedi', 'error');
-    }
-  };
-
+  // Kurum işlemleri
   const handleInstitutionChange = (e) => {
     const { name, value } = e.target;
     setNewInstitution(prev => ({
@@ -548,61 +222,31 @@ const Admin = () => {
   const handleInstitutionSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('➕ Kurum ekleniyor:', newInstitution);
-    console.log('🔑 Token:', token ? 'Var' : 'Yok');
-    
     if (!newInstitution.plaka || !newInstitution.name || !newInstitution.description || 
         !newInstitution.type || !newInstitution.address) {
       showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
       return;
     }
     
-    try {
-      const institutionData = {
-        plaka: newInstitution.plaka,
-        name: newInstitution.name,
-        description: newInstitution.description,
-        type: newInstitution.type,
-        address: newInstitution.address,
-        website: newInstitution.website || ''
-      };
-      
-      const response = await fetch('http://localhost:8080/api/admin/institution', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(institutionData)
-      });
-      
-      console.log('📡 Kurum ekleme API yanıtı:', response.status, response.statusText);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ API Hatası:', errorText);
-        throw new Error(`Kurum eklenemedi: ${response.status} - ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log('✅ Kurum eklendi:', data);
-      showMessage('Kurum başarıyla eklendi!');
-      
-      setNewInstitution({
-        plaka: '',
-        name: '',
-        description: '',
-        type: '',
-        address: '',
-        website: ''
-      });
-      
-      fetchInstitutions();
-      
-    } catch (error) {
-      console.error('❌ Kurum eklenirken hata:', error);
-      showMessage(`Kurum eklenirken hata: ${error.message}`, 'error');
-    }
+    const newInst = {
+      ID: institutions.length + 1,
+      ...newInstitution,
+      CreatedAt: new Date().toISOString()
+    };
+    
+    setInstitutions(prev => [...prev, newInst]);
+    setFilteredInstitutions(prev => [...prev, newInst]);
+    
+    showMessage('Kurum başarıyla eklendi! (Demo modu)');
+    
+    setNewInstitution({
+      plaka: '',
+      name: '',
+      description: '',
+      type: '',
+      address: '',
+      website: ''
+    });
   };
 
   const handleEditInstitution = (institution) => {
@@ -613,31 +257,16 @@ const Admin = () => {
   const handleUpdateInstitution = async (e) => {
     e.preventDefault();
     
-    try {
-      const response = await fetch(`http://localhost:8080/api/admin/institution/${editingInstitution.ID}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingInstitution)
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Kurum güncellenemedi: ${response.status} - ${errorText}`);
-      }
-      
-      showMessage('Kurum bilgileri güncellendi!');
-      setShowEditModal(false);
-      setEditingInstitution(null);
-      
-      fetchInstitutions();
-      
-    } catch (error) {
-      console.error('Kurum güncellenirken hata:', error);
-      showMessage(`Kurum güncellenirken hata: ${error.message}`, 'error');
-    }
+    setInstitutions(prev => 
+      prev.map(inst => inst.ID === editingInstitution.ID ? editingInstitution : inst)
+    );
+    setFilteredInstitutions(prev => 
+      prev.map(inst => inst.ID === editingInstitution.ID ? editingInstitution : inst)
+    );
+    
+    showMessage('Kurum bilgileri güncellendi! (Demo modu)');
+    setShowEditModal(false);
+    setEditingInstitution(null);
   };
 
   const deleteInstitution = async (id) => {
@@ -645,76 +274,131 @@ const Admin = () => {
       return;
     }
     
-    try {
-      const response = await fetch(`http://localhost:8080/api/admin/institution/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Kurum silinemedi');
-      }
-      
-      showMessage('Kurum silindi!');
-      fetchInstitutions();
-    } catch (error) {
-      console.error('Kurum silinirken hata:', error);
-      showMessage('Kurum silinirken hata oluştu', 'error');
-    }
+    setInstitutions(prev => prev.filter(inst => inst.ID !== id));
+    setFilteredInstitutions(prev => prev.filter(inst => inst.ID !== id));
+    
+    showMessage('Kurum silindi! (Demo modu)');
   };
 
   const downloadJsonFile = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/institutions');
-      if (!response.ok) {
-        throw new Error('JSON indirilemedi');
-      }
-      
-      const data = await response.json();
-      const dataStr = JSON.stringify(data, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
-      const exportFileDefaultName = 'russian_institutions.json';
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      showMessage('JSON dosyası indirildi!');
-    } catch (error) {
-      console.error('JSON indirme hatası:', error);
-      showMessage('JSON dosyası indirilemedi', 'error');
-    }
+    const dataStr = JSON.stringify(institutions, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'russian_institutions.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    showMessage('JSON dosyası indirildi! (Demo modu)');
   };
 
-  const updateApplicationStatus = async (id, status, type) => {
-    try {
-      const endpoint = type === 'team' 
-        ? `http://localhost:8080/api/admin/team-application/${id}`
-        : `http://localhost:8080/api/admin/partnership-application/${id}`;
-      
-      const response = await fetch(endpoint, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Durum güncellenemedi');
-      }
-      
-      fetchApplications();
-      showMessage('Başvuru durumu güncellendi!');
-    } catch (error) {
-      console.error('Durum güncellenirken hata:', error);
-      showMessage('Durum güncellenirken hata oluştu', 'error');
+  // Rus İzleri işlemleri
+  const handleRusIziChange = (e) => {
+    const { name, value } = e.target;
+    setNewRusIzi(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleEditRusIziChange = (e) => {
+    const { name, value } = e.target;
+    setEditingRusIzi(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleRusIziSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newRusIzi.plaka || !newRusIzi.name || !newRusIzi.description || 
+        !newRusIzi.type || !newRusIzi.address) {
+      showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
+      return;
     }
+    
+    const newRusIziItem = {
+      ID: rusIzleri.length + 1,
+      ...newRusIzi,
+      CreatedAt: new Date().toISOString()
+    };
+    
+    setRusIzleri(prev => [...prev, newRusIziItem]);
+    setFilteredRusIzleri(prev => [...prev, newRusIziItem]);
+    
+    showMessage('Rus İzi başarıyla eklendi! (Demo modu)');
+    
+    setNewRusIzi({
+      plaka: '',
+      name: '',
+      description: '',
+      type: '',
+      address: '',
+      website: ''
+    });
+  };
+
+  const handleEditRusIzi = (rusIzi) => {
+    setEditingRusIzi({ ...rusIzi });
+    setShowEditRusIziModal(true);
+  };
+
+  const handleUpdateRusIzi = async (e) => {
+    e.preventDefault();
+    
+    setRusIzleri(prev => 
+      prev.map(iz => iz.ID === editingRusIzi.ID ? editingRusIzi : iz)
+    );
+    setFilteredRusIzleri(prev => 
+      prev.map(iz => iz.ID === editingRusIzi.ID ? editingRusIzi : iz)
+    );
+    
+    showMessage('Rus İzi bilgileri güncellendi! (Demo modu)');
+    setShowEditRusIziModal(false);
+    setEditingRusIzi(null);
+  };
+
+  const deleteRusIzi = async (id) => {
+    if (!window.confirm('Bu Rus İzini silmek istediğinize emin misiniz?')) {
+      return;
+    }
+    
+    setRusIzleri(prev => prev.filter(iz => iz.ID !== id));
+    setFilteredRusIzleri(prev => prev.filter(iz => iz.ID !== id));
+    
+    showMessage('Rus İzi silindi! (Demo modu)');
+  };
+
+  const downloadRusIzleriJsonFile = async () => {
+    const dataStr = JSON.stringify(rusIzleri, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'rus_izleri.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    showMessage('Rus İzleri JSON dosyası indirildi! (Demo modu)');
+  };
+
+  // Başvuru işlemleri
+  const updateApplicationStatus = async (id, status, type) => {
+    if (type === 'team') {
+      setTeamApplications(prev => 
+        prev.map(app => app.ID === id ? {...app, status} : app)
+      );
+    } else {
+      setPartnershipApplications(prev => 
+        prev.map(app => app.ID === id ? {...app, status} : app)
+      );
+    }
+    
+    showMessage('Başvuru durumu güncellendi! (Demo modu)');
   };
 
   const deleteApplication = async (id, type) => {
@@ -722,28 +406,13 @@ const Admin = () => {
       return;
     }
     
-    try {
-      const endpoint = type === 'team' 
-        ? `http://localhost:8080/api/admin/team-application/${id}`
-        : `http://localhost:8080/api/admin/partnership-application/${id}`;
-      
-      const response = await fetch(endpoint, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Silme işlemi başarısız');
-      }
-      
-      fetchApplications();
-      showMessage('Başvuru silindi!');
-    } catch (error) {
-      console.error('Silme işlemi sırasında hata:', error);
-      showMessage('Silme işlemi sırasında hata oluştu', 'error');
+    if (type === 'team') {
+      setTeamApplications(prev => prev.filter(app => app.ID !== id));
+    } else {
+      setPartnershipApplications(prev => prev.filter(app => app.ID !== id));
     }
+    
+    showMessage('Başvuru silindi! (Demo modu)');
   };
 
   const getStatusBadge = (status) => {
@@ -761,16 +430,12 @@ const Admin = () => {
     return <span className={`badge ${badges[status]}`}>{labels[status]}</span>;
   };
 
-  if (!isLoggedIn) {
-    return <Login onLoginSuccess={handleLoginSuccess} isAdmin={true} />;
-  }
-
   return (
     <div className="container py-5">
       <div className="row">
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1>🇷🇺 Rusevi Admin Paneli</h1>
+            <h1>🇷🇺 Rusevi Admin Paneli <span className="badge bg-warning text-dark">DEMO MODU</span></h1>
             <div>
               <span className="me-3">Hoşgeldin, {username}</span>
               <button className="btn btn-danger btn-sm" onClick={handleLogout}>
@@ -1258,7 +923,7 @@ const Admin = () => {
                             <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
                             <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
                             <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
-                            <option value="Diğer">7. Diğer</option>
+                            <option value="Diğer">Diğer</option>
                           </select>
                         </div>
                         <div className="col-md-6 mb-3">
