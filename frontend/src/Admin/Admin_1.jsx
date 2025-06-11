@@ -128,8 +128,22 @@ const Admin = () => {
     description: '',
     type: '',
     address: '',
-    website: '',
-    image: ''
+    website: ''
+  });
+  
+  // Rus İzleri state'leri
+  const [rusIzleri, setRusIzleri] = useState([]);
+  const [filteredRusIzleri, setFilteredRusIzleri] = useState([]);
+  const [searchRusIzleri, setSearchRusIzleri] = useState('');
+  const [editingRusIzi, setEditingRusIzi] = useState(null);
+  const [showEditRusIziModal, setShowEditRusIziModal] = useState(false);
+  const [newRusIzi, setNewRusIzi] = useState({
+    plaka: '',
+    name: '',
+    description: '',
+    type: '',
+    address: '',
+    website: ''
   });
 
   useEffect(() => {
@@ -146,6 +160,7 @@ const Admin = () => {
     if (isLoggedIn && token) {
       fetchApplications();
       fetchInstitutions();
+      fetchRusIzleri();
     }
   }, [isLoggedIn, token]);
 
@@ -156,6 +171,14 @@ const Admin = () => {
       performSearch(searchTerm);
     }
   }, [searchTerm, institutions]);
+
+  useEffect(() => {
+    if (searchRusIzleri === '') {
+      setFilteredRusIzleri(rusIzleri);
+    } else {
+      performRusIzleriSearch(searchRusIzleri);
+    }
+  }, [searchRusIzleri, rusIzleri]);
 
   const handleLoginSuccess = (userToken, userUsername) => {
     setToken(userToken);
@@ -182,6 +205,63 @@ const Admin = () => {
       setError(message);
       setSuccess('');
       setTimeout(() => setError(''), 5000);
+    }
+  };
+
+  const fetchRusIzleri = async () => {
+    console.log('🏛️ Rus İzleri yükleniyor, token:', token ? 'Var' : 'Yok');
+    try {
+      const response = await fetch('http://localhost:8080/api/admin/rus-izleri', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('📡 Rus İzleri API yanıtı:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Hatası:', errorText);
+        throw new Error(`Rus İzleri alınamadı: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('📋 Yüklenen Rus İzleri:', data);
+      setRusIzleri(data || []);
+      setFilteredRusIzleri(data || []);
+      showMessage(`✅ ${data?.length || 0} Rus İzi yüklendi`);
+    } catch (error) {
+      console.error('❌ Rus İzleri yüklenirken hata:', error);
+      showMessage(`Rus İzleri yüklenirken hata: ${error.message}`, 'error');
+    }
+  };
+
+  const performRusIzleriSearch = async (searchQuery) => {
+    if (!searchQuery) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/rus-izleri/search?q=${encodeURIComponent(searchQuery)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Arama başarısız');
+      }
+      
+      const data = await response.json();
+      setFilteredRusIzleri(data.results || []);
+    } catch (error) {
+      console.error('Arama hatası:', error);
+      const filtered = rusIzleri.filter(iz => 
+        iz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        iz.plaka.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        iz.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        iz.address.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredRusIzleri(filtered);
     }
   };
 
@@ -288,6 +368,167 @@ const Admin = () => {
     }
   };
 
+  const handleRusIziChange = (e) => {
+    const { name, value } = e.target;
+    setNewRusIzi(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleEditRusIziChange = (e) => {
+    const { name, value } = e.target;
+    setEditingRusIzi(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleRusIziSubmit = async (e) => {
+    e.preventDefault();
+    
+    console.log('➕ Rus İzi ekleniyor:', newRusIzi);
+    console.log('🔑 Token:', token ? 'Var' : 'Yok');
+    
+    if (!newRusIzi.plaka || !newRusIzi.name || !newRusIzi.description || 
+        !newRusIzi.type || !newRusIzi.address) {
+      showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
+      return;
+    }
+    
+    try {
+      const rusIziData = {
+        plaka: newRusIzi.plaka,
+        name: newRusIzi.name,
+        description: newRusIzi.description,
+        type: newRusIzi.type,
+        address: newRusIzi.address,
+        website: newRusIzi.website || ''
+      };
+      
+      const response = await fetch('http://localhost:8080/api/admin/rus-izi', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(rusIziData)
+      });
+      
+      console.log('📡 Rus İzi ekleme API yanıtı:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Hatası:', errorText);
+        throw new Error(`Rus İzi eklenemedi: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Rus İzi eklendi:', data);
+      showMessage('Rus İzi başarıyla eklendi!');
+      
+      setNewRusIzi({
+        plaka: '',
+        name: '',
+        description: '',
+        type: '',
+        address: '',
+        website: ''
+      });
+      
+      fetchRusIzleri();
+      
+    } catch (error) {
+      console.error('❌ Rus İzi eklenirken hata:', error);
+      showMessage(`Rus İzi eklenirken hata: ${error.message}`, 'error');
+    }
+  };
+
+  const handleEditRusIzi = (rusIzi) => {
+    setEditingRusIzi({ ...rusIzi });
+    setShowEditRusIziModal(true);
+  };
+
+  const handleUpdateRusIzi = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${editingRusIzi.ID}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editingRusIzi)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Rus İzi güncellenemedi: ${response.status} - ${errorText}`);
+      }
+      
+      showMessage('Rus İzi bilgileri güncellendi!');
+      setShowEditRusIziModal(false);
+      setEditingRusIzi(null);
+      
+      fetchRusIzleri();
+      
+    } catch (error) {
+      console.error('Rus İzi güncellenirken hata:', error);
+      showMessage(`Rus İzi güncellenirken hata: ${error.message}`, 'error');
+    }
+  };
+
+  const deleteRusIzi = async (id) => {
+    if (!window.confirm('Bu Rus İzini silmek istediğinize emin misiniz?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Rus İzi silinemedi');
+      }
+      
+      showMessage('Rus İzi silindi!');
+      fetchRusIzleri();
+    } catch (error) {
+      console.error('Rus İzi silinirken hata:', error);
+      showMessage('Rus İzi silinirken hata oluştu', 'error');
+    }
+  };
+
+  const downloadRusIzleriJsonFile = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/rus-izleri');
+      if (!response.ok) {
+        throw new Error('JSON indirilemedi');
+      }
+      
+      const data = await response.json();
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = 'rus_izleri.json';
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      showMessage('Rus İzleri JSON dosyası indirildi!');
+    } catch (error) {
+      console.error('JSON indirme hatası:', error);
+      showMessage('JSON dosyası indirilemedi', 'error');
+    }
+  };
+
   const handleInstitutionChange = (e) => {
     const { name, value } = e.target;
     setNewInstitution(prev => ({
@@ -323,8 +564,7 @@ const Admin = () => {
         description: newInstitution.description,
         type: newInstitution.type,
         address: newInstitution.address,
-        website: newInstitution.website || '',
-        image: newInstitution.image || ''
+        website: newInstitution.website || ''
       };
       
       const response = await fetch('http://localhost:8080/api/admin/institution', {
@@ -354,8 +594,7 @@ const Admin = () => {
         description: '',
         type: '',
         address: '',
-        website: '',
-        image: ''
+        website: ''
       });
       
       fetchInstitutions();
@@ -578,6 +817,14 @@ const Admin = () => {
                 onClick={() => setActiveTab('institutions')}
               >
                 🏛️ Kurum Yönetimi ({institutions.length})
+              </button>
+            </li>
+            <li className="nav-item">
+              <button 
+                className={`nav-link ${activeTab === 'rusizleri' ? 'active' : ''}`}
+                onClick={() => setActiveTab('rusizleri')}
+              >
+                🏰 Rus İzleri ({rusIzleri.length})
               </button>
             </li>
           </ul>
@@ -844,17 +1091,6 @@ const Admin = () => {
                             required
                           />
                         </div>
-                        <div className="col-12 mb-3">
-                          <label className="form-label">🖼️ Resim Linki (Opsiyonel)</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="image"
-                            value={newInstitution.image}
-                            onChange={handleInstitutionChange}
-                            placeholder="https://example.com/image.jpg"
-                          />
-                        </div>
                         <div className="col-12">
                           <button 
                             type="button" 
@@ -938,6 +1174,198 @@ const Admin = () => {
                                       <button 
                                         className="btn btn-danger"
                                         onClick={() => deleteInstitution(inst.ID)}
+                                        title="Sil"
+                                      >
+                                        🗑️
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Rus İzleri Yönetimi */}
+              {activeTab === 'rusizleri' && (
+                <div>
+                  {/* Rus İzi Ekleme Formu */}
+                  <div className="card mb-4">
+                    <div className="card-header d-flex justify-content-between align-items-center bg-warning text-dark">
+                      <h5 className="mb-0">🏰 Rus İzi Ekleme</h5>
+                      <button 
+                        className="btn btn-dark btn-sm"
+                        onClick={downloadRusIzleriJsonFile}
+                        title="Rus İzleri JSON dosyasını indir"
+                      >
+                        📥 JSON İndir
+                      </button>
+                    </div>
+                    <div className="card-body">
+                      <div className="row">
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🗺️ Plaka Kodu</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="plaka"
+                            value={newRusIzi.plaka}
+                            onChange={handleRusIziChange}
+                            placeholder="Örn: TR06"
+                            required
+                          />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🏰 Rus İzi Adı</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="name"
+                            value={newRusIzi.name}
+                            onChange={handleRusIziChange}
+                            required
+                          />
+                        </div>
+                        <div className="col-12 mb-3">
+                          <label className="form-label">📝 Açıklama</label>
+                          <textarea
+                            className="form-control"
+                            name="description"
+                            value={newRusIzi.description}
+                            onChange={handleRusIziChange}
+                            rows="3"
+                            required
+                          />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🏷️ Tür</label>
+                          <select
+                            className="form-select"
+                            name="type"
+                            value={newRusIzi.type}
+                            onChange={handleRusIziChange}
+                            required
+                          >
+                            <option value="">Seçiniz</option>
+                            <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
+                            <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
+                            <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
+                            <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
+                            <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
+                            <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
+                            <option value="Diğer">7. Diğer</option>
+                          </select>
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🌐 Web Sitesi</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="website"
+                            value={newRusIzi.website}
+                            onChange={handleRusIziChange}
+                            placeholder="www.example.com veya -"
+                          />
+                        </div>
+                        <div className="col-12 mb-3">
+                          <label className="form-label">📍 Adres</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="address"
+                            value={newRusIzi.address}
+                            onChange={handleRusIziChange}
+                            required
+                          />
+                        </div>
+                        <div className="col-12">
+                          <button 
+                            type="button" 
+                            className="btn btn-warning"
+                            onClick={handleRusIziSubmit}
+                          >
+                            🏰 Rus İzi Ekle
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rus İzi Arama ve Listeleme */}
+                  <div className="card">
+                    <div className="card-header bg-dark text-white">
+                      <div className="row align-items-center">
+                        <div className="col-md-6">
+                          <h5 className="mb-0">🏰 Rus İzleri ({rusIzleri.length})</h5>
+                        </div>
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="🔍 Rus İzi ara... (ad, plaka, tür, adres)"
+                            value={searchRusIzleri}
+                            onChange={(e) => setSearchRusIzleri(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      <div className="table-responsive">
+                        <table className="table table-hover">
+                          <thead className="table-dark">
+                            <tr>
+                              <th>ID</th>
+                              <th>Plaka</th>
+                              <th>Rus İzi Adı</th>
+                              <th>Tür</th>
+                              <th>Adres</th>
+                              <th>Web Sitesi</th>
+                              <th>Tarih</th>
+                              <th>İşlemler</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredRusIzleri.length === 0 ? (
+                              <tr>
+                                <td colSpan="8" className="text-center">
+                                  {searchRusIzleri ? '🔍 Arama sonucunda Rus İzi bulunamadı' : '🏰 Rus İzi bulunamadı'}
+                                </td>
+                              </tr>
+                            ) : (
+                              filteredRusIzleri.map((iz) => (
+                                <tr key={iz.ID}>
+                                  <td>{iz.ID}</td>
+                                  <td><span className="badge bg-secondary">{iz.plaka}</span></td>
+                                  <td>{iz.name}</td>
+                                  <td><span className="badge bg-warning text-dark">{iz.type}</span></td>
+                                  <td>{iz.address}</td>
+                                  <td>
+                                    {iz.website && iz.website !== '-' ? (
+                                      <a href={`http://${iz.website}`} target="_blank" rel="noopener noreferrer">
+                                        {iz.website}
+                                      </a>
+                                    ) : (
+                                      '-'
+                                    )}
+                                  </td>
+                                  <td>{new Date(iz.CreatedAt).toLocaleDateString('tr-TR')}</td>
+                                  <td>
+                                    <div className="btn-group btn-group-sm">
+                                      <button 
+                                        className="btn btn-warning"
+                                        onClick={() => handleEditRusIzi(iz)}
+                                        title="Düzenle"
+                                      >
+                                        ✏️
+                                      </button>
+                                      <button 
+                                        className="btn btn-danger"
+                                        onClick={() => deleteRusIzi(iz.ID)}
                                         title="Sil"
                                       >
                                         🗑️
@@ -1049,16 +1477,6 @@ const Admin = () => {
                       required
                     />
                   </div>
-                  <div className="col-12 mb-3">
-                    <label className="form-label">🖼️ Resim Linki</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="image"
-                      value={editingInstitution.image}
-                      onChange={handleEditInstitutionChange}
-                    />
-                  </div>
                 </div>
               </div>
               <div className="modal-footer">
@@ -1073,6 +1491,117 @@ const Admin = () => {
                   type="button" 
                   className="btn btn-primary"
                   onClick={handleUpdateInstitution}
+                >
+                  💾 Güncelle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rus İzi Düzenleme Modalı */}
+      {showEditRusIziModal && editingRusIzi && (
+        <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header bg-dark text-white">
+                <h5 className="modal-title">🏰 Rus İzi Düzenle</h5>
+                <button 
+                  type="button" 
+                  className="btn-close btn-close-white" 
+                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🗺️ Plaka Kodu</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="plaka"
+                      value={editingRusIzi.plaka}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🏰 Rus İzi Adı</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="name"
+                      value={editingRusIzi.name}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-12 mb-3">
+                    <label className="form-label">📝 Açıklama</label>
+                    <textarea
+                      className="form-control"
+                      name="description"
+                      value={editingRusIzi.description}
+                      onChange={handleEditRusIziChange}
+                      rows="3"
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🏷️ Tür</label>
+                    <select
+                      className="form-select"
+                      name="type"
+                      value={editingRusIzi.type}
+                      onChange={handleEditRusIziChange}
+                      required
+                    >
+                      <option value="">Seçiniz</option>
+                      <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
+                      <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
+                      <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
+                      <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
+                      <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
+                      <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
+                      <option value="Diğer">Diğer</option>
+                    </select>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🌐 Web Sitesi</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="website"
+                      value={editingRusIzi.website}
+                      onChange={handleEditRusIziChange}
+                    />
+                  </div>
+                  <div className="col-12 mb-3">
+                    <label className="form-label">📍 Adres</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="address"
+                      value={editingRusIzi.address}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
+                >
+                  ❌ İptal
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-dark"
+                  onClick={handleUpdateRusIzi}
                 >
                   💾 Güncelle
                 </button>
