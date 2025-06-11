@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+// Backend URL'ini buradan yönet
+const API_BASE_URL = 'https://turkey-map-wh2i.onrender.com';
+
 const Login = ({ onLoginSuccess, isAdmin }) => {
   const [formData, setFormData] = useState({
     username: '',
@@ -22,7 +25,7 @@ const Login = ({ onLoginSuccess, isAdmin }) => {
     setLoading(true);
     
     try {
-      const response = await fetch('http://localhost:8080/api/login', {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -211,7 +214,7 @@ const Admin = () => {
   const fetchRusIzleri = async () => {
     console.log('🏛️ Rus İzleri yükleniyor, token:', token ? 'Var' : 'Yok');
     try {
-      const response = await fetch('http://localhost:8080/api/admin/rus-izleri', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/rus-izleri`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -241,7 +244,7 @@ const Admin = () => {
     if (!searchQuery) return;
     
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izleri/search?q=${encodeURIComponent(searchQuery)}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/rus-izleri/search?q=${encodeURIComponent(searchQuery)}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -268,7 +271,7 @@ const Admin = () => {
   const fetchInstitutions = async () => {
     console.log('🔍 Kurumlar yükleniyor, token:', token ? 'Var' : 'Yok');
     try {
-      const response = await fetch('http://localhost:8080/api/admin/institutions', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/institutions`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -298,7 +301,7 @@ const Admin = () => {
     if (!searchQuery) return;
     
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -327,7 +330,7 @@ const Admin = () => {
     console.log('📊 Başvurular yükleniyor...');
     
     try {
-      const teamResponse = await fetch('http://localhost:8080/api/admin/team-applications?status=all', {
+      const teamResponse = await fetch(`${API_BASE_URL}/api/admin/team-applications?status=all`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -341,7 +344,7 @@ const Admin = () => {
       setTeamApplications(teamData || []);
       console.log('👥 Ekip başvuruları:', teamData?.length || 0);
 
-      const partnershipResponse = await fetch('http://localhost:8080/api/admin/partnership-applications?status=all', {
+      const partnershipResponse = await fetch(`${API_BASE_URL}/api/admin/partnership-applications?status=all`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -406,7 +409,7 @@ const Admin = () => {
         website: newRusIzi.website || ''
       };
       
-      const response = await fetch('http://localhost:8080/api/admin/rus-izi', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/rus-izi`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -453,7 +456,7 @@ const Admin = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${editingRusIzi.ID}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/rus-izi/${editingRusIzi.ID}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -485,7 +488,7 @@ const Admin = () => {
     }
     
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/rus-izi/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -506,7 +509,7 @@ const Admin = () => {
 
   const downloadRusIzleriJsonFile = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/rus-izleri');
+      const response = await fetch(`${API_BASE_URL}/api/rus-izleri`);
       if (!response.ok) {
         throw new Error('JSON indirilemedi');
       }
@@ -567,7 +570,7 @@ const Admin = () => {
         website: newInstitution.website || ''
       };
       
-      const response = await fetch('http://localhost:8080/api/admin/institution', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/institution`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -614,7 +617,7 @@ const Admin = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/institution/${editingInstitution.ID}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/institution/${editingInstitution.ID}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -646,7 +649,7 @@ const Admin = () => {
     }
     
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/institution/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/institution/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -667,7 +670,7 @@ const Admin = () => {
 
   const downloadJsonFile = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/institutions');
+      const response = await fetch(`${API_BASE_URL}/api/institutions`);
       if (!response.ok) {
         throw new Error('JSON indirilemedi');
       }
@@ -693,8 +696,8 @@ const Admin = () => {
   const updateApplicationStatus = async (id, status, type) => {
     try {
       const endpoint = type === 'team' 
-        ? `http://localhost:8080/api/admin/team-application/${id}`
-        : `http://localhost:8080/api/admin/partnership-application/${id}`;
+        ? `${API_BASE_URL}/api/admin/team-application/${id}`
+        : `${API_BASE_URL}/api/admin/partnership-application/${id}`;
       
       const response = await fetch(endpoint, {
         method: 'PUT',
@@ -724,8 +727,8 @@ const Admin = () => {
     
     try {
       const endpoint = type === 'team' 
-        ? `http://localhost:8080/api/admin/team-application/${id}`
-        : `http://localhost:8080/api/admin/partnership-application/${id}`;
+        ? `${API_BASE_URL}/api/admin/team-application/${id}`
+        : `${API_BASE_URL}/api/admin/partnership-application/${id}`;
       
       const response = await fetch(endpoint, {
         method: 'DELETE',
@@ -1254,6 +1257,61 @@ const Admin = () => {
                             <option value="">Seçiniz</option>
                             <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
                             <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
+                      <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
+                      <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
+                      <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
+                      <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
+                      <option value="Diğer">Diğer</option>
+                    </select>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🌐 Web Sitesi</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="website"
+                      value={editingRusIzi.website}
+                      onChange={handleEditRusIziChange}
+                    />
+                  </div>
+                  <div className="col-12 mb-3">
+                    <label className="form-label">📍 Adres</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="address"
+                      value={editingRusIzi.address}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
+                >
+                  ❌ İptal
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-dark"
+                  onClick={handleUpdateRusIzi}
+                >
+                  💾 Güncelle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Admin;rel ve Ticari İzler</option>
                             <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
                             <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
                             <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
@@ -1559,59 +1617,4 @@ const Admin = () => {
                     >
                       <option value="">Seçiniz</option>
                       <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
-                      <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
-                      <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
-                      <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
-                      <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
-                      <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
-                      <option value="Diğer">Diğer</option>
-                    </select>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">🌐 Web Sitesi</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="website"
-                      value={editingRusIzi.website}
-                      onChange={handleEditRusIziChange}
-                    />
-                  </div>
-                  <div className="col-12 mb-3">
-                    <label className="form-label">📍 Adres</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="address"
-                      value={editingRusIzi.address}
-                      onChange={handleEditRusIziChange}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
-                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
-                >
-                  ❌ İptal
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-dark"
-                  onClick={handleUpdateRusIzi}
-                >
-                  💾 Güncelle
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Admin;
+                      <option value="Kültürel ve Ticari İzler">Kültü
