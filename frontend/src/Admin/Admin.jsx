@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-// Backend URL'ini buradan yönet
+// Production backend URL
 const API_BASE_URL = 'https://turkey-map-wh2i.onrender.com';
 
 const Login = ({ onLoginSuccess, isAdmin }) => {
@@ -1257,61 +1257,6 @@ const Admin = () => {
                             <option value="">Seçiniz</option>
                             <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
                             <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
-                      <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
-                      <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
-                      <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
-                      <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
-                      <option value="Diğer">Diğer</option>
-                    </select>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">🌐 Web Sitesi</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="website"
-                      value={editingRusIzi.website}
-                      onChange={handleEditRusIziChange}
-                    />
-                  </div>
-                  <div className="col-12 mb-3">
-                    <label className="form-label">📍 Adres</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="address"
-                      value={editingRusIzi.address}
-                      onChange={handleEditRusIziChange}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
-                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
-                >
-                  ❌ İptal
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-dark"
-                  onClick={handleUpdateRusIzi}
-                >
-                  💾 Güncelle
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Admin;rel ve Ticari İzler</option>
                             <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
                             <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
                             <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
@@ -1617,4 +1562,59 @@ export default Admin;rel ve Ticari İzler</option>
                     >
                       <option value="">Seçiniz</option>
                       <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
-                      <option value="Kültürel ve Ticari İzler">Kültü
+                      <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
+                      <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
+                      <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
+                      <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
+                      <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
+                      <option value="Diğer">Diğer</option>
+                    </select>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🌐 Web Sitesi</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="website"
+                      value={editingRusIzi.website}
+                      onChange={handleEditRusIziChange}
+                    />
+                  </div>
+                  <div className="col-12 mb-3">
+                    <label className="form-label">📍 Adres</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="address"
+                      value={editingRusIzi.address}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
+                >
+                  ❌ İptal
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-dark"
+                  onClick={handleUpdateRusIzi}
+                >
+                  💾 Güncelle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Admin;
