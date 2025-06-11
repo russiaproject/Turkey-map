@@ -21,14 +21,28 @@ const Admin = () => {
     description: '',
     type: '',
     address: '',
-    website: '',
-    image: ''
+    website: ''
+  });
+  
+  // Rus İzleri state'leri
+  const [rusIzleri, setRusIzleri] = useState([]);
+  const [filteredRusIzleri, setFilteredRusIzleri] = useState([]);
+  const [searchRusIzleri, setSearchRusIzleri] = useState('');
+  const [editingRusIzi, setEditingRusIzi] = useState(null);
+  const [showEditRusIziModal, setShowEditRusIziModal] = useState(false);
+  const [newRusIzi, setNewRusIzi] = useState({
+    plaka: '',
+    name: '',
+    description: '',
+    type: '',
+    address: '',
+    website: ''
   });
 
   const mockTeamApplications = [
     {
       ID: 1,
-      adSoyad: "Ahmet",
+      adSoyad: "Ahmet Yılmaz",
       email: "ahmet@example.com",
       egitimDurumu: "Lisans",
       alan: "Yazılımcı",
@@ -39,27 +53,48 @@ const Admin = () => {
     },
     {
       ID: 2,
-      adSoyad: "Mehmet",
+      adSoyad: "Mehmet Demir",
       email: "mehmet@example.com",
       egitimDurumu: "Yüksek Lisans",
       alan: "Çevirmen",
       ceviriDili: "Rusça-Türkçe",
-      telefon: "5555555555",
+      telefon: "5555555556",
       status: "approved",
       CreatedAt: "2024-01-14T14:20:00Z"
+    },
+    {
+      ID: 3,
+      adSoyad: "Ayşe Kaya",
+      email: "ayse@example.com",
+      egitimDurumu: "Doktora",
+      alan: "Akademisyen",
+      akademisyenUzmanlik: "Rusya Tarihi",
+      telefon: "5555555557",
+      status: "rejected",
+      CreatedAt: "2024-01-13T16:45:00Z"
     }
   ];
 
   const mockPartnershipApplications = [
     {
       ID: 1,
-      isim: "berkay",
-      soyisim: "yelkanat",
+      isim: "Berkay",
+      soyisim: "Yelkanat",
       email: "berkay@company.com",
-      isletme: "asd",
+      isletme: "Tech Solutions Ltd.",
       telefon: "5555555555",
       status: "pending",
       CreatedAt: "2024-01-16T09:15:00Z"
+    },
+    {
+      ID: 2,
+      isim: "Fatma",
+      soyisim: "Özkan",
+      email: "fatma@business.com",
+      isletme: "Global Trade Co.",
+      telefon: "5555555558",
+      status: "approved",
+      CreatedAt: "2024-01-15T11:30:00Z"
     }
   ];
 
@@ -72,7 +107,6 @@ const Admin = () => {
       type: "Büyükelçilik",
       address: "Karyağdı Sokak No:5, Çankaya/Ankara",
       website: "turkey.mid.ru",
-      image: "",
       CreatedAt: "2024-01-10T12:00:00Z"
     },
     {
@@ -83,8 +117,44 @@ const Admin = () => {
       type: "Konsolosluk",
       address: "İstiklal Caddesi, Beyoğlu/İstanbul",
       website: "istanbul.mid.ru",
-      image: "",
       CreatedAt: "2024-01-11T15:30:00Z"
+    },
+    {
+      ID: 3,
+      plaka: "TR35",
+      name: "Rus Kültür Merkezi",
+      description: "İzmir'deki Rus kültür merkezi",
+      type: "Kültür",
+      address: "Alsancak, İzmir",
+      website: "ruskultur-izmir.com",
+      CreatedAt: "2024-01-12T10:15:00Z"
+    }
+  ];
+
+  const mockRusIzleri = [
+    {
+      "plaka": "TR36",
+      "name": "Kars Fethiye Camii",
+      "description": "19. yüzyılda Rus Ortodoks Kilisesi olarak inşa edilen bu yapı, bugün cami olarak hizmet vermektedir.",
+      "type": "Dini ve Mezhepsel İzler",
+      "address": "Fethiye, Kars",
+      "website": "https://tr.wikipedia.org/wiki/Fethiye_Camii_(Kars)"
+    },
+    {
+      "plaka": "TR36",
+      "name": "Kars Defterdarlığı",
+      "description": "19. yüzyılın sonlarında inşa edilen Kars Defterdarlığı Binası, Rus dönemi Baltık mimarisinin izlerini taşıyan tarihî bir kamu yapısıdır.",
+      "type": "Mimari ve Tarihi Yapılar",
+      "address": "Kars",
+      "website": "https://kars.gib.gov.tr/"
+    },
+    {
+      "plaka": "TR36",
+      "name": "Kars İl Sağlık Müdürlüğü Binası",
+      "description": "19. yüzyıl sonlarında inşa edilen İl Sağlık Müdürlüğü Binası, Kars'ta Rus dönemi Baltık mimarisinin sade ve işlevsel izlerini taşıyan özgün bir kamu yapısıdır.",
+      "type": "Mimari ve Tarihi Yapılar",
+      "address": "Kars",
+      "website": "https://karsism.saglik.gov.tr/"
     }
   ];
 
@@ -93,6 +163,8 @@ const Admin = () => {
     setPartnershipApplications(mockPartnershipApplications);
     setInstitutions(mockInstitutions);
     setFilteredInstitutions(mockInstitutions);
+    setRusIzleri(mockRusIzleri);
+    setFilteredRusIzleri(mockRusIzleri);
     showMessage('Demo modunda çalışıyorsunuz - Backend bağlantısı yok');
   }, []);
 
@@ -110,6 +182,20 @@ const Admin = () => {
     }
   }, [searchTerm, institutions]);
 
+  useEffect(() => {
+    if (searchRusIzleri === '') {
+      setFilteredRusIzleri(rusIzleri);
+    } else {
+      const filtered = rusIzleri.filter(iz => 
+        iz.name.toLowerCase().includes(searchRusIzleri.toLowerCase()) ||
+        iz.plaka.toLowerCase().includes(searchRusIzleri.toLowerCase()) ||
+        iz.type.toLowerCase().includes(searchRusIzleri.toLowerCase()) ||
+        iz.address.toLowerCase().includes(searchRusIzleri.toLowerCase())
+      );
+      setFilteredRusIzleri(filtered);
+    }
+  }, [searchRusIzleri, rusIzleri]);
+
   const handleLogout = () => {
     showMessage('Demo modunda çıkış yapılamaz', 'error');
   };
@@ -126,6 +212,7 @@ const Admin = () => {
     }
   };
 
+  // Kurum işlemleri
   const handleInstitutionChange = (e) => {
     const { name, value } = e.target;
     setNewInstitution(prev => ({
@@ -168,8 +255,7 @@ const Admin = () => {
       description: '',
       type: '',
       address: '',
-      website: '',
-      image: ''
+      website: ''
     });
   };
 
@@ -218,6 +304,99 @@ const Admin = () => {
     showMessage('JSON dosyası indirildi! (Demo modu)');
   };
 
+  // Rus İzleri işlemleri
+  const handleRusIziChange = (e) => {
+    const { name, value } = e.target;
+    setNewRusIzi(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleEditRusIziChange = (e) => {
+    const { name, value } = e.target;
+    setEditingRusIzi(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleRusIziSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newRusIzi.plaka || !newRusIzi.name || !newRusIzi.description || 
+        !newRusIzi.type || !newRusIzi.address) {
+      showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
+      return;
+    }
+    
+    const newRusIziItem = {
+      ID: rusIzleri.length + 1,
+      ...newRusIzi,
+      CreatedAt: new Date().toISOString()
+    };
+    
+    setRusIzleri(prev => [...prev, newRusIziItem]);
+    setFilteredRusIzleri(prev => [...prev, newRusIziItem]);
+    
+    showMessage('Rus İzi başarıyla eklendi! (Demo modu)');
+    
+    setNewRusIzi({
+      plaka: '',
+      name: '',
+      description: '',
+      type: '',
+      address: '',
+      website: ''
+    });
+  };
+
+  const handleEditRusIzi = (rusIzi) => {
+    setEditingRusIzi({ ...rusIzi });
+    setShowEditRusIziModal(true);
+  };
+
+  const handleUpdateRusIzi = async (e) => {
+    e.preventDefault();
+    
+    setRusIzleri(prev => 
+      prev.map(iz => iz.ID === editingRusIzi.ID ? editingRusIzi : iz)
+    );
+    setFilteredRusIzleri(prev => 
+      prev.map(iz => iz.ID === editingRusIzi.ID ? editingRusIzi : iz)
+    );
+    
+    showMessage('Rus İzi bilgileri güncellendi! (Demo modu)');
+    setShowEditRusIziModal(false);
+    setEditingRusIzi(null);
+  };
+
+  const deleteRusIzi = async (id) => {
+    if (!window.confirm('Bu Rus İzini silmek istediğinize emin misiniz?')) {
+      return;
+    }
+    
+    setRusIzleri(prev => prev.filter(iz => iz.ID !== id));
+    setFilteredRusIzleri(prev => prev.filter(iz => iz.ID !== id));
+    
+    showMessage('Rus İzi silindi! (Demo modu)');
+  };
+
+  const downloadRusIzleriJsonFile = async () => {
+    const dataStr = JSON.stringify(rusIzleri, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'rus_izleri.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    showMessage('Rus İzleri JSON dosyası indirildi! (Demo modu)');
+  };
+
+  // Başvuru işlemleri
   const updateApplicationStatus = async (id, status, type) => {
     if (type === 'team') {
       setTeamApplications(prev => 
@@ -313,6 +492,14 @@ const Admin = () => {
                 onClick={() => setActiveTab('institutions')}
               >
                 🏛️ Kurum Yönetimi ({institutions.length})
+              </button>
+            </li>
+            <li className="nav-item">
+              <button 
+                className={`nav-link ${activeTab === 'rusizleri' ? 'active' : ''}`}
+                onClick={() => setActiveTab('rusizleri')}
+              >
+                🏰 Rus İzleri ({rusIzleri.length})
               </button>
             </li>
           </ul>
@@ -579,17 +766,6 @@ const Admin = () => {
                             required
                           />
                         </div>
-                        <div className="col-12 mb-3">
-                          <label className="form-label">🖼️ Resim Linki (Opsiyonel)</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="image"
-                            value={newInstitution.image}
-                            onChange={handleInstitutionChange}
-                            placeholder="https://example.com/image.jpg"
-                          />
-                        </div>
                         <div className="col-12">
                           <button 
                             type="button" 
@@ -673,6 +849,198 @@ const Admin = () => {
                                       <button 
                                         className="btn btn-danger"
                                         onClick={() => deleteInstitution(inst.ID)}
+                                        title="Sil"
+                                      >
+                                        🗑️
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Rus İzleri Yönetimi */}
+              {activeTab === 'rusizleri' && (
+                <div>
+                  {/* Rus İzi Ekleme Formu */}
+                  <div className="card mb-4">
+                    <div className="card-header d-flex justify-content-between align-items-center bg-warning text-dark">
+                      <h5 className="mb-0">🏰 Rus İzi Ekleme</h5>
+                      <button 
+                        className="btn btn-dark btn-sm"
+                        onClick={downloadRusIzleriJsonFile}
+                        title="Rus İzleri JSON dosyasını indir"
+                      >
+                        📥 JSON İndir
+                      </button>
+                    </div>
+                    <div className="card-body">
+                      <div className="row">
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🗺️ Plaka Kodu</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="plaka"
+                            value={newRusIzi.plaka}
+                            onChange={handleRusIziChange}
+                            placeholder="Örn: TR06"
+                            required
+                          />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🏰 Rus İzi Adı</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="name"
+                            value={newRusIzi.name}
+                            onChange={handleRusIziChange}
+                            required
+                          />
+                        </div>
+                        <div className="col-12 mb-3">
+                          <label className="form-label">📝 Açıklama</label>
+                          <textarea
+                            className="form-control"
+                            name="description"
+                            value={newRusIzi.description}
+                            onChange={handleRusIziChange}
+                            rows="3"
+                            required
+                          />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🏷️ Tür</label>
+                          <select
+                            className="form-select"
+                            name="type"
+                            value={newRusIzi.type}
+                            onChange={handleRusIziChange}
+                            required
+                          >
+                            <option value="">Seçiniz</option>
+                            <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
+                            <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
+                            <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
+                            <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
+                            <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
+                            <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
+                            <option value="Diğer">Diğer</option>
+                          </select>
+                        </div>
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label">🌐 Web Sitesi</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="website"
+                            value={newRusIzi.website}
+                            onChange={handleRusIziChange}
+                            placeholder="www.example.com veya -"
+                          />
+                        </div>
+                        <div className="col-12 mb-3">
+                          <label className="form-label">📍 Adres</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="address"
+                            value={newRusIzi.address}
+                            onChange={handleRusIziChange}
+                            required
+                          />
+                        </div>
+                        <div className="col-12">
+                          <button 
+                            type="button" 
+                            className="btn btn-warning"
+                            onClick={handleRusIziSubmit}
+                          >
+                            🏰 Rus İzi Ekle
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rus İzi Arama ve Listeleme */}
+                  <div className="card">
+                    <div className="card-header bg-dark text-white">
+                      <div className="row align-items-center">
+                        <div className="col-md-6">
+                          <h5 className="mb-0">🏰 Rus İzleri ({rusIzleri.length})</h5>
+                        </div>
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="🔍 Rus İzi ara... (ad, plaka, tür, adres)"
+                            value={searchRusIzleri}
+                            onChange={(e) => setSearchRusIzleri(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      <div className="table-responsive">
+                        <table className="table table-hover">
+                          <thead className="table-dark">
+                            <tr>
+                              <th>ID</th>
+                              <th>Plaka</th>
+                              <th>Rus İzi Adı</th>
+                              <th>Tür</th>
+                              <th>Adres</th>
+                              <th>Web Sitesi</th>
+                              <th>Tarih</th>
+                              <th>İşlemler</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredRusIzleri.length === 0 ? (
+                              <tr>
+                                <td colSpan="8" className="text-center">
+                                  {searchRusIzleri ? '🔍 Arama sonucunda Rus İzi bulunamadı' : '🏰 Rus İzi bulunamadı'}
+                                </td>
+                              </tr>
+                            ) : (
+                              filteredRusIzleri.map((iz) => (
+                                <tr key={iz.ID}>
+                                  <td>{iz.ID}</td>
+                                  <td><span className="badge bg-secondary">{iz.plaka}</span></td>
+                                  <td>{iz.name}</td>
+                                  <td><span className="badge bg-warning text-dark">{iz.type}</span></td>
+                                  <td>{iz.address}</td>
+                                  <td>
+                                    {iz.website && iz.website !== '-' ? (
+                                      <a href={`http://${iz.website}`} target="_blank" rel="noopener noreferrer">
+                                        {iz.website}
+                                      </a>
+                                    ) : (
+                                      '-'
+                                    )}
+                                  </td>
+                                  <td>{new Date(iz.CreatedAt).toLocaleDateString('tr-TR')}</td>
+                                  <td>
+                                    <div className="btn-group btn-group-sm">
+                                      <button 
+                                        className="btn btn-warning"
+                                        onClick={() => handleEditRusIzi(iz)}
+                                        title="Düzenle"
+                                      >
+                                        ✏️
+                                      </button>
+                                      <button 
+                                        className="btn btn-danger"
+                                        onClick={() => deleteRusIzi(iz.ID)}
                                         title="Sil"
                                       >
                                         🗑️
@@ -784,16 +1152,6 @@ const Admin = () => {
                       required
                     />
                   </div>
-                  <div className="col-12 mb-3">
-                    <label className="form-label">🖼️ Resim Linki</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="image"
-                      value={editingInstitution.image}
-                      onChange={handleEditInstitutionChange}
-                    />
-                  </div>
                 </div>
               </div>
               <div className="modal-footer">
@@ -808,6 +1166,117 @@ const Admin = () => {
                   type="button" 
                   className="btn btn-primary"
                   onClick={handleUpdateInstitution}
+                >
+                  💾 Güncelle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rus İzi Düzenleme Modalı */}
+      {showEditRusIziModal && editingRusIzi && (
+        <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header bg-dark text-white">
+                <h5 className="modal-title">🏰 Rus İzi Düzenle</h5>
+                <button 
+                  type="button" 
+                  className="btn-close btn-close-white" 
+                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🗺️ Plaka Kodu</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="plaka"
+                      value={editingRusIzi.plaka}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🏰 Rus İzi Adı</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="name"
+                      value={editingRusIzi.name}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-12 mb-3">
+                    <label className="form-label">📝 Açıklama</label>
+                    <textarea
+                      className="form-control"
+                      name="description"
+                      value={editingRusIzi.description}
+                      onChange={handleEditRusIziChange}
+                      rows="3"
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🏷️ Tür</label>
+                    <select
+                      className="form-select"
+                      name="type"
+                      value={editingRusIzi.type}
+                      onChange={handleEditRusIziChange}
+                      required
+                    >
+                      <option value="">Seçiniz</option>
+                      <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
+                      <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
+                      <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
+                      <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
+                      <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
+                      <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
+                      <option value="Diğer">Diğer</option>
+                    </select>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🌐 Web Sitesi</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="website"
+                      value={editingRusIzi.website}
+                      onChange={handleEditRusIziChange}
+                    />
+                  </div>
+                  <div className="col-12 mb-3">
+                    <label className="form-label">📍 Adres</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="address"
+                      value={editingRusIzi.address}
+                      onChange={handleEditRusIziChange}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => {setShowEditRusIziModal(false); setEditingRusIzi(null);}}
+                >
+                  ❌ İptal
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-dark"
+                  onClick={handleUpdateRusIzi}
                 >
                   💾 Güncelle
                 </button>
