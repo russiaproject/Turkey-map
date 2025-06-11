@@ -43,7 +43,7 @@ import Rt from "./Rt"
 import Sberbank from './Sberbank'
 import Tass from "./Tass"
 import Vize from './Vize'
-import RusIzleri from './Rusizleri'
+import RusIzleri from './RusIzleri'
 import RusIziEkle from './RusIziEkle'
 import KarsFethiyeCamii from './KarsFethiyeCamii'
 import KarsDefterdarligi from './KarsDefterdarligi'
