@@ -1,0 +1,28 @@
+{
+  "TR36": [
+    {
+      "plaka": "TR36",
+      "name": "Kars Fethiye Camii",
+      "description": "19. yüzyılda Rus Ortodoks Kilisesi olarak inşa edilen bu yapı, bugün cami olarak hizmet vermektedir.",
+      "type": "Dini ve Mezhepsel İzler",
+      "address": "Fethiye, Kars",
+      "website": "https://tr.wikipedia.org/wiki/Fethiye_Camii_(Kars)"
+    },
+    {
+      "plaka": "TR36",
+      "name": "Kars Defterdarlığı",
+      "description": "19. yüzyılın sonlarında inşa edilen Kars Defterdarlığı Binası, Rus dönemi Baltık mimarisinin izlerini taşıyan tarihî bir kamu yapısıdır.",
+      "type": "Mimari ve Tarihi Yapılar",
+      "address": "Kars",
+      "website": "https://kars.gib.gov.tr/"
+    },
+    {
+      "plaka": "TR36",
+      "name": "Kars İl Sağlık Müdürlüğü Binası",
+      "description": "19. yüzyıl sonlarında inşa edilen İl Sağlık Müdürlüğü Binası, Kars'ta Rus dönemi Baltık mimarisinin sade ve işlevsel izlerini taşıyan özgün bir kamu yapısıdır.",
+      "type": "Mimari ve Tarihi Yapılar",
+      "address": "Kars",
+      "website": "https://karsism.saglik.gov.tr/"
+    }
+  ]
+}
