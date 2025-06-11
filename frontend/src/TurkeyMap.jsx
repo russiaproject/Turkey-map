@@ -357,9 +357,17 @@ const TurkeyMap = () => {
     setSelectedInstitution(null);
   };
 
+  // YENİ FONKSİYON: Çarpı butonunun davranışını kontrol eder
   const handleCloseSideMenu = (e) => {
     e.stopPropagation();
-    resetMap(); 
+    
+    // Eğer kurum detayındaysak, sadece kurum listesine dön
+    if (selectedInstitution) {
+      setSelectedInstitution(null);
+    } else {
+      // Eğer kurum listesindeyse, haritaya geri dön
+      resetMap();
+    }
   };
 
   const handleSuggestionClick = (institution) => {
