@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import pathData from './data/path.json';
+import rusIzleriData from './data/rus_izleri.json';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { select } from 'd3-selection';
 import 'd3-transition';
@@ -16,81 +18,6 @@ import {
   faMasksTheater, 
 } from '@fortawesome/free-solid-svg-icons';
 
-// Mock data - production'da API'den gelecek
-const mockPathData = [
-  {
-    plaka: "06",
-    ilismi: "Ankara",
-    d: "M400,200 L450,180 L480,220 L420,240 Z"
-  },
-  {
-    plaka: "34",
-    ilismi: "İstanbul",
-    d: "M300,150 L350,130 L380,170 L320,190 Z"
-  },
-  {
-    plaka: "35",
-    ilismi: "İzmir",
-    d: "M250,220 L300,200 L330,240 L270,260 Z"
-  },
-  {
-    plaka: "07",
-    ilismi: "Antalya",
-    d: "M350,280 L400,260 L430,300 L370,320 Z"
-  },
-  {
-    plaka: "36",
-    ilismi: "Kars",
-    d: "M550,120 L600,100 L630,140 L570,160 Z"
-  }
-];
-
-const mockRusIzleriData = {
-  "06": [
-    {
-      name: "Hacı Bayram Camii",
-      description: "Osmanlı döneminde Rus diplomatların ziyaret ettiği tarihi cami",
-      type: "Dini ve Mezhepsel İzler",
-      address: "Hacı Bayram Mahallesi, Altındağ/Ankara",
-      website: "-"
-    }
-  ],
-  "34": [
-    {
-      name: "Galata Kulesi",
-      description: "Rus seyyahların İstanbul gezilerinde uğradığı tarihi kule",
-      type: "Mimari ve Tarihi Yapılar",
-      address: "Galata, Beyoğlu/İstanbul",
-      website: "galatatower.com"
-    },
-    {
-      name: "Ayasofya",
-      description: "Rus İmparatorluğu döneminde önemli dini merkez",
-      type: "Dini ve Mezhepsel İzler",
-      address: "Sultanahmet, Fatih/İstanbul",
-      website: "ayasofyamuzesi.gov.tr"
-    }
-  ],
-  "35": [
-    {
-      name: "İzmir Saat Kulesi",
-      description: "Rus mimarların etkisinde kalan tarihi yapı",
-      type: "Mimari ve Tarihi Yapılar",
-      address: "Konak Meydanı, İzmir",
-      website: "-"
-    }
-  ],
-  "36": [
-    {
-      name: "Kars Defterdarlığı",
-      description: "19. yüzyılın sonlarında inşa edilen Rus dönemi Baltık mimarisi",
-      type: "Mimari ve Tarihi Yapılar",
-      address: "Merkez, Kars",
-      website: "-"
-    }
-  ]
-};
-
 const RusIzleri = () => {
   const [provincePaths, setProvincePaths] = useState([]);  
   const [hoverCity, setHoverCity] = useState(null);
@@ -106,8 +33,6 @@ const RusIzleri = () => {
   const [plakaToCity, setPlakaToCity] = useState({});
   const [cityToPlaka, setCityToPlaka] = useState({});  
   const [filteredRusIzleri, setFilteredRusIzleri] = useState({});
-  const [rusIzleriData, setRusIzleriData] = useState({});
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
   
   const svgRef = useRef(null);
   const gRef = useRef(null);
@@ -130,6 +55,15 @@ const RusIzleri = () => {
         return faBriefcase;
       case 'Diğer':
         return faSchoolFlag;
+      // Eski kategoriler için geriye dönük uyumluluk
+      case 'Mimari':
+        return faLandmarkFlag;
+      case 'Tarihi Yapı':
+        return faBuildingFlag;
+      case 'Kültürel':
+        return faMasksTheater;
+      case 'Ticari':
+        return faBriefcase;
       default:
         return faLandmarkFlag;
     }
@@ -147,69 +81,46 @@ const RusIzleri = () => {
     return code;
   };
 
-  // Data loading simulation
-  const loadData = async () => {
-    try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Use mock data
-      const pathData = mockPathData;
-      const rusData = mockRusIzleriData;
-      
-      setProvincePaths(pathData);
-      setRusIzleriData(rusData);
-      
-      const plakaMapping = {};
-      const cityMapping = {};
-      
-      pathData.forEach(province => {
-        if (province.plaka && province.ilismi) {
-          const normalizedPlaka = normalizeCode(province.plaka);
-          
-          plakaMapping[normalizedPlaka] = province.ilismi;
-          plakaMapping[`TR${normalizedPlaka}`] = province.ilismi;
-          plakaMapping[`TR-${normalizedPlaka}`] = province.ilismi;
-          
-          cityMapping[province.ilismi] = normalizedPlaka;
-        }
-      });
-      
-      setPlakaToCity(plakaMapping);
-      setCityToPlaka(cityMapping);
-      
-      const categories = new Set(['Hepsi']);
-      Object.keys(rusData).forEach(cityCodeKey => {
-        if (rusData[cityCodeKey] && Array.isArray(rusData[cityCodeKey])) {
-          rusData[cityCodeKey].forEach(rusIzi => {
-            if (rusIzi.type) {
-              categories.add(rusIzi.type);
-            }
-          });
-        }
-      });
-      
-      setAllCategories(Array.from(categories));
-      setIsDataLoaded(true);
-      
-    } catch (error) {
-      console.error('Data loading error:', error);
-      // Fallback to basic data
-      setProvincePaths(mockPathData);
-      setRusIzleriData(mockRusIzleriData);
-      setIsDataLoaded(true);
-    }
-  };
-
   useEffect(() => {
-    loadData();
+    setProvincePaths(pathData);
+    
+    const plakaMapping = {};
+    const cityMapping = {};
+    
+    pathData.forEach(province => {
+      if (province.plaka && province.ilismi) {
+        const normalizedPlaka = normalizeCode(province.plaka);
+        
+        plakaMapping[normalizedPlaka] = province.ilismi;
+        plakaMapping[`TR${normalizedPlaka}`] = province.ilismi;
+        plakaMapping[`TR-${normalizedPlaka}`] = province.ilismi;
+        
+        cityMapping[province.ilismi] = normalizedPlaka;
+      }
+    });
+    
+    setPlakaToCity(plakaMapping);
+    setCityToPlaka(cityMapping);
+    
+    const categories = new Set(['Hepsi']);
+    Object.keys(rusIzleriData).forEach(cityCodeKey => {
+      if (rusIzleriData[cityCodeKey] && Array.isArray(rusIzleriData[cityCodeKey])) {
+        rusIzleriData[cityCodeKey].forEach(rusIzi => {
+          if (rusIzi.type) {
+            categories.add(rusIzi.type);
+          }
+        });
+      }
+    });
+    
+    setAllCategories(Array.from(categories));
   }, []);
 
   useEffect(() => {
-    if (Object.keys(plakaToCity).length > 0 && isDataLoaded) {
+    if (Object.keys(plakaToCity).length > 0) {
       filterByCategory('Hepsi');
     }
-  }, [plakaToCity, isDataLoaded]);
+  }, [plakaToCity]);
 
   const filterByCategory = (category) => {
     setSelectedCategory(category);
@@ -278,7 +189,7 @@ const RusIzleri = () => {
     return () => {
       svg.on('.zoom', null);
     };
-  }, [isDataLoaded]);
+  }, []);
 
   const handleCityClick = (cityID) => {
     if (zoomedCity && zoomedCity !== cityID) {
@@ -292,12 +203,18 @@ const RusIzleri = () => {
       setZoomedCity(cityID);
       setShowSideMenu(true); 
       
-      // Simple zoom without DOM manipulation
-      if (zoomBehaviorRef.current) {
+      const cityPath = document.getElementById(cityID);
+      if (cityPath && zoomBehaviorRef.current) {
+        const bbox = cityPath.getBBox();
         const svg = select(svgRef.current);
-        const targetScale = 2;
-        const targetX = 200;
-        const targetY = 100;
+        
+        const svgWidth = 800; 
+        const svgHeight = 350;
+        
+        const targetScale = 2; 
+        
+        const targetX = svgWidth / 2 - (bbox.x + bbox.width / 2) * targetScale;
+        const targetY = svgHeight / 2 - (bbox.y + bbox.height / 2) * targetScale;
         
         const targetTransform = zoomIdentity.translate(targetX, targetY).scale(targetScale);
         
@@ -356,8 +273,17 @@ const RusIzleri = () => {
       case 'Tarihi Olaylar ve Diplomatik İzler': return '#DC143C'; 
       case 'Göç ve Yerleşim': return '#FF8C00'; 
       case 'Diğer': return '#708090'; 
+      // Eski kategoriler için geriye dönük uyumluluk
+      case 'Mimari': return '#B8860B'; 
+      case 'Tarihi Yapı': return '#B8860B'; 
+      case 'Kültürel': return '#4169E1'; 
+      case 'Ticari': return '#4169E1'; 
       default: return '#708090'; 
     }
+  };
+
+  const getMarkerSize = () => {
+    return currentZoomLevel > 2 ? "8px" : "6px";
   };
 
   const getRusIziCount = (cityID) => {
@@ -378,6 +304,7 @@ const RusIzleri = () => {
 
   const handleRusIziClick = (e, rusIzi) => {
     if (e) e.stopPropagation(); 
+
     setSelectedRusIzi(rusIzi);
     setShowSideMenu(true); 
   };
@@ -431,7 +358,9 @@ const RusIzleri = () => {
 
   const handleMapClick = (e) => {
     if (zoomedCity) {
-      if (showSideMenu && selectedRusIzi) {
+      const isInsideG = e.target.closest('g#map-interactive-area') === gRef.current; 
+      
+      if (isInsideG && showSideMenu && selectedRusIzi) {
         if (e.target.tagName === 'path' || e.target.tagName === 'circle' || e.target.tagName === 'text') {
             return; 
         }
@@ -445,9 +374,11 @@ const RusIzleri = () => {
   const handleCloseSideMenu = (e) => {
     e.stopPropagation();
     
+    // Eğer bir Rus izi detayındaysak, sadece listeye geri dön
     if (selectedRusIzi) {
       setSelectedRusIzi(null);
     } else {
+      // Listede isek, haritaya geri dön
       resetMap(); 
     }
   };
@@ -478,18 +409,57 @@ const RusIzleri = () => {
     }
   };
 
-  if (!isDataLoaded) {
-    return (
-      <div className="container my-5 py-3">
-        <div className="text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Yükleniyor...</span>
-          </div>
-          <p className="mt-3">Rus İzleri verisi yükleniyor...</p>
-        </div>
-      </div>
-    );
-  }
+  const isDataEmpty = !provincePaths || provincePaths.length === 0 || 
+                      !provincePaths[0]?.d || provincePaths[0]?.d === "";
+
+  useEffect(() => {
+    if (svgRef.current && gRef.current) {
+      const gElement = gRef.current;
+      const cityPathClickHandler = (e) => {
+        const pathElement = e.target.closest('.city-path');
+        if (pathElement && gElement.contains(pathElement)) {
+          if (!e.defaultPrevented) {
+             handleCityClick(pathElement.id);
+          }
+        }
+      };
+
+      gElement.addEventListener('click', cityPathClickHandler);
+      
+      return () => {
+        gElement.removeEventListener('click', cityPathClickHandler);
+      };
+    }
+  }, [zoomedCity, provincePaths, handleCityClick]); 
+
+  useEffect(() => {
+    const gElement = gRef.current;
+
+    if (gElement) {
+        const numberElementClickHandler = (e) => {
+            const targetCircle = e.target.closest('circle[data-city-id]');
+            const targetText = e.target.closest('text[data-city-id-text]');
+            let cityId = null;
+
+            if (targetCircle) {
+                cityId = targetCircle.getAttribute('data-city-id');
+            } else if (targetText) {
+                cityId = targetText.getAttribute('data-city-id-text');
+            }
+
+            if (cityId) {
+                e.stopPropagation();
+                handleCityClick(cityId);
+            }
+        };
+
+        gElement.addEventListener('click', numberElementClickHandler);
+
+        return () => {
+            gElement.removeEventListener('click', numberElementClickHandler);
+        };
+    }
+  }, [zoomedCity, provincePaths, filteredRusIzleri, handleCityClick]);
 
   return (
     <div className="container my-5 py-3">
@@ -586,6 +556,13 @@ const RusIzleri = () => {
             <span style={{ marginRight: "5px" }}>&#8592;</span> Türkiye Haritasına Dön
           </button>
         )}
+
+        {isDataEmpty && (
+          <div className="alert alert-warning">
+            <strong>Uyarı:</strong> path.json dosyası ya yüklenemedi ya da boş veri içeriyor. 
+            Lütfen dosyanın doğru formatta olduğunu kontrol edin.
+          </div>
+        )}
         
         <div className='main-layout-wrapper'>
           {showSideMenu && zoomedCity && (
@@ -637,7 +614,7 @@ const RusIzleri = () => {
                       </div>
                     )}
                     
-                    {selectedRusIzi.website && selectedRusIzi.website !== "_" && selectedRusIzi.website !== "-" && (
+                    {selectedRusIzi.website && selectedRusIzi.website !== "_" && (
                       <div className="mb-3 text-center">
                         <a 
                           href={selectedRusIzi.website.startsWith('http') ? selectedRusIzi.website : `https://${selectedRusIzi.website}`} 
@@ -811,27 +788,83 @@ const RusIzleri = () => {
                         style={pathStyles(cityCode)}
                         onMouseEnter={() => setHoverCity(cityCode)}
                         onMouseLeave={() => setHoverCity(null)}
-                        onClick={() => handleCityClick(cityCode)}
                       />
                       
                       {cityHasRusIzleri && !zoomedCity && (
-                        <g className="city-marker-group" style={{cursor: 'pointer'}}>
-                          <circle
-                            cx={300 + index * 50}
-                            cy={200 + index * 30}
-                            r="10"
-                            className="city-center-count-circle"
-                            onClick={() => handleCityClick(cityCode)}
-                          />
-                          <text
-                            x={300 + index * 50}
-                            y={204 + index * 30}
-                            className="city-center-count-text"
-                            onClick={() => handleCityClick(cityCode)}
-                          >
-                            {rusIziCount}
-                          </text>
-                        </g>
+                        (() => {
+                          const cityElement = document.getElementById(cityCode);
+                          if (!cityElement) return null;
+                          
+                          let cx = 300, cy = 150;
+                          
+                          try {
+                            const bbox = cityElement.getBBox();
+                            cx = bbox.x + bbox.width / 2;
+                            cy = bbox.y + bbox.height / 2;
+                          } catch (e) {
+                            // console.error(`Error getting bbox for ${cityCode}:`, e);
+                          }
+                          
+                          let circleOffsetX = 0;
+                          let circleOffsetY = 0;
+                          let textOffsetX = 0;
+                          let textOffsetY = 4; 
+                          
+                          // City-specific offsets
+                          if (cityCode === "35") { // Izmir
+                            circleOffsetX = 3;
+                            circleOffsetY = 20; 
+                            textOffsetX = 3; 
+                            textOffsetY = 20 + 3; 
+                          } else if (cityCode === "06") { // Ankara
+                            circleOffsetX = 5; circleOffsetY = -5; 
+                            textOffsetX = 5; textOffsetY = -1; 
+                          } else if (cityCode === "38") { // Kayseri
+                              circleOffsetX = -5; circleOffsetY = -8;
+                              textOffsetX = -5; textOffsetY = -4;
+                          } else if (cityCode === "42") { // Konya
+                              circleOffsetX = -17; circleOffsetY = -4; 
+                              textOffsetX = -17; textOffsetY = -1;
+                          } else if (cityCode === "04") { // Agri
+                              circleOffsetX = -15; circleOffsetY = -10;
+                              textOffsetX = -15; textOffsetY = -6;
+                          } else if (cityCode === "07") { // Antalya
+                              circleOffsetY = -15; 
+                              textOffsetY = -11;
+                          } else if (cityCode === "17") { // Canakkale
+                              circleOffsetX = 8; circleOffsetY = 4; 
+                              textOffsetX = 8; textOffsetY = 8;
+                          } else if (cityCode === "55") { // Samsun
+                              circleOffsetX = -4; circleOffsetY = 4; 
+                              textOffsetX = -4; textOffsetY = 7;
+                          } else if (cityCode === "36") { // Kars
+                              circleOffsetX = 6; circleOffsetY = 4; 
+                              textOffsetX = 6; textOffsetY = 7;
+                          } else if (cityCode === "22") { // Edirne
+                              circleOffsetX = 4; circleOffsetY = 2; 
+                              textOffsetX = 4; textOffsetY = 6;
+                          }
+                          
+                          return (
+                            <g className="city-marker-group" data-city-id-group={cityCode} style={{cursor: 'pointer'}}>
+                              <circle
+                                cx={cx + circleOffsetX}
+                                cy={cy + circleOffsetY}
+                                r="10"
+                                className="city-center-count-circle"
+                                data-city-id={cityCode} 
+                              />
+                              <text
+                                x={cx + textOffsetX}
+                                y={cy + textOffsetY}
+                                className="city-center-count-text"
+                                data-city-id-text={cityCode}
+                              >
+                                {rusIziCount}
+                              </text>
+                            </g>
+                          );
+                        })()
                       )}
                     </g>
                   );
@@ -1331,6 +1364,7 @@ const RusIzleri = () => {
         }
         .city-center-count-circle:hover {
             fill-opacity: 1;
+            r: 11;
         }
         .city-center-count-text {
             text-anchor: middle;
@@ -1491,6 +1525,36 @@ const RusIzleri = () => {
           .info-title-cityname { font-size: 12px; }
           .info-title-instruction { font-size: 10px; }
         }
+         @media (max-width: 480px) {
+            .side-menu {
+              max-height: 50vh; 
+            }
+            .map-container {
+                min-height: 300px; 
+            }
+            .title-box-heading { font-size: 0.75rem; }
+            .title-box-subheading { font-size: 0.6rem; }
+            .legend-title { font-size: 0.7rem; }
+            .legend-label { font-size: 0.55rem; }
+            .zoom-instructions {
+                bottom: 5px;
+                right: 5px;
+            }
+             .map-legend {
+                max-width: 130px; 
+             }
+             .legend-item {
+                 margin: 4px 0;
+             }
+             .back-to-list-button {
+                 font-size: 12px;
+                 padding: 7px 14px;
+             }
+             .rusizi-website-button {
+                 font-size: 0.75rem;
+                 padding: 6px 12px;
+             }
+         }
 
         /* Cards Section Styles */
         .normalBaslik {
@@ -1508,7 +1572,7 @@ const RusIzleri = () => {
           transition: all 0.3s ease;
           background: white;
           cursor: pointer;
-          height: 400px;
+          height: 400px; /* Sabit yükseklik */
         }
 
         .kurumCard:hover {
@@ -1521,11 +1585,11 @@ const RusIzleri = () => {
           top: 0;
           left: 0;
           width: 100%;
-          height: 100%;
+          height: 100%; /* Kartın tamamını kapla */
           object-fit: cover;
-          object-position: center;
+          object-position: center; /* Resmin merkezini göster */
           transition: transform 0.3s ease;
-          border-radius: 1rem;
+          border-radius: 1rem; /* Tüm köşeleri yuvarla */
         }
 
         .kurumCard:hover .card-img-top {
@@ -1606,7 +1670,7 @@ const RusIzleri = () => {
           }
           
           .kurumCard {
-            height: 350px;
+            height: 350px; /* Mobilde biraz daha kısa */
           }
           
           .kurumCardYazilar h5 {
@@ -1620,7 +1684,7 @@ const RusIzleri = () => {
 
         @media (max-width: 480px) {
           .kurumCard {
-            height: 320px;
+            height: 320px; /* Çok küçük ekranlarda daha da kısa */
           }
           
           .kurumCardYazilar {
