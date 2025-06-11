@@ -45,9 +45,9 @@ import Tass from "./Tass"
 import Vize from './Vize'
 import RusIzleri from './RusIzleri'
 import RusIziEkle from './RusIziEkle'
-import KarsFethiyeCamii from './KarsFethiyeCamii'
-import KarsDefterdarligi from './KarsDefterdarligi'
-import KarsIlSaglik from './KarsIlSaglik'
+import KarsFethiyeCamii from './KarsFethiyeCamii';
+import KarsDefterdarligi from './KarsDefterdarligi';
+import KarsIlSaglik from './KarsIlSaglik';
 import MezuniyetKulubu from './Mezuniyet'
 import MezuniyetUye from './MezuniyetUye'
 
@@ -229,11 +229,6 @@ const AnimatedRoutes = () => {
             <Vize />
           </AnimatedPage>
         } />
-         <Route path="/Rus-izi-ekle" element={
-          <AnimatedPage>
-            <RusIziEkle />
-          </AnimatedPage>
-        } />
         <Route path="/Mezuniyet" element={
           <AnimatedPage>
             <MezuniyetKulubu />
@@ -244,12 +239,17 @@ const AnimatedRoutes = () => {
             <MezuniyetUye />
           </AnimatedPage>
         } />
+         <Route path="/Rus-izi-ekle" element={
+          <AnimatedPage>
+            <RusIziEkle />
+          </AnimatedPage>
+        } />
         <Route path="/turkiyede-rus-izleri" element={
           <AnimatedPage>
             <RusIzleri />
           </AnimatedPage>
         } />
-                <Route path="/fethiyeCamii" element={
+        <Route path="/fethiyeCamii" element={
           <AnimatedPage>
             <KarsFethiyeCamii />
           </AnimatedPage>
