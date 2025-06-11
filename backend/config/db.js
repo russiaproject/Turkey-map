@@ -1,28 +1,33 @@
 const { Sequelize } = require('sequelize');
+const dotenv = require('dotenv');
 const path = require('path');
 
-// SQLite veritabanı yolu
+dotenv.config();
+
+// Production'da farklı path kullan
 const dbPath = process.env.NODE_ENV === 'production' 
   ? '/tmp/rusevi.db'  // Render'da geçici dizin
   : path.join(__dirname, '../rusevi.db'); // Local'de proje dizini
 
+console.log(`📂 Database path: ${dbPath}`);
+console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: dbPath,
-  logging: false, // SQL loglarını kapatmak için
+  logging: false,
   define: {
-    timestamps: true // createdAt, updatedAt alanları için
+    timestamps: true
   }
 });
 
-// Veritabanı bağlantısını test et
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ SQLite veritabanı bağlantısı başarılı');
+    console.log('✅ Veritabanı bağlantısı başarılı');
     
     // Tabloları senkronize et
-    await sequelize.sync({ alter: false });
+    await sequelize.sync({ force: false });
     console.log('✅ Veritabanı tabloları senkronize edildi');
     
   } catch (error) {
@@ -30,7 +35,7 @@ const testConnection = async () => {
   }
 };
 
-module.exports = {
+module.exports = { 
   sequelize,
-  testConnection
+  testConnection 
 };
