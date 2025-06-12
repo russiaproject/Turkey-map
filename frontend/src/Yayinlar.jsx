@@ -1,5 +1,6 @@
 import React from "react";
 import BarKurum from "./BarKurum";
+import { Link } from "react-router-dom";
 
 const Yayinlar = () => {
   return (
@@ -46,6 +47,8 @@ const Yayinlar = () => {
                 <option value="2">Bildiri</option>
                 <option value="3">Kitap</option>
                 <option value="4">Tez</option>
+                <option value="5">Konferans</option>
+
               </select>
             </div>
             <div className="col-lg-2 col-md-6">
@@ -58,107 +61,25 @@ const Yayinlar = () => {
       </div>
 
       <div className="row g-4">
-        <div className="col-lg-6">
+        <div className="col-lg-6 hoverYayinlar">
           <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
             <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
-              <p className="p-2 m-0">Makale</p>
+              <p className="p-2 m-0">Konferans</p>
             </div>
             <h4 className="fw-bold text-primary mt-5">
-              Türkiye-Rusya İlişkilerinde Enerji Faktörü
-            </h4>
+Avrasyacılık: Ortak Vizyon konferansı            </h4>
             <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat, Mustafa Türkmen
-            </p>
-            <p className="fst-italic small">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
+              <i className="fa-solid fa-user me-2"></i>Ankara Rus Evi
             </p>
             <p className="text-secondary">
-              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
-              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
-              almaktadır...
+              "Avrasyacılık: Ortak Vizyon" Konferansı
+Ankara Üniversitesi Siyasal Bilgiler Fakültesi
+Primakov Dış Politika İşbirliği Merkezi & Rus Evi Ankara iş birliğiyle
             </p>
             <div className="mt-auto">
-              <a href="#" className="btn btn-sm btn-outline-primary me-2">
+              <Link to="/avrasyacilik" className="btn btn-sm btn-outline-primary me-2">
                 Detayları Gör
-              </a>
-            </div>
-          </div>
-        </div>
-          <div className="col-lg-6">
-          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
-            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
-              <p className="p-2 m-0">Makale</p>
-            </div>
-            <h4 className="fw-bold text-primary mt-5">
-              Türkiye-Rusya İlişkilerinde Enerji Faktörü
-            </h4>
-            <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat, Mustafa Türkmen
-            </p>
-            <p className="fst-italic small">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
-            </p>
-            <p className="text-secondary">
-              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
-              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
-              almaktadır...
-            </p>
-            <div className="mt-auto">
-              <a href="#" className="btn btn-sm btn-outline-primary me-2">
-                Detayları Gör
-              </a>
-            </div>
-          </div>
-        </div>
-          <div className="col-lg-6">
-          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
-            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
-              <p className="p-2 m-0">Makale</p>
-            </div>
-            <h4 className="fw-bold text-primary mt-5">
-              Türkiye-Rusya İlişkilerinde Enerji Faktörü
-            </h4>
-            <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat
-            </p>
-            <p className="fst-italic small">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
-            </p>
-            <p className="text-secondary">
-              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
-              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
-              almaktadır...
-            </p>
-            <div className="mt-auto">
-              <a href="#" className="btn btn-sm btn-outline-primary me-2">
-                Detayları Gör
-              </a>
-            </div>
-          </div>
-        </div>
-          <div className="col-lg-6">
-          <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
-            <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
-              <p className="p-2 m-0">Makale</p>
-            </div>
-            <h4 className="fw-bold text-primary mt-5">
-              Türkiye-Rusya İlişkilerinde Enerji Faktörü
-            </h4>
-            <p className="text-muted small">
-              <i className="fa-solid fa-user me-2"></i>Emir Kesimoğlu, Berkay Yelkanat
-            </p>
-            <p className="fst-italic small">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, neque!
-            </p>
-            <p className="text-secondary">
-              Bu çalışma, Türkiye ve Rusya Federasyonu arasındaki ikili
-              ilişkilerin temel dinamiklerinden biri olan enerji konusunu ele
-              almaktadır...
-            </p>
-            <div className="mt-auto">
-              <a href="#" className="btn btn-sm btn-outline-primary me-2">
-                Detayları Gör
-              </a>
+              </Link>
             </div>
           </div>
         </div>
