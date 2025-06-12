@@ -273,9 +273,9 @@
   color: #fff;
 }
 .turkiyeArka {
-  background-image: url("./images/calinti.png");
-  background-size: 130%;
-  background-position: center;
+  background-image: url("./images/map2.png");
+  background-size: 90%;
+  background-position: 50% 50%;
   background-repeat: no-repeat;
   height: 100vh;
   position: relative;
@@ -1717,4 +1717,10 @@
 }
 .rusiziButtonUst:active{
   color: #0169c6;
+}
+.hoverYayinlar{
+  transition: all 0.3s ease-in-out;
+}
+.hoverYayinlar:hover{
+  transform: translateY(3px);
 }
