@@ -37,8 +37,7 @@ const Sotnicenko = () => {
 
               <h5 className="mt-4">Özgeçmiş</h5>
               <p className="card-text">
-                1 Şubat 1977’de Leningrad’da bir asker ailesinin evladı olarak
-                dünyaya geldi.
+                1 Şubat 1977’de Leningrad’da, asker bir ailenin albay rütbesindeki çocuğu olarak dünyaya geldi.
               </p>
               <h5 className="mt-4">Görev ve Yetkiler</h5>
               <p className="card-text">
