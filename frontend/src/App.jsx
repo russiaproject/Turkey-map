@@ -50,6 +50,7 @@ import KarsDefterdarligi from './KarsDefterdarligi';
 import KarsIlSaglik from './KarsIlSaglik';
 import MezuniyetKulubu from './Mezuniyet'
 import MezuniyetUye from './MezuniyetUye'
+import Avrasyacilik from './Avrasyacilik'
 
 // Animated page wrapper component
 const AnimatedPage = ({ children }) => {
@@ -262,6 +263,11 @@ const AnimatedRoutes = () => {
         <Route path="/kars-il-saglik" element={
           <AnimatedPage>
             <KarsIlSaglik />
+          </AnimatedPage>
+        } />
+        <Route path="/avrasyacilik" element={
+          <AnimatedPage>
+            <Avrasyacilik />
           </AnimatedPage>
         } />
         <Route path="/sotnicenko" element={
