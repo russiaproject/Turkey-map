@@ -976,7 +976,7 @@ const Admin = () => {
           {activeTab === 'institutions' && (
             <div>
               <div className="alert alert-info mb-4">
-                <strong>🏛️ Demo Bilgi:</strong> Bu bölümde Berkay Yelkanat tarafından araştırılmış İzmir Rus Ticaret Odası dahil olmak üzere Türkiye'deki Rus kurumları yönetilmektedir.
+                <strong>🏛️ Demo Bilgi:</strong> Bu bölümde kurum ekleme, silme, düzenleme yapabilirsiniz.
               </div>
               
               {/* Kurum Ekleme Formu */}
@@ -1174,7 +1174,7 @@ const Admin = () => {
           {activeTab === 'rusizleri' && (
             <div>
               <div className="alert alert-info mb-4">
-                <strong>🏰 Demo Bilgi:</strong> Bu bölümde Berkay Yelkanat tarafından keşfedilen Beyoğlu Rus Kilisesi ve Ankara Rus Diplomat Konutları dahil olmak üzere Türkiye'deki Rus izleri yönetilmektedir.
+                <strong>🏰 Demo Bilgi:</strong> Bu bölümde rus izi ekleyebilir, silebilir, yönetebilirsiniz.
               </div>
               
               {/* Rus İzi Ekleme Formu */}
