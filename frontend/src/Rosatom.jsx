@@ -134,6 +134,9 @@ Rosatom ile Türkiye’nin iş birliği, yalnızca bugünün enerji ihtiyacını
                       <p className="mt-1">Sayın Bakan Bayraktar ve Sayın Rosatom Başkanı Lihaçev görüşmesi sırasında.
                       </p>
                     </div>
+                             <p>
+  <span className="fw-bold">Web Site:</span> <a href="https://www.rosatom.ru/en/" target="_blank">https://www.rosatom.ru/</a>
+</p>  
         </div>
       </div>
       <BarKurum />
