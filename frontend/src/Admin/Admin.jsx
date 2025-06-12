@@ -743,7 +743,7 @@ const Admin = () => {
           {activeTab === 'graduation' && (
             <div>
               <div className="alert alert-info mb-4">
-                <strong>🎓 Demo Bilgi:</strong> Bu bölümde Berkay Yelkanat'ın Moskova Devlet Üniversitesi mezuniyeti dahil olmak üzere Rusya'da eğitim görmüş kişilerin başvuruları yer almaktadır.
+                <strong>🎓 Demo Bilgi:</strong> Bu bölümde Berkay Yelkanat'ın mezuniyet klubü başvurusu yer almaktadır
               </div>
               <div className="table-responsive">
                 <table className="table table-hover">
