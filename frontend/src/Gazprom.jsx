@@ -87,6 +87,10 @@ TurkStream’in tasarım kapasitesi yılda 31,5 milyar metreküp doğalgazdır. 
                       <img src={bakanlarGazprom} alt="" />
                     </div>
                     <p className="card-text">TürkAkım doğalgaz boru hattının büyük açılış törenine, Rusya Federasyonu Devlet Başkanı Vladimir Putin, Türkiye Cumhuriyeti Cumhurbaşkanı Recep Tayyip Erdoğan, Sırbistan Cumhurbaşkanı Aleksandar Vučić, Bulgaristan Başbakanı Boyko Borisov, Rusya Federasyonu Enerji Bakanı Alexander Novak, Türkiye Enerji ve Tabii Kaynaklar Bakanı Fatih Dönmez ve Alexey Miller katıldı.</p>
+
+                          <p>
+  <span className="fw-bold">Web Site:</span> <a href="https://www.gazprom.com/" target="_blank">https://www.gazprom.com/</a>
+</p>  
         </div>
         
       </div>
