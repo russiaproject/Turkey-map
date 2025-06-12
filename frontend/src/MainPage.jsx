@@ -298,102 +298,96 @@ Türkiye genelindeki tüm Rusya Federasyonuna ait eğitim ve resmi kurumlara ula
           <h2 className='makaleBaslik'>Yayınlar</h2>
           <Link to="/Yayinlar" className='makaleButton btn py-3'>Tüm Yayınlar! <i className="fa-solid fa-arrow-right"></i></Link>
         </div>
-        <div className="row g-4 mt-2">
-          <a href="#" className="col-lg-7 text-decoration-none d-flex">
-            <div className="featured-post w-100">
-              <div className="featured-image-wrapper">
-                <img src={ruseviYatay} className="featured-image" alt="Öne çıkan blog gönderisi" />
-                <div className="category-badge">
-                  <p className="m-0">IT Alanı</p>
-                </div>
-              </div>
-              <div className="featured-content">
-                <div className="post-meta mb-3">16 Haziran 2006</div>
-                <h2 className="post-title">Teknoloji 2024'te İşin Geleceğini Nasıl Şekillendiriyor</h2>
-                <p className="post-excerpt">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere enim nibh, eu condimentum erat varius non varius non...
-                </p>
-              </div>
-            </div>
-          </a>
-          <div className="col-lg-5 d-flex flex-column">
-            <a href="#" className="text-decoration-none d-flex flex-grow-1">
-              <div className="side-post mb-3 w-100">
-                <div className="row g-0 h-100">
-                  <div className="col-7">
-                    <div className="side-post-content">
-                      <div>
-                        <div className="post-meta mb-1">16 Haziran 2006</div>
-                        <h3 className="side-post-title">Modern İşletmelerde Yapay Zekayı Keşfetmek</h3>
-                        <p className="side-post-excerpt">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere enim nibh...
-                        </p>
-                      </div>
-                      <div className="category-badge-small mt-auto">
-                        <p className="m-0">IT Alanı</p>
-                      </div>
+        <div className="row g-4  mt-1">
+                <div className="col-lg-6 hoverYayinlar">
+                  <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+                    <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+                      <p className="p-2 m-0">Konferans</p>
                     </div>
-                  </div>
-                  <div className="col-5 d-flex">
-                    <div className="side-image-wrapper w-100">
-                      <img src={akkuyuFoto} className="side-image" alt="Blog gönderisi" />
+                    <h4 className="fw-bold text-primary mt-5">
+        Avrasyacılık: Ortak Vizyon konferansı            </h4>
+                    <p className="text-muted small">
+                      <i className="fa-solid fa-user me-2"></i>Ankara Rus Evi
+                    </p>
+                    <p className="text-secondary">
+                      "Avrasyacılık: Ortak Vizyon" Konferansı
+        Ankara Üniversitesi Siyasal Bilgiler Fakültesi
+        Primakov Dış Politika İşbirliği Merkezi & Rus Evi Ankara iş birliğiyle
+                    </p>
+                    <div className="mt-auto">
+                      <Link to="/avrasyacilik" className="btn btn-sm btn-outline-primary me-2">
+                        Detayları Gör
+                      </Link>
                     </div>
                   </div>
                 </div>
-              </div>
-            </a>
-            <a href="#" className="text-decoration-none d-flex flex-grow-1">
-              <div className="side-post mb-3 w-100">
-                <div className="row g-0 h-100">
-                  <div className="col-7">
-                    <div className="side-post-content">
-                      <div>
-                        <div className="post-meta mb-1">15 Haziran 2006</div>
-                        <h3 className="side-post-title">Dikkat Edilmesi Gereken Siber Güvenlik Trendleri</h3>
-                        <p className="side-post-excerpt">
-                          Consectetur adipiscing elit. Donec posuere enim nibh, eu condimentum erat varius...
-                        </p>
-                      </div>
-                      <div className="category-badge-small mt-auto">
-                        <p className="m-0">Güvenlik</p>
-                      </div>
+                <div className="col-lg-6 hoverYayinlar">
+                  <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+                    <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+                      <p className="p-2 m-0">Konferans</p>
                     </div>
-                  </div>
-                  <div className="col-5 d-flex">
-                    <div className="side-image-wrapper w-100">
-                      <img src={konsolosluk} className="side-image" alt="Blog gönderisi" />
+                    <h4 className="fw-bold text-primary mt-5">
+        Avrasyacılık: Ortak Vizyon konferansı            </h4>
+                    <p className="text-muted small">
+                      <i className="fa-solid fa-user me-2"></i>Ankara Rus Evi
+                    </p>
+                    <p className="text-secondary">
+                      "Avrasyacılık: Ortak Vizyon" Konferansı
+        Ankara Üniversitesi Siyasal Bilgiler Fakültesi
+        Primakov Dış Politika İşbirliği Merkezi & Rus Evi Ankara iş birliğiyle
+                    </p>
+                    <div className="mt-auto">
+                      <Link to="/avrasyacilik" className="btn btn-sm btn-outline-primary me-2">
+                        Detayları Gör
+                      </Link>
                     </div>
                   </div>
                 </div>
-              </div>
-            </a>
-            <a href="#" className="text-decoration-none d-flex flex-grow-1">
-              <div className="side-post w-100">
-                <div className="row g-0 h-100">
-                  <div className="col-7">
-                    <div className="side-post-content">
-                      <div>
-                        <div className="post-meta mb-1">14 Haziran 2006</div>
-                        <h3 className="side-post-title">Uzaktan İşbirliğinin Yükselişi</h3>
-                        <p className="post-excerpt">
-                          Adipiscing elit. Donec posuere enim nibh, eu condimentum erat varius non varius non...
-                        </p>
-                      </div>
-                      <div className="category-badge-small mt-auto">
-                        <p className="m-0">İş Dünyası</p>
-                      </div>
+                <div className="col-lg-6 hoverYayinlar">
+                  <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+                    <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+                      <p className="p-2 m-0">Konferans</p>
+                    </div>
+                    <h4 className="fw-bold text-primary mt-5">
+        Avrasyacılık: Ortak Vizyon konferansı            </h4>
+                    <p className="text-muted small">
+                      <i className="fa-solid fa-user me-2"></i>Ankara Rus Evi
+                    </p>
+                    <p className="text-secondary">
+                      "Avrasyacılık: Ortak Vizyon" Konferansı
+        Ankara Üniversitesi Siyasal Bilgiler Fakültesi
+        Primakov Dış Politika İşbirliği Merkezi & Rus Evi Ankara iş birliğiyle
+                    </p>
+                    <div className="mt-auto">
+                      <Link to="/avrasyacilik" className="btn btn-sm btn-outline-primary me-2">
+                        Detayları Gör
+                      </Link>
                     </div>
                   </div>
-                  <div className="col-5 d-flex">
-                    <div className="side-image-wrapper w-100">
-                      <img src={ruseviYatay} className="side-image" alt="Blog gönderisi" />
+                </div>
+                <div className="col-lg-6 hoverYayinlar">
+                  <div className="yayinlarDiv d-flex flex-column h-100 p-4 position-relative">
+                    <div className="yayinlarTuru position-absolute top-0 start-0 m-3">
+                      <p className="p-2 m-0">Konferans</p>
+                    </div>
+                    <h4 className="fw-bold text-primary mt-5">
+        Avrasyacılık: Ortak Vizyon konferansı            </h4>
+                    <p className="text-muted small">
+                      <i className="fa-solid fa-user me-2"></i>Ankara Rus Evi
+                    </p>
+                    <p className="text-secondary">
+                      "Avrasyacılık: Ortak Vizyon" Konferansı
+        Ankara Üniversitesi Siyasal Bilgiler Fakültesi
+        Primakov Dış Politika İşbirliği Merkezi & Rus Evi Ankara iş birliğiyle
+                    </p>
+                    <div className="mt-auto">
+                      <Link to="/avrasyacilik" className="btn btn-sm btn-outline-primary me-2">
+                        Detayları Gör
+                      </Link>
                     </div>
                   </div>
                 </div>
               </div>
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   );
