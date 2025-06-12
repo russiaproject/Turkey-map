@@ -52,7 +52,7 @@ const Admin = () => {
         email: 'berkay@gmail.com',
         isletme: 'Kaspersky',
         telefon: '+90 555 555 55 55',
-        status: 'rejected',
+        status: 'approved',
         createdAt: new Date('2024-01-12')
       }
     ]);
