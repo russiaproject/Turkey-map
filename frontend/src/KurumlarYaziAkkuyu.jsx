@@ -59,6 +59,9 @@ const KurumlarYaziAkkuyu = () => {
 
               </p> <p className="card-text"><span className="fw-bold">Akkuyu 4. Ünite</span>: VVER V-513 modeli, 1114 MW kapasite, inşaat başlangıcı 21 Temmuz 2022, elektrik üretimi planlanan yıl 2028.
               </p>
+              <p>
+  <span className="fw-bold">Web Site:</span> <a href="https://akkuyu.com/tr" target="_blank">https://akkuyu.com/</a>
+</p>
               <h3 className="fw-bold text-primary my-4 mb-3 fs-5">İlgili Fotoğraflar:</h3>
              
               <div>
