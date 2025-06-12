@@ -12,6 +12,10 @@ const RusIziEkle = () => {
     dosyalar: []
   });
 
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -22,6 +26,16 @@ const RusIziEkle = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
+    
+    // Dosya boyutu kontrolü
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const oversizedFiles = files.filter(file => file.size > maxSize);
+    
+    if (oversizedFiles.length > 0) {
+      showMessage('Bazı dosyalar 5MB\'dan büyük. Lütfen daha küçük dosyalar seçin.', 'error');
+      return;
+    }
+
     const filePromises = files.map(file => {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -52,33 +66,59 @@ const RusIziEkle = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const showMessage = (msg, type = 'success') => {
+    setMessage(msg);
+    setMessageType(type);
+    setTimeout(() => {
+      setMessage('');
+      setMessageType('');
+    }, 5000);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const yeniGonderi = {
-      id: Date.now(),
-      ...formData,
-      tarih: new Date().toLocaleDateString('tr-TR'),
-      saat: new Date().toLocaleTimeString('tr-TR')
-    };
+    setLoading(true);
 
-    // Mevcut gönderileri al
-    const mevcutGonderiler = JSON.parse(localStorage.getItem('rusIziGonderiler') || '[]');
-    const guncelGonderiler = [yeniGonderi, ...mevcutGonderiler];
-    localStorage.setItem('rusIziGonderiler', JSON.stringify(guncelGonderiler));
+    try {
+      const response = await fetch('http://localhost:8080/api/user-rusizi-application', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
 
-    // Formu temizle
-    setFormData({
-      isim: "",
-      soyisim: "",
-      email: "",
-      telefon: "",
-      aciklama: "",
-      konum: "",
-      dosyalar: []
-    });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Başvuru gönderilemedi');
+      }
 
-    alert('Rus izi bilginiz başarıyla eklendi! Şehir detay sayfalarından görüntüleyebilirsiniz.');
+      const data = await response.json();
+      showMessage('✅ Rus izi bilginiz başarıyla gönderildi! İncelendikten sonra yayınlanacaktır.', 'success');
+      
+      // Formu temizle
+      setFormData({
+        isim: "",
+        soyisim: "",
+        email: "",
+        telefon: "",
+        aciklama: "",
+        konum: "",
+        dosyalar: []
+      });
+
+      // Dosya input'unu da temizle
+      const fileInput = document.getElementById('dosyaForm');
+      if (fileInput) {
+        fileInput.value = '';
+      }
+
+    } catch (error) {
+      console.error('Başvuru hatası:', error);
+      showMessage(`❌ Başvuru gönderilirken hata oluştu: ${error.message}`, 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatFileSize = (bytes) => {
@@ -127,9 +167,16 @@ const RusIziEkle = () => {
               Yeni Rus İzi Bilgisi Ekle
             </h4>
             <p className="text-muted">
-              Türkiye'de keşfettiğiniz Rus izlerini bizimle paylaşın!
+              Türkiye'de keşfettiğiniz Rus izlerini bizimle paylaşın! Başvurunuz incelendikten sonra yayınlanacaktır.
             </p>
           </div>
+
+          {/* Mesaj Bildirimi */}
+          {message && (
+            <div className={`alert ${messageType === 'success' ? 'alert-success' : 'alert-danger'} mb-4`}>
+              {message}
+            </div>
+          )}
           
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
@@ -243,7 +290,7 @@ const RusIziEkle = () => {
                   onChange={handleFileChange}
                 />
                 <div className="form-text">
-                  Birden fazla fotoğraf seçebilirsiniz (JPG, PNG, WEBP)
+                  Birden fazla fotoğraf seçebilirsiniz (JPG, PNG, WEBP - Maksimum 5MB/dosya)
                 </div>
               </div>
 
@@ -291,9 +338,22 @@ const RusIziEkle = () => {
               )}
               
               <div className="col-12 text-center mt-4">
-                <button type="submit" className="btn btn-primary btn-lg px-5">
-                  <i className="fa-solid fa-paper-plane me-2"></i>
-                  Rus İzi Bilgisini Paylaş!
+                <button 
+                  type="submit" 
+                  className="btn btn-primary btn-lg px-5"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2"></span>
+                      Gönderiliyor...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-paper-plane me-2"></i>
+                      Rus İzi Bilgisini Paylaş!
+                    </>
+                  )}
                 </button>
               </div>
             </div>
