@@ -451,30 +451,10 @@ const TurkeyMap = () => {
 
     return (
         <div className="container my-5 py-3">
-            <nav aria-label="breadcrumb">
-                <ol className="breadcrumb">
-                    <li className="breadcrumb-item">
-                        <a href="/" className="text-decoration-none">
-                            <FontAwesomeIcon icon={faHouse} className="me-1" /> Ana Sayfa
-                        </a>
-                    </li>
-                    <li className="breadcrumb-item active" aria-current="page">
-                        Rus Kurumları
-                    </li>
-                </ol>
-            </nav>
-
-            <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4">
-                <div className="d-flex align-items-center mb-3 mb-md-0">
-                    <FontAwesomeIcon icon={faBuildingFlag} className="text-primary me-2 fs-2" />
-                    <h2 className="fw-bold text-primary m-0">Türkiye'deki Rus Kurumları</h2>
-                </div>
-                <Link to="/rus-kurumu-ekle" className="btn btn-primary btn-lg px-4 py-2">
-                    <FontAwesomeIcon icon={faPlusCircle} className="me-2" />
-                    Yeni Rus Kurumu Ekle
-                </Link>
-            </div>
-
+<div className='text-center'>
+            <h2 className='normalBaslik fs-2 mb-4' id='kurumlarBazi'>Türkiye'deki Rus Kurumları Haritası
+</h2>
+          </div>
             <div className='turkey-map-app-container'>
                 <div className="search-filter-container mb-4">
                     <div className="category-filter">
@@ -728,7 +708,7 @@ const TurkeyMap = () => {
 
                         <div className='d-flex justify-content-center'>
                             <div className="map-legend">
-                                <h3 className="legend-title">Kurum Kategorileri</h3>
+                                <h3 className="legend-title">Kurum Tipleri</h3>
                                 <div className="legend-item">
                                     <span className="legend-color city-legend"></span>
                                     <span className="legend-label">Şehir (Kurum Sayısı)</span>
