@@ -148,7 +148,7 @@
 }
 .sidebar-social-icon-link {
   color: #fff;
-  opacity: 0.8;
+  opacity: .95;
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 .sidebar-social-icon-link:hover {
