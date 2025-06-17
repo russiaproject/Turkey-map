@@ -211,10 +211,10 @@ const Credit = () => {
   return (
     <div className="container p-5">
       <div className="row creditRow gap-4">
-        {/* Ekip üyeleri bölümü aynı kalıyor */}
-        <div className="col-12 ludmilaBlur position-relative creditHoverHepsi rounded-5 p-5 shadowCredit">
-          <div className="katedralLudmila position-absolute"></div>
-          <div className="row g-5">
+        <div className="col-12 position-relative creditHoverHepsi rounded-5 shadowCredit">
+
+<div className="katedralLudmila position-absolute"></div>
+            <div className="row g-5 ludmilaBlur p-5">
             <div className="col-lg-4">
               <img src={LudmilaKralice} className="ludmilaFoto" alt="Ludmila Çalışkan" />
             </div>
@@ -236,6 +236,7 @@ const Credit = () => {
               <br />
 <a href="https://t.me/ankara_rusevi" target="_blank" className="p-2 px-3 creditRussianDom">Русский Дом <i className="fa-solid fa-arrow-right"></i></a>
             </div>
+
           </div>
         </div>
 
