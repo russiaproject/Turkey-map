@@ -18,9 +18,15 @@ const Yayinlar = () => {
         </ol>
       </nav>
 
-      <div className="d-flex align-items-center mb-4">
-        <i className="fa-solid fa-book-open text-primary me-2 fs-2"></i>
-        <h2 className="fw-bold text-primary m-0">Yayınlar</h2>
+      <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4">
+        <div className="d-flex align-items-center mb-3 mb-md-0">
+          <i className="fa-solid fa-book-open text-primary me-2 fs-2"></i>
+          <h2 className="fw-bold text-primary m-0">Yayınlar</h2>
+        </div>
+        <Link to="/yayinlar-ekle" className="btn btn-primary btn-lg px-4 py-2">
+          <i className="fa-solid fa-plus-circle me-2"></i>
+          Yeni Yayın Ekle!
+        </Link>
       </div>
 
       <div className="card shadow-sm border-0 mb-4">
