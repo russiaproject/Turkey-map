@@ -897,7 +897,6 @@
 .ludmilaBlur {
   backdrop-filter: blur(2px);
   width: 100%;
-  height: 100%;
 }
 .ekipContainer {
   background-color: #f8f9fa;
