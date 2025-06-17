@@ -51,6 +51,7 @@ import KarsIlSaglik from './KarsIlSaglik';
 import MezuniyetKulubu from './Mezuniyet'
 import MezuniyetUye from './MezuniyetUye'
 import Avrasyacilik from './Avrasyacilik'
+import YayinlarEkle from './YayinlarEkle'
 
 // Animated page wrapper component
 const AnimatedPage = ({ children }) => {
@@ -268,6 +269,11 @@ const AnimatedRoutes = () => {
         <Route path="/avrasyacilik" element={
           <AnimatedPage>
             <Avrasyacilik />
+          </AnimatedPage>
+        } />
+        <Route path="/yayinlar-ekle" element={
+          <AnimatedPage>
+            <YayinlarEkle />
           </AnimatedPage>
         } />
         <Route path="/sotnicenko" element={
