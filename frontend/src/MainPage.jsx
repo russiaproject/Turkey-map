@@ -21,7 +21,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import TurkeyMap from './TurkeyMap';
 import RusenFoto from "./images/rusen.jpg";
-import RusmerFoto from "./images/rusmer.jpg";
+import MumessilikFoto from "./images/mumessilik.jpg";
 import SputnikFoto from "./images/sputnik.jpg";
 import RTFoto from "./images/RT.png"
 import SberbankFoto from "./images/sberbank.png"
@@ -190,16 +190,16 @@ Türkiye genelindeki tüm Rusya Federasyonuna ait eğitim ve resmi kurumlara ula
               {/* card 7 */}
               <div className='px-2'>
                 <div className='kurumCard h-100'>
-                  <img src={RusmerFoto} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
+                  <img src={MumessilikFoto} className='rounded-4 card-img-top' alt="Mumessilik Foto" />
                   <div className='photo-dark-overlay'></div>
                   <div className='kurumCard-content'>
                     <div className='custom-fit p-2 d-inline-block ms-2'>
-                      <p className='d-inline mb-0'>Rus Dili ve Kültür Merkezi</p>
+                      <p className='d-inline mb-0'>Sanayi ve Yatırım Kurumu</p>
                     </div>
                     <div className='kurumCardYazilar p-3'>
-                      <h5>Rusmer</h5>
-                      <p>Rusça kursları, TORFL sınavları ve kültürel etkinliklerle Türkiye-Rusya arasında dil ve kültür köprüsü kuruyor. Eğitimler her seviyeye uygun olarak Ankara, İstanbul ve Alanya’da sunuluyor.</p>
-                      <Link to="/rusmer" className='btn kurumButton'>Kurumu Görün!</Link>
+                      <h5>Rusya Federasyonu Ticaret Mümessilliği</h5>
+                      <p>İkili ticaret, sanayi ve yatırım alanlarında iş birliğini geliştirmekle görevli resmî Rus devlet kurumudur.</p>
+                      <Link to="/mumessillik" className='btn kurumButton'>Kurumu Görün!</Link>
                     </div>
                   </div>
                 </div>

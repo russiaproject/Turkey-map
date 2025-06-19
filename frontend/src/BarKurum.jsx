@@ -18,12 +18,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import TurkeyMap from './TurkeyMap';
 import RusenFoto from "./images/rusen.jpg";
-import RusmerFoto from "./images/rusmer.jpg";
 import SputnikFoto from "./images/sputnik.jpg";
 import RTFoto from "./images/RT.png"
 import SberbankFoto from "./images/sberbank.png"
 import TassFoto from "./images/Tass.png"
-
+import MumessilikFoto from "./images/mumessilik.jpg";
 
 
 const BarKurum = () => {
@@ -165,21 +164,21 @@ const BarKurum = () => {
               </div>
               {/* card 7 */}
               <div className='px-2'>
-                <div className='kurumCard h-100'>
-                  <img src={RusmerFoto} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
-                  <div className='photo-dark-overlay'></div>
-                  <div className='kurumCard-content'>
-                    <div className='custom-fit p-2 d-inline-block ms-2'>
-                      <p className='d-inline mb-0'>Rus Dili ve Kültür Merkezi</p>
-                    </div>
-                    <div className='kurumCardYazilar p-3'>
-                      <h5>Rusmer</h5>
-                      <p>Rusça kursları, TORFL sınavları ve kültürel etkinliklerle Türkiye-Rusya arasında dil ve kültür köprüsü kuruyor. Eğitimler her seviyeye uygun olarak Ankara, İstanbul ve Alanya’da sunuluyor.</p>
-                      <Link to="/rusmer" className='btn kurumButton'>Kurumu Görün!</Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                              <div className='kurumCard h-100'>
+                                <img src={MumessilikFoto} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
+                                <div className='photo-dark-overlay'></div>
+                                <div className='kurumCard-content'>
+                                  <div className='custom-fit p-2 d-inline-block ms-2'>
+                                    <p className='d-inline mb-0'>Sanayi ve Yatırım Kurumu</p>
+                                  </div>
+                                  <div className='kurumCardYazilar p-3'>
+                                    <h5>Rusya Federasyonu Ticaret Mümessilliği</h5>
+                                    <p>İkili ticaret, sanayi ve yatırım alanlarında iş birliğini geliştirmekle görevli resmî Rus devlet kurumudur.</p>
+                                    <Link to="/mumessillik" className='btn kurumButton'>Kurumu Görün!</Link>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
               {/* card 8 */}
               <div className='px-2'>
                 <div className='kurumCard h-100'>

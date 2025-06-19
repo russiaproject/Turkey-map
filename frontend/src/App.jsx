@@ -33,7 +33,7 @@ import Rostec from './KurumRos'
 import Rosatom from './Rosatom'
 import IsStaj from './IsStaj'
 import Gazprom from './Gazprom'
-import Rusmer from './Rusmer'
+import Mumessillik from './Mumessillik'
 import Sputnik from './Sputnik'
 import Rusen from './Rusen'
 import turkiyeRusyaBayrak from "./images/turkiye-rusya-bayrak.jpg"
@@ -52,6 +52,7 @@ import MezuniyetKulubu from './Mezuniyet'
 import MezuniyetUye from './MezuniyetUye'
 import Avrasyacilik from './Avrasyacilik'
 import YayinlarEkle from './YayinlarEkle'
+import Gashigullin from './Gashigullin'
 
 // Animated page wrapper component
 const AnimatedPage = ({ children }) => {
@@ -186,9 +187,9 @@ const AnimatedRoutes = () => {
             <Gazprom />
           </AnimatedPage>
         } />
-         <Route path="/rusmer" element={
+         <Route path="/mumessillik" element={
           <AnimatedPage>
-            <Rusmer />
+            <Mumessillik />
           </AnimatedPage>
         } />
          <Route path="/rusen" element={
@@ -274,6 +275,11 @@ const AnimatedRoutes = () => {
         <Route path="/yayinlar-ekle" element={
           <AnimatedPage>
             <YayinlarEkle />
+          </AnimatedPage>
+        } />
+         <Route path="/gashigullin" element={
+          <AnimatedPage>
+            <Gashigullin />
           </AnimatedPage>
         } />
         <Route path="/sotnicenko" element={
