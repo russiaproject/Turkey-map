@@ -813,11 +813,7 @@ const RusIzleri = () => {
         </div>
       </div>
 
-      <div className="container mt-5 px-lg-5 px-3">
-        <h4 className="card-title mb-4 mt-5 fw-bold ">
-          <i className="fa-solid fa-info-circle me-2 text-primary"></i>
-          Başka Kurumlarada Bakın!
-        </h4>        
+      <div className="container px-lg-5 px-3">      
         <RusIzleriSlider/>
       </div>
 
