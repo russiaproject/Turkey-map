@@ -189,12 +189,30 @@ Elmadağ, Şişli, İstanbul, Türkiye, 34367
         <div className="card-body p-4">
           <h4 className="card-title mb-3 fw-bold">
             <i className="fa-solid fa-map-location-dot me-2 text-primary"></i>
-            Konum
+            Ankara - Konum 
           </h4>
 
           <div className="d-flex justify-content-center align-items-center">
             <iframe
-              src="https://yandex.com/map-widget/v1/-/CHfKe2YW"
+              src="https://yandex.com/map-widget/v1/-/CHcMjVid"
+              className="w-100 mt-4 rounded-4"
+              style={{ height: "75vh" }}
+              frameBorder="0"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+       {/* Map Section */}
+      <div className="card shadow-sm border-0 mt-4">
+        <div className="card-body p-4">
+          <h4 className="card-title mb-3 fw-bold">
+            <i className="fa-solid fa-map-location-dot me-2 text-primary"></i>
+            İstanbul - Konum 
+          </h4>
+
+          <div className="d-flex justify-content-center align-items-center">
+            <iframe
+              src="https://yandex.com/map-widget/v1/-/CHcMjX1Z"
               className="w-100 mt-4 rounded-4"
               style={{ height: "75vh" }}
               frameBorder="0"
