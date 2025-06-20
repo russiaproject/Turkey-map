@@ -35,7 +35,7 @@ import IsStaj from './IsStaj'
 import Gazprom from './Gazprom'
 import Mumessillik from './Mumessillik'
 import Sputnik from './Sputnik'
-import Rusen from './Rusen'
+import Lukoil from './Lukoil'
 import turkiyeRusyaBayrak from "./images/turkiye-rusya-bayrak.jpg"
 import Dostluk from './Dostluk'
 import Evize from './Evize'
@@ -53,6 +53,9 @@ import MezuniyetUye from './MezuniyetUye'
 import Avrasyacilik from './Avrasyacilik'
 import YayinlarEkle from './YayinlarEkle'
 import Gashigullin from './Gashigullin'
+import GeliboluHatira from './GeliboluHatira'
+import RusAskeriAnit from './RusAskeriAnit'
+import AndreyKarlovHatira from './AndreyKarlovHatira'
 
 // Animated page wrapper component
 const AnimatedPage = ({ children }) => {
@@ -192,9 +195,9 @@ const AnimatedRoutes = () => {
             <Mumessillik />
           </AnimatedPage>
         } />
-         <Route path="/rusen" element={
+         <Route path="/Lukoil" element={
           <AnimatedPage>
-            <Rusen />
+            <Lukoil />
           </AnimatedPage>
         } />
          <Route path="/sputnik" element={
@@ -280,6 +283,21 @@ const AnimatedRoutes = () => {
          <Route path="/gashigullin" element={
           <AnimatedPage>
             <Gashigullin />
+          </AnimatedPage>
+        } />
+         <Route path="/gelibolu-hatirasi" element={
+          <AnimatedPage>
+            <GeliboluHatira />
+          </AnimatedPage>
+        } />
+         <Route path="/rus-askerleri-aniti" element={
+          <AnimatedPage>
+            <RusAskeriAnit />
+          </AnimatedPage>
+        } />
+         <Route path="/andrey-karlovun-hatirasi" element={
+          <AnimatedPage>
+            <AndreyKarlovHatira />
           </AnimatedPage>
         } />
         <Route path="/sotnicenko" element={

@@ -48,7 +48,7 @@ const Navbar = ({ rusevi, turkiyeRusyaBayrak }) => {
                 </ul>
               </div>
               <a href="https://turkiye.rs.gov.ru/" className="text-white text-decoration-none text-uppercase rusLink d-none d-lg-inline-flex align-items-center" target="_blank" rel="noreferrer">
-                Русский Дом
+                Rus Evi Ankara
                 <i className="fa-solid fa-arrow-right mainpageRight ms-1"></i>
               </a>
               
@@ -69,6 +69,7 @@ const Navbar = ({ rusevi, turkiyeRusyaBayrak }) => {
           <div className="d-none d-lg-flex justify-content-between align-items-center" id="desktopSocialIconsBar">
             <div className='desktop-navbar-social d-lg-flex align-items-center gap-3'>
               <a href="https://t.me/ankara_rusevi" target='_blank' rel="noopener noreferrer" className="desktop-social-icon"><i className="fa-brands fa-telegram"></i></a>
+               <a href="https://www.facebook.com/RSinTurkey/" target='_blank' rel="noopener noreferrer" className="desktop-social-icon"><i className="fa-brands fa-square-facebook"></i></a>
               <a href="tel:+903124420218" className="desktop-social-icon"><i className="fa-solid fa-square-phone"></i></a>
               <a href="https://vk.com/rusevi" target='_blank' rel="noopener noreferrer" className="desktop-social-icon"><i className="fa-brands fa-vk"></i></a>
               <a href="https://www.instagram.com/rusevi_ankara/?hl=tr" target='_blank' rel="noopener noreferrer" className="desktop-social-icon"><i className="fa-brands fa-instagram"></i></a>
@@ -111,6 +112,9 @@ const Navbar = ({ rusevi, turkiyeRusyaBayrak }) => {
               <a href="https://t.me/ankara_rusevi" target='_blank' rel="noopener noreferrer" className="sidebar-social-icon-link" onClick={toggleSidebar}>
                 <i className="fa-brands fa-telegram fs-4"></i>
               </a>
+              <a href="https://www.facebook.com/RSinTurkey/" target='_blank' rel="noopener noreferrer" className="sidebar-social-icon-link" onClick={toggleSidebar}>
+                <i className="fa-brands fa-square-facebook fs-4"></i>
+              </a>
               <a href="tel:+903124420218" className="sidebar-social-icon-link" onClick={toggleSidebar}>
                 <i className="fa-solid fa-square-phone fs-4"></i>
               </a>
@@ -137,9 +141,6 @@ const Navbar = ({ rusevi, turkiyeRusyaBayrak }) => {
             </li>
             <li className="nav-item">
               <Link to="/yayinlar" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-book-open"></i> Yayınlar</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/credit" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-user"></i> Ekibe Katılın!</Link>
             </li>
             <li className="nav-item">
               <Link to="/konsolosluklar" className="nav-link-item text-white text-decoration-none py-2 d-block" onClick={toggleSidebar}><i className="fa-solid fa-building-columns"></i> Konsolosluklar</Link>
@@ -170,7 +171,7 @@ const Navbar = ({ rusevi, turkiyeRusyaBayrak }) => {
             </li>
             <li className="nav-item">
               <a href="https://turkiye.rs.gov.ru/" className="nav-link-item text-white text-decoration-none text-uppercase rusLink-sidebar py-2 d-block" target="_blank" rel="noreferrer" onClick={toggleSidebar}>
-                Русский Дом
+                Ankara Rus Evi
                 <i className="fa-solid fa-arrow-right mainpageRight ms-1"></i>
               </a>
             </li>

@@ -20,7 +20,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import TurkeyMap from './TurkeyMap';
-import RusenFoto from "./images/rusen.jpg";
+import lukoil from "./images/lukoil.png";
 import MumessilikFoto from "./images/mumessilik.jpg";
 import SputnikFoto from "./images/sputnik.jpg";
 import RTFoto from "./images/RT.png"
@@ -143,7 +143,7 @@ Türkiye genelindeki tüm Rusya Federasyonuna ait eğitim ve resmi kurumlara ula
                   <div className='photo-dark-overlay'></div>
                   <div className='kurumCard-content'>
                     <div className='custom-fit p-2 d-inline-block ms-2'>
-                      <p className='d-inline mb-0'>Şirket</p>
+                      <p className='d-inline mb-0'>Petrol ve Doğal Gaz Şirketi</p>
                     </div>
                     <div className='kurumCardYazilar p-3'>
                       <h5>Gazprom</h5>
@@ -207,16 +207,16 @@ Türkiye genelindeki tüm Rusya Federasyonuna ait eğitim ve resmi kurumlara ula
               {/* card 8 */}
               <div className='px-2'>
                 <div className='kurumCard h-100'>
-                  <img src={RusenFoto} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
+                  <img src={lukoil} className='rounded-4 card-img-top' alt="Akkuyu Projesi" />
                   <div className='photo-dark-overlay'></div>
                   <div className='kurumCard-content'>
                     <div className='custom-fit p-2 d-inline-block ms-2'>
-                      <p className='d-inline mb-0'>Rusya Araştırmaları Enstitüsü</p>
+                      <p className='d-inline mb-0'>Petrol ve Doğal Gaz Şirketi</p>
                     </div>
                     <div className='kurumCardYazilar p-3'>
-                      <h5>Rusen</h5>
+                      <h5>Lukoil</h5>
                       <p>Rusya ve Avrasya üzerine akademik ve kültürel çalışmalar yürüten RUSEN, karşılıklı anlayış, işbirliği ve entelektüel etkileşimi teşvik eden, Türkiye merkezli bir düşünce kuruluşudur.</p>
-                      <Link to="/rusen" className='btn kurumButton'>Kurumu Görün!</Link>
+                      <Link to="/Lukoil" className='btn kurumButton'>Kurumu Görün!</Link>
                     </div>
                   </div>
                 </div>

@@ -1,28 +1,63 @@
 {
+  "TR34":[
+    {
+      "plaka": "TR34",
+      "name": " Rus Askerlerinin Anıtı",
+      "description": "1828–1829 Osmanlı-Rus Savaşı sırasında esir düşen ve Haybeliada’da hayatını kaybeden Rus askerlerinin anısına",
+      "type": "Tarihi Olaylar ve Diplomatik İzler",
+      "image": "./images/rusAskeriAnit.jpg",
+      "RusLink":"/rus-askerleri-aniti"
+
+    }
+  ],
+  "TR07":[
+    {
+      "plaka": "TR07",
+      "name": "Büyükelçi Andrey Karlov’un Aziz Hatırası",
+      "description": "Barış ve dostluk uğruna görev başında hayatını kaybeden Büyükelçi Andrey Karlov’un aziz hatırasına",
+      "type": "Tarihi Olaylar ve Diplomatik İzler",
+      "image": "./images/andreyKarlovAnit.jpg",
+      "RusLink":"/andrey-karlovun-hatirasi"
+
+    }
+  ],
+  "TR17":[
+    {
+      "plaka": "TR17",
+      "name": "Gelibolu’da Rusların Anısına Yapılan Hatıra",
+      "description": "1920-1921 yıllarında hayatını kaybeden Rus askerlerinin anısına yapılan anıt, Rossotrudnichestvo Türkiye Temsilciliği tarafından korunmakta ve restore edilmektedir. Tarihe saygı, kültürel mirasa vefa.",
+      "type": "Tarihi Olaylar ve Diplomatik İzler",
+      "image": "./images/geliboluFotoDikey.jpg",
+      "RusLink":"/gelibolu-hatirasi"
+
+    }
+  ],
   "TR36": [
     {
       "plaka": "TR36",
       "name": "Kars Fethiye Camii",
       "description": "19. yüzyılda Rus Ortodoks Kilisesi olarak inşa edilen bu yapı, bugün cami olarak hizmet vermektedir.",
       "type": "Dini ve Mezhepsel İzler",
-      "address": "Fethiye, Kars",
-      "website": "https://tr.wikipedia.org/wiki/Fethiye_Camii_(Kars)"
+      "image": "./images/fethiyeCamii.jpeg",
+      "RusLink":"/fethiyeCamii"
+
     },
     {
       "plaka": "TR36",
       "name": "Kars Defterdarlığı",
       "description": "19. yüzyılın sonlarında inşa edilen Kars Defterdarlığı Binası, Rus dönemi Baltık mimarisinin izlerini taşıyan tarihî bir kamu yapısıdır.",
       "type": "Mimari ve Tarihi Yapılar",
-      "address": "Kars",
-      "website": "https://kars.gib.gov.tr/"
+      "image": "./images/karsDefterdarligi.jpeg",
+      "RusLink":"/kars-defterdarligi"
+
     },
     {
       "plaka": "TR36",
       "name": "Kars İl Sağlık Müdürlüğü Binası",
       "description": "19. yüzyıl sonlarında inşa edilen İl Sağlık Müdürlüğü Binası, Kars'ta Rus dönemi Baltık mimarisinin sade ve işlevsel izlerini taşıyan özgün bir kamu yapısıdır.",
       "type": "Mimari ve Tarihi Yapılar",
-      "address": "Kars",
-      "website": "https://karsism.saglik.gov.tr/"
-    }
+      "image": "./images/karsİlSaglik.jpeg",
+      "RusLink":"/kars-il-saglik"
+       }
   ]
 }
