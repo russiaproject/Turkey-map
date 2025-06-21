@@ -145,9 +145,14 @@ const AnimatedRoutes = () => {
             <Credit />
           </AnimatedPage>
         } />
-        <Route path="/Yayinlar" element={
+        <Route path="/yayinlar" element={
           <AnimatedPage>
             <Yayinlar />
+          </AnimatedPage>
+        } />
+        <Route path="/yayin/:id" element={
+          <AnimatedPage>
+            <YayinDetay />
           </AnimatedPage>
         } />
         <Route path="/rusyaburslari" element={
