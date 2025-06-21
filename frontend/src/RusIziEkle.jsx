@@ -80,7 +80,14 @@ const RusIziEkle = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/user-rusizi-application', {
+      console.log('📝 Form submit başlıyor...');
+      console.log('📋 Form Data:', formData);
+      
+      // ✅ DOĞRU API URL
+      const url = 'http://localhost:8080/api/user-rusizi-application';
+      console.log('📡 API URL:', url);
+
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -88,12 +95,18 @@ const RusIziEkle = () => {
         body: JSON.stringify(formData)
       });
 
+      console.log('📊 Response Status:', response.status);
+      console.log('📋 Response OK:', response.ok);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('❌ API Error:', errorData);
         throw new Error(errorData.error || 'Başvuru gönderilemedi');
       }
 
       const data = await response.json();
+      console.log('✅ API Success:', data);
+      
       showMessage('✅ Rus izi bilginiz başarıyla gönderildi! İncelendikten sonra yayınlanacaktır.', 'success');
       
       // Formu temizle
@@ -114,7 +127,7 @@ const RusIziEkle = () => {
       }
 
     } catch (error) {
-      console.error('Başvuru hatası:', error);
+      console.error('❌ Form submit hatası:', error);
       showMessage(`❌ Başvuru gönderilirken hata oluştu: ${error.message}`, 'error');
     } finally {
       setLoading(false);
