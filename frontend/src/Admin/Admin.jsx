@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import rusIzleriData from '../data/rus_izleri.json';
 
+// Backend URL'sini buradan değiştirebilirsiniz
+const BACKEND_URL = 'https://turkey-map-wh2i.onrender.com';
+
 const Login = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
     username: '',
@@ -23,7 +26,11 @@ const Login = ({ onLoginSuccess }) => {
     setLoading(true);
     
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/login', {
+      console.log('🚀 Login request başlatılıyor...');
+      console.log('📡 Backend URL:', 'https://turkey-map-wh2i.onrender.com/api/login');
+      console.log('📝 Gönderilen data:', { username: formData.username, password: '***' });
+      
+      const response = await fetch(`${BACKEND_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -34,18 +41,37 @@ const Login = ({ onLoginSuccess }) => {
         })
       });
       
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response ok:', response.ok);
+      
       if (!response.ok) {
-        throw new Error('Giriş başarısız');
+        const errorText = await response.text();
+        console.error('❌ Backend error response:', errorText);
+        throw new Error(`Backend hatası: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();
+      console.log('✅ Login başarılı, response data:', data);
       
       if (data && data.token) {
         onLoginSuccess(data.token, data.username);
+      } else {
+        throw new Error('Token alınamadı');
       }
     } catch (error) {
-      console.error('Giriş hatası:', error);
-      setError('Kullanıcı adı veya şifre hatalı');
+      console.error('❌ Giriş hatası:', error);
+      
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        setError('🔌 Backend sunucusuna bağlanılamıyor. Sunucu çalışmıyor olabilir.');
+      } else if (error.message.includes('CORS')) {
+        setError('🔒 CORS hatası. Backend CORS ayarlarını kontrol edin.');
+      } else if (error.message.includes('401')) {
+        setError('🚫 Kullanıcı adı veya şifre hatalı');
+      } else if (error.message.includes('500')) {
+        setError('🛠️ Sunucu hatası. Backend loglarını kontrol edin.');
+      } else {
+        setError(`❌ Bağlantı hatası: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
