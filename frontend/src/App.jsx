@@ -24,6 +24,7 @@ import TurkeyMap from './TurkeyMap'
 import Credit from "./Credit"
 import akkuyuFoto from "./images/akkuyuFoto.jpg";
 import Yayinlar from './Yayinlar'
+import YayinDetay from './YayinDetay'
 import RusyaBurslari from './RusyaBurslari'
 import KayitOl from './KayitOl'
 import Konsolosluklar from './Konsolosluklar'
@@ -51,7 +52,6 @@ import KarsIlSaglik from './KarsIlSaglik';
 import MezuniyetKulubu from './Mezuniyet'
 import MezuniyetUye from './MezuniyetUye'
 import Avrasyacilik from './Avrasyacilik'
-import YayinlarEkle from './YayinlarEkle'
 import Gashigullin from './Gashigullin'
 import GeliboluHatira from './GeliboluHatira'
 import RusAskeriAnit from './RusAskeriAnit'
@@ -278,11 +278,6 @@ const AnimatedRoutes = () => {
         <Route path="/avrasyacilik" element={
           <AnimatedPage>
             <Avrasyacilik />
-          </AnimatedPage>
-        } />
-        <Route path="/yayinlar-ekle" element={
-          <AnimatedPage>
-            <YayinlarEkle />
           </AnimatedPage>
         } />
          <Route path="/gashigullin" element={
