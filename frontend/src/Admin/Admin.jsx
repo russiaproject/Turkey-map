@@ -8,7 +8,7 @@ const Login = ({ onLoginSuccess }) => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({
@@ -16,14 +16,14 @@ const Login = ({ onLoginSuccess }) => {
       [id === 'kullaniciAdi' ? 'username' : 'password']: value
     });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    
+
     try {
-      const response = await fetch('http://localhost:8080/api/login', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -33,13 +33,13 @@ const Login = ({ onLoginSuccess }) => {
           password: formData.password
         })
       });
-      
+
       if (!response.ok) {
         throw new Error('Giriş başarısız');
       }
-      
+
       const data = await response.json();
-      
+
       if (data && data.token) {
         onLoginSuccess(data.token, data.username);
       }
@@ -50,44 +50,44 @@ const Login = ({ onLoginSuccess }) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="w-100 position-relative">
       <div className="container">
         <div className="d-flex justify-content-center align-items-center w-100 vh-100">
           <div className="w-50 p-5 shadow-lg rounded-4">
             <h3 className="text-center">Admin Girişi</h3>
-            
+
             {error && (
               <div className="alert alert-danger mt-3">{error}</div>
             )}
-            
+
             <div className="w-75 py-4 mx-auto">
               <label htmlFor="kullaniciAdi" style={{fontWeight:"500"}}>Kullanıcı Adı</label>
-              <input 
-                type="text" 
-                className="form-control mt-3 p-3 rounded-4" 
-                id="kullaniciAdi" 
+              <input
+                type="text"
+                className="form-control mt-3 p-3 rounded-4"
+                id="kullaniciAdi"
                 placeholder="Kullanıcı Adı"
                 value={formData.username}
                 onChange={handleChange}
                 required
               />
-              
+
               <label htmlFor="sifre" className="mt-4" style={{fontWeight:"500"}}>Şifre</label>
-              <input 
-                type="password" 
-                className="form-control mt-3 p-3 rounded-4" 
-                id="sifre" 
+              <input
+                type="password"
+                className="form-control mt-3 p-3 rounded-4"
+                id="sifre"
                 placeholder="Şifre"
                 value={formData.password}
                 onChange={handleChange}
                 required
               />
-              
+
               <div className="mt-4 text-center">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-primary text-center"
                   disabled={loading}
                   onClick={handleSubmit}
@@ -122,8 +122,8 @@ const Admin = () => {
   const [success, setSuccess] = useState('');
   const [token, setToken] = useState('');
   const [username, setUsername] = useState('');
-  
-  // Kurum yönetimi state'leri
+
+  // Institution management states
   const [institutions, setInstitutions] = useState([]);
   const [filteredInstitutions, setFilteredInstitutions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -138,7 +138,7 @@ const Admin = () => {
     website: ''
   });
 
-  // Rus İzi yönetimi state'leri
+  // Russian Trace management states
   const [currentRusIzleri, setCurrentRusIzleri] = useState(rusIzleriData);
   const [newRusIzi, setNewRusIzi] = useState({
     plaka: '',
@@ -152,7 +152,7 @@ const Admin = () => {
   const [editingRusIzi, setEditingRusIzi] = useState(null);
   const [showRusIziEditModal, setShowRusIziEditModal] = useState(false);
 
-  // Yayın yönetimi state'leri
+  // Publication management states
   const [publications, setPublications] = useState([]);
   const [filteredPublications, setFilteredPublications] = useState([]);
   const [publicationSearchTerm, setPublicationSearchTerm] = useState('');
@@ -175,7 +175,7 @@ const Admin = () => {
     isCopyrighted: false
   });
 
-  // Türkiye plaka kodları ve şehirler
+  // Turkish license plates and cities
   const plakaKodlari = {
     '01': 'Adana', '02': 'Adıyaman', '03': 'Afyonkarahisar', '04': 'Ağrı', '05': 'Amasya',
     '06': 'Ankara', '07': 'Antalya', '08': 'Artvin', '09': 'Aydın', '10': 'Balıkesir',
@@ -196,7 +196,7 @@ const Admin = () => {
     '81': 'Düzce'
   };
 
-  // CSS stilleri - Boşluk sorununu çözmek için
+  // CSS styles - To fix spacing issue
   const textAreaStyle = {
     whiteSpace: 'pre-wrap',
     lineHeight: '1.5',
@@ -225,7 +225,7 @@ const Admin = () => {
       fetchInstitutions();
       fetchGraduationApplications();
       fetchUserRusIziApplications();
-      fetchCurrentRusIzleri(); 
+      fetchCurrentRusIzleri();
       fetchPublications();
       fetchUserPublicationApplications();
     }
@@ -239,12 +239,12 @@ const Admin = () => {
     }
   }, [searchTerm, institutions]);
 
-  // Yayın arama filtreleme
+  // Publication search filtering
   useEffect(() => {
     if (publicationSearchTerm === '') {
       setFilteredPublications(publications);
     } else {
-      const filtered = publications.filter(pub => 
+      const filtered = publications.filter(pub =>
         pub.title.toLowerCase().includes(publicationSearchTerm.toLowerCase()) ||
         pub.authors.toLowerCase().includes(publicationSearchTerm.toLowerCase()) ||
         pub.type.toLowerCase().includes(publicationSearchTerm.toLowerCase()) ||
@@ -282,24 +282,24 @@ const Admin = () => {
     }
   };
 
-  // Yayın yönetimi fonksiyonları
+  // Publication management functions
   const fetchPublications = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/admin/publications', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publications', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`API Hatası: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setPublications(data || []);
       setFilteredPublications(data || []);
-      
+
     } catch (error) {
       console.error('❌ Yayınlar API hatası:', error);
       showMessage('Yayınlar yüklenirken hata oluştu: ' + error.message, 'error');
@@ -308,13 +308,13 @@ const Admin = () => {
 
   const fetchUserPublicationApplications = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/admin/user-publication-applications?status=all', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/user-publication-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           setUserPublicationApplications([]);
@@ -322,44 +322,44 @@ const Admin = () => {
         }
         throw new Error(`API Hatası: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setUserPublicationApplications(data || []);
-      
+
     } catch (error) {
       console.error('❌ Kullanıcı yayın başvuruları hatası:', error);
       setUserPublicationApplications([]);
     }
   };
 
-  // DÜZELTME: Boşluk korunması için özel handlePublicationChange
+  // CORRECTION: Special handlePublicationChange for preserving spaces
   const handlePublicationChange = (e) => {
     const { name, value } = e.target;
-    // Değeri olduğu gibi koruyoruz, trim() yapmıyoruz
+    // We preserve the value as is, we don't trim() it
     setNewPublication(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value // Preserving spaces
     }));
   };
 
   const handlePublicationSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validation yaparken trim kullanıyoruz ama state'i değiştirmiyoruz
-    if (!newPublication.title?.trim() || !newPublication.authors?.trim() || !newPublication.type || 
+
+    // We use trim for validation but don't change the state
+    if (!newPublication.title?.trim() || !newPublication.authors?.trim() || !newPublication.type ||
         !newPublication.shortAbstract?.trim() || !newPublication.description?.trim()) {
       showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/admin/publication', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publication', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newPublication) // Boşlukları koruyarak gönderiyoruz
+        body: JSON.stringify(newPublication) // Sending with preserved spaces
       });
 
       if (!response.ok) {
@@ -369,7 +369,7 @@ const Admin = () => {
       const result = await response.json();
       showMessage('✅ Yayın başarıyla eklendi!');
 
-      // Formu temizle
+      // Clear the form
       setNewPublication({
         title: '',
         authors: '',
@@ -386,9 +386,9 @@ const Admin = () => {
         isCopyrighted: false
       });
 
-      // Verileri yenile
+      // Refresh data
       fetchPublications();
-      
+
     } catch (error) {
       console.error('❌ Yayın ekleme hatası:', error);
       showMessage('Yayın eklenirken hata oluştu: ' + error.message, 'error');
@@ -402,9 +402,9 @@ const Admin = () => {
 
   const handleUpdatePublication = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/publication/${editingPublication.id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/publication/${editingPublication.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -418,12 +418,12 @@ const Admin = () => {
       }
 
       showMessage('✅ Yayın başarıyla güncellendi!');
-      
+
       setShowPublicationEditModal(false);
       setEditingPublication(null);
 
       fetchPublications();
-      
+
     } catch (error) {
       console.error('❌ Yayın güncelleme hatası:', error);
       showMessage('Yayın güncellenirken hata oluştu: ' + error.message, 'error');
@@ -436,7 +436,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/publication/${id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/publication/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -450,7 +450,7 @@ const Admin = () => {
 
       showMessage('✅ Yayın başarıyla silindi!');
       fetchPublications();
-      
+
     } catch (error) {
       console.error('❌ Yayın silme hatası:', error);
       showMessage('Yayın silinirken hata oluştu: ' + error.message, 'error');
@@ -459,7 +459,7 @@ const Admin = () => {
 
   const updateUserPublicationApplicationStatus = async (id, status, adminNote = '') => {
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/user-publication-application/${id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/user-publication-application/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -467,17 +467,17 @@ const Admin = () => {
         },
         body: JSON.stringify({ status, adminNote })
       });
-      
+
       if (!response.ok) {
         throw new Error(`Durum güncellenemedi: ${response.status}`);
       }
-      
-      // Eğer başvuru onaylandıysa, otomatik olarak yayın listesine ekle
+
+      // If the application is approved, automatically add it to the publication list
       if (status === 'approved') {
         const application = userPublicationApplications.find(app => app.id === id);
         if (application) {
           try {
-            const addResponse = await fetch('http://localhost:8080/api/admin/publication-from-application', {
+            const addResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publication-from-application', {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -504,22 +504,22 @@ const Admin = () => {
               throw new Error(`Yayın ekleme hatası: ${addResponse.status}`);
             }
 
-            fetchPublications(); // Yayın listesini yenile
+            fetchPublications(); // Refresh publication list
           } catch (error) {
             console.error('❌ Yayın ekleme hatası:', error);
             showMessage('Başvuru onaylandı ama yayın eklenirken hata oluştu', 'error');
           }
         }
       }
-      
+
       fetchUserPublicationApplications();
-      
+
       if (status === 'approved') {
         showMessage('✅ Başvuru onaylandı ve yayın listesine eklendi!');
       } else {
         showMessage('Kullanıcı yayın başvuru durumu güncellendi!');
       }
-      
+
     } catch (error) {
       console.error('❌ Durum güncelleme hatası:', error);
       showMessage('Durum güncellenirken hata oluştu', 'error');
@@ -530,46 +530,46 @@ const Admin = () => {
     if (!window.confirm('Bu kullanıcı yayın başvurusunu silmek istediğinize emin misiniz?')) {
       return;
     }
-    
+
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/user-publication-application/${id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/user-publication-application/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`Silme işlemi başarısız: ${response.status}`);
       }
-      
+
       fetchUserPublicationApplications();
       showMessage('Kullanıcı yayın başvurusu silindi!');
-      
+
     } catch (error) {
       console.error('❌ Silme hatası:', error);
       showMessage('Silme işlemi sırasında hata oluştu', 'error');
     }
   };
 
-  // Rus İzi fonksiyonları (devam ediyor...)
+  // Russian Trace functions (continued...)
   const fetchCurrentRusIzleri = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/admin/rus-izleri', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izleri', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`API Hatası: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
-      // Database formatından JSON formatına dönüştür
+
+      // Convert from database format to JSON format
       const groupedData = {};
       data.forEach(rusIzi => {
         const plaka = rusIzi.plaka;
@@ -578,12 +578,12 @@ const Admin = () => {
         }
         groupedData[plaka].push({
           ...rusIzi,
-          id: rusIzi.id // Database ID'sini koru
+          id: rusIzi.id // Preserve Database ID
         });
       });
-      
+
       setCurrentRusIzleri(groupedData);
-      
+
       return groupedData;
     } catch (error) {
       console.error('❌ Rus İzleri API hatası:', error);
@@ -592,26 +592,26 @@ const Admin = () => {
     }
   };
 
-  // DÜZELTME: Boşluk korunması için özel handleRusIziChange
+  // CORRECTION: Special handleRusIziChange for preserving spaces
   const handleRusIziChange = (e) => {
     const { name, value } = e.target;
     setNewRusIzi(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value // Preserving spaces
     }));
   };
 
   const handleRusIziSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!newRusIzi.plaka?.trim() || !newRusIzi.name?.trim() || !newRusIzi.description?.trim() || 
+
+    if (!newRusIzi.plaka?.trim() || !newRusIzi.name?.trim() || !newRusIzi.description?.trim() ||
         !newRusIzi.type || !newRusIzi.address?.trim()) {
       showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/admin/rus-izi', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izi', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -634,7 +634,7 @@ const Admin = () => {
       const result = await response.json();
       showMessage('✅ Rus İzi başarıyla eklendi ve JSON dosyası güncellendi!');
 
-      // Formu temizle
+      // Clear the form
       setNewRusIzi({
         plaka: '',
         name: '',
@@ -644,9 +644,9 @@ const Admin = () => {
         website: ''
       });
 
-      // Verileri yenile
+      // Refresh data
       fetchCurrentRusIzleri();
-      
+
     } catch (error) {
       console.error('❌ Rus İzi ekleme hatası:', error);
       showMessage('Rus İzi eklenirken hata oluştu: ' + error.message, 'error');
@@ -660,11 +660,11 @@ const Admin = () => {
 
   const handleUpdateRusIzi = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const rusIziId = editingRusIzi.id; // Database ID kullan
-      
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${rusIziId}`, {
+      const rusIziId = editingRusIzi.id; // Use Database ID
+
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/rus-izi/${rusIziId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -685,12 +685,12 @@ const Admin = () => {
       }
 
       showMessage('✅ Rus İzi başarıyla güncellendi!');
-      
+
       setShowRusIziEditModal(false);
       setEditingRusIzi(null);
 
       fetchCurrentRusIzleri();
-      
+
     } catch (error) {
       console.error('❌ Rus İzi güncelleme hatası:', error);
       showMessage('Rus İzi güncellenirken hata oluştu: ' + error.message, 'error');
@@ -703,9 +703,9 @@ const Admin = () => {
     }
 
     try {
-      const rusIziId = rusIzi.id; // Database ID kullan
-      
-      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${rusIziId}`, {
+      const rusIziId = rusIzi.id; // Use Database ID
+
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/rus-izi/${rusIziId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -719,16 +719,16 @@ const Admin = () => {
 
       showMessage('✅ Rus İzi başarıyla silindi!');
 
-      // Verileri yenile
+      // Refresh data
       fetchCurrentRusIzleri();
-      
+
     } catch (error) {
       console.error('❌ Rus İzi silme hatası:', error);
       showMessage('Rus İzi silinirken hata oluştu: ' + error.message, 'error');
     }
   };
 
-  // Rus İzlerini listele
+  // List all Russian Traces
   const getAllRusIzleri = () => {
     const allRusIzleri = [];
     Object.keys(currentRusIzleri).forEach(plakaCode => {
@@ -744,22 +744,22 @@ const Admin = () => {
     return allRusIzleri;
   };
 
-  // Mezuniyet kulübü fonksiyonları
+  // Graduation club functions
   const fetchGraduationApplications = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/admin/graduation-applications?status=all', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/graduation-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Mezuniyet başvuruları alınamadı');
       }
-      
+
       const data = await response.json();
       setGraduationApplications(data || []);
-      
+
     } catch (error) {
       console.error('❌ Mezuniyet başvuruları yüklenirken hata:', error);
       showMessage('Mezuniyet başvuruları yüklenirken hata oluştu: ' + error.message, 'error');
@@ -768,7 +768,7 @@ const Admin = () => {
 
   const updateGraduationApplicationStatus = async (id, status) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/graduation-application/${id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/graduation-application/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -776,11 +776,11 @@ const Admin = () => {
         },
         body: JSON.stringify({ status })
       });
-      
+
       if (!response.ok) {
         throw new Error('Durum güncellenemedi');
       }
-      
+
       fetchGraduationApplications();
       showMessage('Mezuniyet başvuru durumu güncellendi!');
     } catch (error) {
@@ -793,19 +793,19 @@ const Admin = () => {
     if (!window.confirm('Bu mezuniyet başvurusunu silmek istediğinize emin misiniz?')) {
       return;
     }
-    
+
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/graduation-application/${id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/graduation-application/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Silme işlemi başarısız');
       }
-      
+
       fetchGraduationApplications();
       showMessage('Mezuniyet başvurusu silindi!');
     } catch (error) {
@@ -814,34 +814,34 @@ const Admin = () => {
     }
   };
 
-  // Kullanıcı Rus İzi fonksiyonları
+  // User Russian Trace functions
   const fetchUserRusIziApplications = async () => {
     try {
-      const url = 'http://localhost:8080/api/admin/user-rusizi-applications?status=all';
-      
+      const url = 'https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-applications?status=all';
+
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           setUserRusIziApplications([]);
           return;
         }
-        
+
         const errorText = await response.text();
         throw new Error(`Kullanıcı Rus İzi başvuruları alınamadı: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setUserRusIziApplications(data || []);
-      
+
     } catch (error) {
       console.error('❌ fetchUserRusIziApplications hatası:', error);
-      
+
       if (error.message.includes('404')) {
         setUserRusIziApplications([]);
         showMessage('Kullanıcı Rus İzi modülü henüz backend\'de aktif değil', 'error');
@@ -853,8 +853,8 @@ const Admin = () => {
 
   const updateUserRusIziApplicationStatus = async (id, status, adminNot = '') => {
     try {
-      const url = `http://localhost:8080/api/admin/user-rusizi-application/${id}`;
-      
+      const url = `https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-application/${id}`;
+
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -863,18 +863,18 @@ const Admin = () => {
         },
         body: JSON.stringify({ status, adminNot })
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Durum güncellenemedi: ${response.status}`);
       }
 
-      // Eğer başvuru onaylandıysa JSON'a ekle
+      // If the application is approved, add it to JSON
       if (status === 'approved') {
         const application = userRusIziApplications.find(app => app.id === id);
         if (application) {
           try {
-            const addResponse = await fetch('http://localhost:8080/api/admin/rus-izi-from-application', {
+            const addResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izi-from-application', {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -897,15 +897,15 @@ const Admin = () => {
           }
         }
       }
-      
+
       fetchUserRusIziApplications();
-      
+
       if (status === 'approved') {
         showMessage('✅ Başvuru onaylandı ve haritaya eklendi!');
       } else {
         showMessage('Kullanıcı Rus İzi başvuru durumu güncellendi!');
       }
-      
+
     } catch (error) {
       console.error('❌ updateUserRusIziApplicationStatus hatası:', error);
       showMessage('Durum güncellenirken hata oluştu', 'error');
@@ -916,10 +916,10 @@ const Admin = () => {
     if (!window.confirm('Bu kullanıcı başvurusunu silmek istediğinize emin misiniz?')) {
       return;
     }
-    
+
     try {
-      const url = `http://localhost:8080/api/admin/user-rusizi-application/${id}`;
-      
+      const url = `https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-application/${id}`;
+
       const response = await fetch(url, {
         method: 'DELETE',
         headers: {
@@ -927,36 +927,36 @@ const Admin = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Silme işlemi başarısız: ${response.status}`);
       }
-      
+
       fetchUserRusIziApplications();
       showMessage('Kullanıcı başvurusu silindi!');
-      
+
     } catch (error) {
       console.error('❌ deleteUserRusIziApplication hatası:', error);
       showMessage('Silme işlemi sırasında hata oluştu', 'error');
     }
   };
 
-  // Kurum fonksiyonları
+  // Institution functions
   const fetchInstitutions = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/admin/institutions', {
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/institutions', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Kurumlar alınamadı: ${response.status} - ${errorText}`);
       }
-      
+
       const data = await response.json();
       setInstitutions(data || []);
       setFilteredInstitutions(data || []);
@@ -968,23 +968,23 @@ const Admin = () => {
 
   const performSearch = async (searchQuery) => {
     if (!searchQuery) return;
-    
+
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Arama başarısız');
       }
-      
+
       const data = await response.json();
       setFilteredInstitutions(data.results || []);
     } catch (error) {
       console.error('Arama hatası:', error);
-      const filtered = institutions.filter(inst => 
+      const filtered = institutions.filter(inst =>
         inst.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inst.plaka.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inst.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -994,12 +994,12 @@ const Admin = () => {
     }
   };
 
-  // DÜZELTME: Boşluk korunması için özel handleInstitutionChange
+  // CORRECTION: Special handleInstitutionChange for preserving spaces
   const handleInstitutionChange = (e) => {
     const { name, value } = e.target;
     setNewInstitution(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value // Preserving spaces
     }));
   };
 
@@ -1007,19 +1007,19 @@ const Admin = () => {
     const { name, value } = e.target;
     setEditingInstitution(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value // Preserving spaces
     }));
   };
 
   const handleInstitutionSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!newInstitution.plaka?.trim() || !newInstitution.name?.trim() || !newInstitution.description?.trim() || 
+
+    if (!newInstitution.plaka?.trim() || !newInstitution.name?.trim() || !newInstitution.description?.trim() ||
         !newInstitution.type || !newInstitution.address?.trim()) {
       showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
       return;
     }
-    
+
     try {
       const institutionData = {
         plaka: newInstitution.plaka,
@@ -1029,8 +1029,8 @@ const Admin = () => {
         address: newInstitution.address,
         website: newInstitution.website || ''
       };
-      
-      const response = await fetch('http://localhost:8080/api/admin/institution', {
+
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/institution', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1038,14 +1038,14 @@ const Admin = () => {
         },
         body: JSON.stringify(institutionData)
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Kurum eklenemedi: ${response.status} - ${errorText}`);
       }
-      
+
       showMessage('Kurum başarıyla eklendi!');
-      
+
       setNewInstitution({
         plaka: '',
         name: '',
@@ -1054,9 +1054,9 @@ const Admin = () => {
         address: '',
         website: ''
       });
-      
+
       fetchInstitutions();
-      
+
     } catch (error) {
       console.error('❌ Kurum eklenirken hata:', error);
       showMessage(`Kurum eklenirken hata: ${error.message}`, 'error');
@@ -1070,9 +1070,9 @@ const Admin = () => {
 
   const handleUpdateInstitution = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/institution/${editingInstitution.id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institution/${editingInstitution.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1080,18 +1080,18 @@ const Admin = () => {
         },
         body: JSON.stringify(editingInstitution)
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Kurum güncellenemedi: ${response.status} - ${errorText}`);
       }
-      
+
       showMessage('Kurum bilgileri güncellendi!');
       setShowEditModal(false);
       setEditingInstitution(null);
-      
+
       fetchInstitutions();
-      
+
     } catch (error) {
       console.error('Kurum güncellenirken hata:', error);
       showMessage(`Kurum güncellenirken hata: ${error.message}`, 'error');
@@ -1102,19 +1102,19 @@ const Admin = () => {
     if (!window.confirm('Bu kurumu silmek istediğinize emin misiniz?')) {
       return;
     }
-    
+
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/institution/${id}`, {
+      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institution/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Kurum silinemedi');
       }
-      
+
       showMessage('Kurum silindi!');
       fetchInstitutions();
     } catch (error) {
@@ -1125,22 +1125,22 @@ const Admin = () => {
 
   const downloadJsonFile = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/institutions');
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/institutions');
       if (!response.ok) {
         throw new Error('JSON indirilemedi');
       }
-      
+
       const data = await response.json();
       const dataStr = JSON.stringify(data, null, 2);
       const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
+
       const exportFileDefaultName = 'russian_institutions.json';
-      
+
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
-      
+
       showMessage('JSON dosyası indirildi!');
     } catch (error) {
       console.error('JSON indirme hatası:', error);
@@ -1148,24 +1148,24 @@ const Admin = () => {
     }
   };
 
-  // Rus İzleri JSON'ını indir (güncel dosyadan)
+  // Download Russian Traces JSON (from current file)
   const downloadRusIzleriJson = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/rus-izleri');
-      
+      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/rus-izleri');
+
       if (!response.ok) {
         throw new Error(`API Hatası: ${response.status}`);
       }
-      
+
       const data = await response.json();
       const dataStr = JSON.stringify(data, null, 2);
       const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
+
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', 'rus_izleri.json');
       linkElement.click();
-      
+
       showMessage('📥 Güncel Rus İzleri JSON dosyası indirildi!');
     } catch (error) {
       console.error('JSON indirme hatası:', error);
@@ -1173,41 +1173,41 @@ const Admin = () => {
     }
   };
 
-  // Genel başvuru fonksiyonları
+  // General application functions
   const fetchApplications = async () => {
     setLoading(true);
-    
+
     try {
-      const teamResponse = await fetch('http://localhost:8080/api/admin/team-applications?status=all', {
+      const teamResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/team-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!teamResponse.ok) {
         throw new Error('Ekip başvuruları alınamadı');
       }
-      
+
       const teamData = await teamResponse.json();
       setTeamApplications(teamData || []);
 
-      const partnershipResponse = await fetch('http://localhost:8080/api/admin/partnership-applications?status=all', {
+      const partnershipResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/partnership-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!partnershipResponse.ok) {
         throw new Error('İşbirliği başvuruları alınamadı');
       }
-      
+
       const partnershipData = await partnershipResponse.json();
       setPartnershipApplications(partnershipData || []);
-      
+
     } catch (error) {
       console.error('❌ Başvurular yüklenirken hata:', error);
       showMessage('Başvurular yüklenirken hata oluştu: ' + error.message, 'error');
-      
+
       if (error.message.includes('401')) {
         handleLogout();
       }
@@ -1218,10 +1218,10 @@ const Admin = () => {
 
   const updateApplicationStatus = async (id, status, type) => {
     try {
-      const endpoint = type === 'team' 
-        ? `http://localhost:8080/api/admin/team-application/${id}`
-        : `http://localhost:8080/api/admin/partnership-application/${id}`;
-      
+      const endpoint = type === 'team'
+        ? `https://turkey-map-wh2i.onrender.com/api/admin/team-application/${id}`
+        : `https://turkey-map-wh2i.onrender.com/api/admin/partnership-application/${id}`;
+
       const response = await fetch(endpoint, {
         method: 'PUT',
         headers: {
@@ -1230,11 +1230,11 @@ const Admin = () => {
         },
         body: JSON.stringify({ status })
       });
-      
+
       if (!response.ok) {
         throw new Error('Durum güncellenemedi');
       }
-      
+
       fetchApplications();
       showMessage('Başvuru durumu güncellendi!');
     } catch (error) {
@@ -1247,23 +1247,23 @@ const Admin = () => {
     if (!window.confirm('Bu başvuruyu silmek istediğinize emin misiniz?')) {
       return;
     }
-    
+
     try {
-      const endpoint = type === 'team' 
-        ? `http://localhost:8080/api/admin/team-application/${id}`
-        : `http://localhost:8080/api/admin/partnership-application/${id}`;
-      
+      const endpoint = type === 'team'
+        ? `https://turkey-map-wh2i.onrender.com/api/admin/team-application/${id}`
+        : `https://turkey-map-wh2i.onrender.com/api/admin/partnership-application/${id}`;
+
       const response = await fetch(endpoint, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Silme işlemi başarısız');
       }
-      
+
       fetchApplications();
       showMessage('Başvuru silindi!');
     } catch (error) {
@@ -1283,7 +1283,7 @@ const Admin = () => {
       'approved': 'Onaylandı',
       'rejected': 'Reddedildi'
     };
-    
+
     return <span className={`badge ${badges[status]}`}>{labels[status]}</span>;
   };
 
@@ -1293,7 +1293,7 @@ const Admin = () => {
 
   return (
     <div className="container py-5">
-      {/* DÜZELTME: CSS stillerini head'e ekleme */}
+      {/* CORRECTION: Add CSS styles to head */}
       <style jsx>{`
         .form-control.text-area-custom {
           white-space: pre-wrap !important;
@@ -1303,25 +1303,25 @@ const Admin = () => {
           word-wrap: break-word !important;
           overflow-wrap: break-word !important;
         }
-        
+
         .form-control.input-custom {
           white-space: normal !important;
           word-wrap: break-word !important;
           overflow-wrap: break-word !important;
         }
-        
-        /* Textarea'da satır sonlarını koruma */
+
+        /* Preserve line breaks in textarea */
         textarea.form-control {
           white-space: pre-wrap !important;
           word-break: break-word !important;
         }
-        
-        /* Input'larda normal yazı akışı */
+
+        /* Normal text flow in inputs */
         input.form-control {
           white-space: normal !important;
         }
       `}</style>
-      
+
       <div className="row">
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center mb-4">
@@ -1333,25 +1333,25 @@ const Admin = () => {
               </button>
             </div>
           </div>
-          
+
           {error && (
             <div className="alert alert-danger alert-dismissible fade show" role="alert">
               {error}
               <button type="button" className="btn-close" onClick={() => setError('')}></button>
             </div>
           )}
-          
+
           {success && (
             <div className="alert alert-success alert-dismissible fade show" role="alert">
               {success}
               <button type="button" className="btn-close" onClick={() => setSuccess('')}></button>
             </div>
           )}
-          
+
           {/* Tab Navigation */}
           <ul className="nav nav-tabs mb-4">
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'partnership' ? 'active' : ''}`}
                 onClick={() => setActiveTab('partnership')}
               >
@@ -1359,7 +1359,7 @@ const Admin = () => {
               </button>
             </li>
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'team' ? 'active' : ''}`}
                 onClick={() => setActiveTab('team')}
               >
@@ -1367,7 +1367,7 @@ const Admin = () => {
               </button>
             </li>
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'graduation' ? 'active' : ''}`}
                 onClick={() => setActiveTab('graduation')}
               >
@@ -1375,7 +1375,7 @@ const Admin = () => {
               </button>
             </li>
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'rusizleri' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rusizleri')}
               >
@@ -1383,7 +1383,7 @@ const Admin = () => {
               </button>
             </li>
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'user-rusizi' ? 'active' : ''}`}
                 onClick={() => setActiveTab('user-rusizi')}
               >
@@ -1391,7 +1391,7 @@ const Admin = () => {
               </button>
             </li>
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'publications' ? 'active' : ''}`}
                 onClick={() => setActiveTab('publications')}
               >
@@ -1399,7 +1399,7 @@ const Admin = () => {
               </button>
             </li>
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'user-publications' ? 'active' : ''}`}
                 onClick={() => setActiveTab('user-publications')}
               >
@@ -1407,7 +1407,7 @@ const Admin = () => {
               </button>
             </li>
             <li className="nav-item">
-              <button 
+              <button
                 className={`nav-link ${activeTab === 'institutions' ? 'active' : ''}`}
                 onClick={() => setActiveTab('institutions')}
               >
@@ -1415,7 +1415,7 @@ const Admin = () => {
               </button>
             </li>
           </ul>
-          
+
           {loading ? (
             <div className="text-center py-5">
               <div className="spinner-border" role="status">
@@ -1424,10 +1424,10 @@ const Admin = () => {
             </div>
           ) : (
             <>
-              {/* Yayın Yönetimi Tab */}
+              {/* Publication Management Tab */}
               {activeTab === 'publications' && (
                 <div>
-                  {/* Yayın Ekleme Formu */}
+                  {/* Publication Add Form */}
                   <div className="card mb-4">
                     <div className="card-header bg-primary text-white">
                       <h5 className="mb-0">📚 Manuel Yayın Ekleme</h5>
@@ -1511,8 +1511,8 @@ Bu alanda:
                             />
                           </div>
                         </div>
-                        
-                        {/* Detay Bilgileri */}
+
+                        {/* Detail Information */}
                         <h6 className="text-muted mb-3">📋 Detay Bilgileri (Opsiyonel)</h6>
                         <div className="row">
                           <div className="col-md-6 mb-3">
@@ -1620,8 +1620,8 @@ Bu alanda da satır sonları ve boşluklar korunur."
                             </div>
                           </div>
                           <div className="col-12">
-                            <button 
-                              type="submit" 
+                            <button
+                              type="submit"
                               className="btn btn-primary"
                             >
                               📚 Yayın Ekle
@@ -1632,7 +1632,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                     </div>
                   </div>
 
-                  {/* Mevcut Yayınlar */}
+                  {/* Existing Publications */}
                   <div className="card">
                     <div className="card-header bg-success text-white">
                       <div className="row align-items-center">
@@ -1680,8 +1680,8 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                     <strong>{pub.title}</strong>
                                     <br />
                                     <small className="text-muted" style={{whiteSpace: 'pre-wrap'}}>
-                                      {pub.shortAbstract.length > 50 ? 
-                                        `${pub.shortAbstract.substring(0, 50)}...` : 
+                                      {pub.shortAbstract.length > 50 ?
+                                        `${pub.shortAbstract.substring(0, 50)}...` :
                                         pub.shortAbstract
                                       }
                                     </small>
@@ -1689,8 +1689,8 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                   <td><small>{pub.authors}</small></td>
                                   <td><span className="badge bg-info">{pub.type}</span></td>
                                   <td>
-                                    {pub.isCopyrighted ? 
-                                      <span className="badge bg-warning text-dark">Telifli</span> : 
+                                    {pub.isCopyrighted ?
+                                      <span className="badge bg-warning text-dark">Telifli</span> :
                                       <span className="badge bg-success">Telifsiz</span>
                                     }
                                   </td>
@@ -1702,14 +1702,14 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                   <td><small>{pub.publisher || '-'}</small></td>
                                   <td>
                                     <div className="btn-group btn-group-sm">
-                                      <button 
+                                      <button
                                         className="btn btn-warning"
                                         onClick={() => handleEditPublication(pub)}
                                         title="Düzenle"
                                       >
                                         ✏️
                                       </button>
-                                      <button 
+                                      <button
                                         className="btn btn-danger"
                                         onClick={() => deletePublication(pub.id)}
                                         title="Sil"
@@ -1717,10 +1717,10 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                         🗑️
                                       </button>
                                       {pub.webLink && (
-                                        <a 
-                                          href={pub.webLink} 
-                                          target="_blank" 
-                                          rel="noopener noreferrer" 
+                                        <a
+                                          href={pub.webLink}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
                                           className="btn btn-primary"
                                           title="Link'e Git"
                                         >
@@ -1740,8 +1740,8 @@ Bu alanda da satır sonları ve boşluklar korunur."
                 </div>
               )}
 
-              {/* DİĞER TAB'LAR DEVAM EDİYOR... */}
-              {/* Kullanıcı Yayın Başvuruları */}
+              {/* OTHER TABS CONTINUED... */}
+              {/* User Publication Applications */}
               {activeTab === 'user-publications' && (
                 <div className="table-responsive">
                   <table className="table table-hover">
@@ -1778,8 +1778,8 @@ Bu alanda da satır sonları ve boşluklar korunur."
                               <strong>{app.title}</strong>
                               <br />
                               <small className="text-muted" style={{whiteSpace: 'pre-wrap'}}>
-                                {app.shortAbstract && app.shortAbstract.length > 50 ? 
-                                  `${app.shortAbstract.substring(0, 50)}...` : 
+                                {app.shortAbstract && app.shortAbstract.length > 50 ?
+                                  `${app.shortAbstract.substring(0, 50)}...` :
                                   app.shortAbstract
                                 }
                               </small>
@@ -1791,7 +1791,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                             <td>{new Date(app.createdAt).toLocaleDateString('tr-TR')}</td>
                             <td>
                               <div className="btn-group btn-group-sm">
-                                <button 
+                                <button
                                   className="btn btn-success"
                                   onClick={() => updateUserPublicationApplicationStatus(app.id, 'approved')}
                                   disabled={app.status === 'approved'}
@@ -1799,7 +1799,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ✅
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-danger"
                                   onClick={() => updateUserPublicationApplicationStatus(app.id, 'rejected')}
                                   disabled={app.status === 'rejected'}
@@ -1807,7 +1807,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ❌
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-warning"
                                   onClick={() => updateUserPublicationApplicationStatus(app.id, 'pending')}
                                   disabled={app.status === 'pending'}
@@ -1815,7 +1815,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ⏸️
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-info"
                                   onClick={() => window.open(`data:text/plain;charset=utf-8,${encodeURIComponent(
                                     `YAYIN BİLGİLERİ:\n` +
@@ -1836,7 +1836,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   👁️
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-dark"
                                   onClick={() => deleteUserPublicationApplication(app.id)}
                                   title="Sil"
@@ -1853,7 +1853,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                 </div>
               )}
 
-              {/* İşbirliği Başvuruları */}
+              {/* Partnership Applications */}
               {activeTab === 'partnership' && (
                 <div className="table-responsive">
                   <table className="table table-hover">
@@ -1888,7 +1888,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                             <td>{new Date(app.createdAt).toLocaleDateString('tr-TR')}</td>
                             <td>
                               <div className="btn-group btn-group-sm">
-                                <button 
+                                <button
                                   className="btn btn-success"
                                   onClick={() => updateApplicationStatus(app.id, 'approved', 'partnership')}
                                   disabled={app.status === 'approved'}
@@ -1896,7 +1896,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ✅
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-danger"
                                   onClick={() => updateApplicationStatus(app.id, 'rejected', 'partnership')}
                                   disabled={app.status === 'rejected'}
@@ -1904,7 +1904,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ❌
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-warning"
                                   onClick={() => updateApplicationStatus(app.id, 'pending', 'partnership')}
                                   disabled={app.status === 'pending'}
@@ -1912,7 +1912,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ⏸️
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-dark"
                                   onClick={() => deleteApplication(app.id, 'partnership')}
                                   title="Sil"
@@ -1929,7 +1929,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                 </div>
               )}
 
-              {/* Ekip Başvuruları */}
+              {/* Team Applications */}
               {activeTab === 'team' && (
                 <div className="table-responsive">
                   <table className="table table-hover">
@@ -1972,7 +1972,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                             <td>{new Date(app.createdAt).toLocaleDateString('tr-TR')}</td>
                             <td>
                               <div className="btn-group btn-group-sm">
-                                <button 
+                                <button
                                   className="btn btn-success"
                                   onClick={() => updateApplicationStatus(app.id, 'approved', 'team')}
                                   disabled={app.status === 'approved'}
@@ -1980,7 +1980,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ✅
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-danger"
                                   onClick={() => updateApplicationStatus(app.id, 'rejected', 'team')}
                                   disabled={app.status === 'rejected'}
@@ -1988,7 +1988,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ❌
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-warning"
                                   onClick={() => updateApplicationStatus(app.id, 'pending', 'team')}
                                   disabled={app.status === 'pending'}
@@ -1996,7 +1996,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ⏸️
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-dark"
                                   onClick={() => deleteApplication(app.id, 'team')}
                                   title="Sil"
@@ -2013,7 +2013,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                 </div>
               )}
 
-              {/* Mezuniyet Kulübü Başvuruları */}
+              {/* Graduation Club Applications */}
               {activeTab === 'graduation' && (
                 <div className="table-responsive">
                   <table className="table table-hover">
@@ -2060,7 +2060,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                             <td>{new Date(app.createdAt).toLocaleDateString('tr-TR')}</td>
                             <td>
                               <div className="btn-group btn-group-sm">
-                                <button 
+                                <button
                                   className="btn btn-success"
                                   onClick={() => updateGraduationApplicationStatus(app.id, 'approved')}
                                   disabled={app.status === 'approved'}
@@ -2068,7 +2068,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ✅
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-danger"
                                   onClick={() => updateGraduationApplicationStatus(app.id, 'rejected')}
                                   disabled={app.status === 'rejected'}
@@ -2076,7 +2076,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ❌
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-warning"
                                   onClick={() => updateGraduationApplicationStatus(app.id, 'pending')}
                                   disabled={app.status === 'pending'}
@@ -2084,7 +2084,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                                 >
                                   ⏸️
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-dark"
                                   onClick={() => deleteGraduationApplication(app.id)}
                                   title="Sil"
@@ -2101,14 +2101,14 @@ Bu alanda da satır sonları ve boşluklar korunur."
                 </div>
               )}
 
-              {/* Rus İzi Yönetimi Tab'ı */}
+              {/* Russian Traces Management Tab */}
               {activeTab === 'rusizleri' && (
                 <div>
-                  {/* Rus İzi Ekleme Formu */}
+                  {/* Russian Trace Add Form */}
                   <div className="card mb-4">
                     <div className="card-header d-flex justify-content-between align-items-center bg-primary text-white">
                       <h5 className="mb-0">🏛️ Manuel Rus İzi Ekleme</h5>
-                      <button 
+                      <button
                         className="btn btn-light btn-sm"
                         onClick={downloadRusIzleriJson}
                         title="Rus İzleri JSON dosyasını indir"
@@ -2212,8 +2212,8 @@ Bu alanda:
                             />
                           </div>
                           <div className="col-12">
-                            <button 
-                              type="submit" 
+                            <button
+                              type="submit"
                               className="btn btn-primary"
                             >
                               🏛️ Rus İzi Ekle
@@ -2224,7 +2224,7 @@ Bu alanda:
                     </div>
                   </div>
 
-                  {/* Mevcut Rus İzleri Listesi */}
+                  {/* List of Existing Russian Traces */}
                   <div className="card">
                     <div className="card-header bg-success text-white">
                       <h5 className="mb-0">📋 Mevcut Rus İzleri ({getAllRusIzleri().length})</h5>
@@ -2261,8 +2261,8 @@ Bu alanda:
                                     <strong>{rusIzi.name}</strong>
                                     <br />
                                     <small className="text-muted" style={{whiteSpace: 'pre-wrap'}}>
-                                      {rusIzi.description.length > 50 ? 
-                                        `${rusIzi.description.substring(0, 50)}...` : 
+                                      {rusIzi.description.length > 50 ?
+                                        `${rusIzi.description.substring(0, 50)}...` :
                                         rusIzi.description
                                       }
                                     </small>
@@ -2280,14 +2280,14 @@ Bu alanda:
                                   </td>
                                   <td>
                                     <div className="btn-group btn-group-sm">
-                                      <button 
+                                      <button
                                         className="btn btn-warning"
                                         onClick={() => handleEditRusIzi(rusIzi, rusIzi.plakaCode, rusIzi.index)}
                                         title="Düzenle"
                                       >
                                         ✏️
                                       </button>
-                                      <button 
+                                      <button
                                         className="btn btn-danger"
                                         onClick={() => deleteRusIzi(rusIzi, rusIzi.plakaCode, rusIzi.index)}
                                         title="Sil"
@@ -2307,7 +2307,7 @@ Bu alanda:
                 </div>
               )}
 
-              {/* Kullanıcı Rus İzi Başvuruları */}
+              {/* User Russian Trace Applications */}
               {activeTab === 'user-rusizi' && (
                 <div className="table-responsive">
                   <table className="table table-hover">
@@ -2350,8 +2350,8 @@ Bu alanda:
                             </td>
                             <td>
                               <div style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'pre-wrap' }}>
-                                {app.aciklama && app.aciklama.length > 100 ? 
-                                  `${app.aciklama.substring(0, 100)}...` : 
+                                {app.aciklama && app.aciklama.length > 100 ?
+                                  `${app.aciklama.substring(0, 100)}...` :
                                   app.aciklama
                                 }
                               </div>
@@ -2360,14 +2360,14 @@ Bu alanda:
                               {app.dosyalar && app.dosyalar.length > 0 ? (
                                 <div className="d-flex flex-wrap gap-1">
                                   {app.dosyalar.slice(0, 2).map((dosya, index) => (
-                                    <img 
+                                    <img
                                       key={index}
-                                      src={dosya.data} 
+                                      src={dosya.data}
                                       alt={dosya.name}
                                       className="rounded border"
-                                      style={{ 
-                                        width: '40px', 
-                                        height: '40px', 
+                                      style={{
+                                        width: '40px',
+                                        height: '40px',
                                         objectFit: 'cover',
                                         cursor: 'pointer'
                                       }}
@@ -2376,7 +2376,7 @@ Bu alanda:
                                     />
                                   ))}
                                   {app.dosyalar.length > 2 && (
-                                    <div className="d-flex align-items-center justify-content-center bg-light border rounded" 
+                                    <div className="d-flex align-items-center justify-content-center bg-light border rounded"
                                          style={{ width: '40px', height: '40px', fontSize: '12px' }}>
                                       +{app.dosyalar.length - 2}
                                     </div>
@@ -2390,7 +2390,7 @@ Bu alanda:
                             <td>{new Date(app.createdAt).toLocaleDateString('tr-TR')}</td>
                             <td>
                               <div className="btn-group btn-group-sm">
-                                <button 
+                                <button
                                   className="btn btn-success"
                                   onClick={() => updateUserRusIziApplicationStatus(app.id, 'approved')}
                                   disabled={app.status === 'approved'}
@@ -2398,7 +2398,7 @@ Bu alanda:
                                 >
                                   ✅
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-danger"
                                   onClick={() => updateUserRusIziApplicationStatus(app.id, 'rejected')}
                                   disabled={app.status === 'rejected'}
@@ -2406,7 +2406,7 @@ Bu alanda:
                                 >
                                   ❌
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-warning"
                                   onClick={() => updateUserRusIziApplicationStatus(app.id, 'pending')}
                                   disabled={app.status === 'pending'}
@@ -2414,7 +2414,7 @@ Bu alanda:
                                 >
                                   ⏸️
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-info"
                                   onClick={() => window.open(`data:text/plain;charset=utf-8,${encodeURIComponent(
                                     `KULLANICI BİLGİLERİ:\n` +
@@ -2429,7 +2429,7 @@ Bu alanda:
                                 >
                                   👁️
                                 </button>
-                                <button 
+                                <button
                                   className="btn btn-dark"
                                   onClick={() => deleteUserRusIziApplication(app.id)}
                                   title="Sil"
@@ -2445,15 +2445,15 @@ Bu alanda:
                   </table>
                 </div>
               )}
-              
-              {/* Kurum Yönetimi */}
+
+              {/* Institution Management */}
               {activeTab === 'institutions' && (
                 <div>
-                  {/* Kurum Ekleme Formu */}
+                  {/* Institution Add Form */}
                   <div className="card mb-4">
                     <div className="card-header d-flex justify-content-between align-items-center bg-primary text-white">
                       <h5 className="mb-0">➕ Kurum Ekleme</h5>
-                      <button 
+                      <button
                         className="btn btn-light btn-sm"
                         onClick={downloadJsonFile}
                         title="JSON dosyasını indir"
@@ -2521,7 +2521,7 @@ Bu alanda:
                               <option value="Büyükelçilik">Büyükelçilik</option>
                               <option value="Konsolosluk">Konsolosluk</option>
                               <option value="Ticaret">Ticaret</option>
-                              <option value="Üniversite">Üniversite</option>  
+                              <option value="Üniversite">Üniversite</option>
                               <option value="Okul/Kreş">Okul/Kreş</option>
                               <option value="Kurslar">Kurslar</option>
                               <option value="Dernekler">Dernekler</option>
@@ -2554,8 +2554,8 @@ Bu alanda:
                             />
                           </div>
                           <div className="col-12">
-                            <button 
-                              type="submit" 
+                            <button
+                              type="submit"
                               className="btn btn-primary"
                             >
                               ➕ Kurum Ekle
@@ -2566,7 +2566,7 @@ Bu alanda:
                     </div>
                   </div>
 
-                  {/* Kurum Arama ve Listeleme */}
+                  {/* Institution Search and Listing */}
                   <div className="card">
                     <div className="card-header bg-success text-white">
                       <div className="row align-items-center">
@@ -2615,8 +2615,8 @@ Bu alanda:
                                     <strong>{inst.name}</strong>
                                     <br />
                                     <small className="text-muted" style={{whiteSpace: 'pre-wrap'}}>
-                                      {inst.description.length > 50 ? 
-                                        `${inst.description.substring(0, 50)}...` : 
+                                      {inst.description.length > 50 ?
+                                        `${inst.description.substring(0, 50)}...` :
                                         inst.description
                                       }
                                     </small>
@@ -2637,14 +2637,14 @@ Bu alanda:
                                   <td><small>{new Date(inst.createdAt).toLocaleDateString('tr-TR')}</small></td>
                                   <td>
                                     <div className="btn-group btn-group-sm">
-                                      <button 
+                                      <button
                                         className="btn btn-warning"
                                         onClick={() => handleEditInstitution(inst)}
                                         title="Düzenle"
                                       >
                                         ✏️
                                       </button>
-                                      <button 
+                                      <button
                                         className="btn btn-danger"
                                         onClick={() => deleteInstitution(inst.id)}
                                         title="Sil"
@@ -2664,18 +2664,18 @@ Bu alanda:
                 </div>
               )}
 
-      {/* Modal'lar */}
+      {/* Modals */}
 
-      {/* Yayın Düzenleme Modalı */}
+      {/* Publication Edit Modal */}
       {showPublicationEditModal && editingPublication && (
         <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header bg-warning text-dark">
                 <h5 className="modal-title">✏️ Yayın Düzenle</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
+                <button
+                  type="button"
+                  className="btn-close"
                   onClick={() => {setShowPublicationEditModal(false); setEditingPublication(null);}}
                 ></button>
               </div>
@@ -2839,15 +2839,15 @@ Bu alanda:
                 </form>
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => {setShowPublicationEditModal(false); setEditingPublication(null);}}
                 >
                   ❌ İptal
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-primary"
                   onClick={handleUpdatePublication}
                 >
@@ -2859,16 +2859,16 @@ Bu alanda:
         </div>
       )}
 
-      {/* Rus İzi Düzenleme Modalı */}
+      {/* Russian Trace Edit Modal */}
       {showRusIziEditModal && editingRusIzi && (
         <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header bg-warning text-dark">
                 <h5 className="modal-title">✏️ Rus İzi Düzenle</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
+                <button
+                  type="button"
+                  className="btn-close"
                   onClick={() => {setShowRusIziEditModal(false); setEditingRusIzi(null);}}
                 ></button>
               </div>
@@ -2986,15 +2986,15 @@ Bu alanda:
                 </form>
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => {setShowRusIziEditModal(false); setEditingRusIzi(null);}}
                 >
                   ❌ İptal
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-primary"
                   onClick={handleUpdateRusIzi}
                 >
@@ -3006,16 +3006,16 @@ Bu alanda:
         </div>
       )}
 
-      {/* Kurum Düzenleme Modalı */}
+      {/* Institution Edit Modal */}
       {showEditModal && editingInstitution && (
         <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header bg-warning text-dark">
                 <h5 className="modal-title">✏️ Kurum Düzenle</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
+                <button
+                  type="button"
+                  className="btn-close"
                   onClick={() => {setShowEditModal(false); setEditingInstitution(null);}}
                 ></button>
               </div>
@@ -3106,15 +3106,15 @@ Bu alanda:
                 </form>
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => {setShowEditModal(false); setEditingInstitution(null);}}
                 >
                   ❌ İptal
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-primary"
                   onClick={handleUpdateInstitution}
                 >
@@ -3125,7 +3125,7 @@ Bu alanda:
           </div>
         </div>
       )}
-              
+
             </>
           )}
         </div>
