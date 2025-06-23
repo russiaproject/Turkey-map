@@ -35,7 +35,14 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // CORS ayarları
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'],
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:5173', 
+    'http://127.0.0.1:3000', 
+    'http://127.0.0.1:5173',
+    'https://turkey-map-frontend.onrender.com',
+    'https://turkey-map-wh2i.onrender.com',     
+  ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization', 'X-Requested-With'],
   exposedHeaders: ['Content-Length', 'Authorization'],
