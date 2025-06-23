@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import rusIzleriData from '../data/rus_izleri.json';
 
-// Backend URL'sini buradan değiştirebilirsiniz
 const BACKEND_URL = 'https://turkey-map-wh2i.onrender.com';
 
 const Login = ({ onLoginSuccess }) => {
