@@ -1,5 +1,272 @@
 import React, { useState, useEffect } from 'react';
-import rusIzleriData from '../data/rus_izleri.json';
+import rusIzleriData from '../data/rus_izleri.json'; // Mevcut Rus İzleri veri dosyası
+
+// Demo için sabit kullanıcı adı ve şifre
+const DEMO_USERNAME = 'admin';
+const DEMO_PASSWORD = 'password123';
+
+// Örnek Veriler (Backend bağlantısı kaldırıldı)
+const demoTeamApplications = [
+  {
+    id: '1',
+    adSoyad: 'Ali Can',
+    email: 'ali.can@example.com',
+    egitimDurumu: 'Lisans',
+    alan: 'Yazılımcı',
+    yazilimUzmanlik: 'React, Node.js',
+    telefon: '555-111-2233',
+    status: 'pending',
+    createdAt: '2023-01-15T10:00:00Z',
+    digerAlanDetay: null,
+    ceviriDili: null,
+    tasarimUzmanlik: null,
+    akademisyenUzmanlik: null,
+  },
+  {
+    id: '2',
+    adSoyad: 'Ayşe Demir',
+    email: 'ayse.demir@example.com',
+    egitimDurumu: 'Yüksek Lisans',
+    alan: 'Çevirmen',
+    ceviriDili: 'Rusça-Türkçe',
+    telefon: '555-444-5566',
+    status: 'approved',
+    createdAt: '2023-01-10T11:30:00Z',
+    digerAlanDetay: null,
+    yazilimUzmanlik: null,
+    tasarimUzmanlik: null,
+    akademisyenUzmanlik: null,
+  },
+  {
+    id: '3',
+    adSoyad: 'Mehmet Yılmaz',
+    email: 'mehmet.yilmaz@example.com',
+    egitimDurumu: 'Doktora',
+    alan: 'Akademisyen',
+    akademisyenUzmanlik: 'Uluslararası İlişkiler',
+    telefon: '555-777-8899',
+    status: 'rejected',
+    createdAt: '2023-01-05T09:00:00Z',
+    digerAlanDetay: null,
+    ceviriDili: null,
+    tasarimUzmanlik: null,
+    yazilimUzmanlik: null,
+  },
+];
+
+const demoPartnershipApplications = [
+  {
+    id: '101',
+    isim: 'Zeynep',
+    soyisim: 'Kaya',
+    email: 'zeynep.kaya@partner.com',
+    isletme: 'Gelecek Holding A.Ş.',
+    telefon: '532-123-4567',
+    status: 'pending',
+    createdAt: '2023-02-20T14:00:00Z',
+  },
+  {
+    id: '102',
+    isim: 'Burak',
+    soyisim: 'Öztürk',
+    email: 'burak.ozturk@firmam.com',
+    isletme: 'Yenilikçi Çözümler Ltd. Şti.',
+    telefon: '542-987-6543',
+    status: 'approved',
+    createdAt: '2023-02-18T10:00:00Z',
+  },
+];
+
+const demoGraduationApplications = [
+  {
+    id: '201',
+    isim: 'Deniz',
+    soyisim: 'Demir',
+    email: 'deniz.demir@mezun.com',
+    babaAdi: 'Mustafa',
+    mezunKurum: 'Ankara Üniversitesi',
+    mezuniyetYili: '2018',
+    calistigiKurum: 'T.C. Dışişleri Bakanlığı',
+    akademikGorev: 'Yok',
+    telefon: '505-111-2244',
+    status: 'pending',
+    createdAt: '2023-03-01T09:00:00Z',
+  },
+  {
+    id: '202',
+    isim: 'Efe',
+    soyisim: 'Yıldız',
+    email: 'efe.yildiz@mezun.com',
+    babaAdi: 'Ayhan',
+    mezunKurum: 'ODTÜ',
+    mezuniyetYili: '2015',
+    calistigiKurum: 'Özel Sektör',
+    akademikGorev: 'Proje Yöneticisi',
+    telefon: '533-555-6677',
+    status: 'approved',
+    createdAt: '2023-02-25T13:00:00Z',
+  },
+];
+
+const demoInstitutions = [
+  {
+    id: '301',
+    plaka: 'TR06',
+    name: 'Rusya Federasyonu Ankara Büyükelçiliği',
+    description: 'Türkiye\'deki Rusya Federasyonu\'nun diplomatik temsilciliği.',
+    type: 'Büyükelçilik',
+    address: 'Andrey Karlov Sk. No:5, Çankaya/Ankara',
+    website: 'www.turkey.mid.ru',
+    createdAt: '2022-01-01T00:00:00Z',
+  },
+  {
+    id: '302',
+    plaka: 'TR34',
+    name: 'Rus Bilim ve Kültür Merkezi',
+    description: 'Rus kültürü ve dilini tanıtma faaliyetleri yürüten merkez.',
+    type: 'Kültür',
+    address: 'İstiklal Cad. No:161, Beyoğlu/İstanbul',
+    website: 'www.russianculture.org',
+    createdAt: '2022-01-10T00:00:00Z',
+  },
+  {
+    id: '303',
+    plaka: 'TR07',
+    name: 'Rusya Federasyonu Antalya Konsolosluğu',
+    description: 'Antalya ve çevresindeki Rus vatandaşlarına konsolosluk hizmetleri.',
+    type: 'Konsolosluk',
+    address: 'Park Sk. No:30, Konyaaltı/Antalya',
+    website: '-',
+    createdAt: '2022-02-15T00:00:00Z',
+  },
+];
+
+const demoPublications = [
+  {
+    id: '401',
+    title: 'Türkiye-Rusya İlişkilerinde Enerji Diplomasisi',
+    authors: 'Dr. Cem Yılmaz',
+    type: 'Makale',
+    shortAbstract: 'Bu makale, Türkiye ve Rusya arasındaki enerji ilişkilerinin diplomatik boyutlarını incelemektedir.',
+    description: 'Detaylı bir analizi içeren bu çalışma, iki ülke arasındaki enerji işbirliğinin tarihsel gelişimini ve güncel dinamiklerini ele almaktadır. Özellikle Türk Akımı projesinin bölgesel etkileri üzerinde durulmaktadır.',
+    webLink: 'https://example.com/enerji-diplomasisi',
+    publisher: 'Uluslararası İlişkiler Dergisi',
+    fullAbstract: 'Tam abstract metni buraya gelecek. Makalede kullanılan yöntemler, bulgular ve sonuçlar hakkında daha detaylı bilgi verilecektir. Bu alanda satır sonları ve boşluklar korunur.',
+    keywords: 'Türkiye, Rusya, enerji, diplomasi, Türk Akımı',
+    pageNumbers: '15-32',
+    volume: '10',
+    issue: '2',
+    isCopyrighted: true,
+    createdAt: '2023-04-01T10:00:00Z',
+  },
+  {
+    id: '402',
+    title: 'Rus Edebiyatında Toplumsal Eleştiri',
+    authors: 'Prof. Dr. Elif Kara',
+    type: 'Kitap',
+    shortAbstract: 'Dostoyevski, Tolstoy ve Çehov gibi yazarların eserlerinde toplumsal sorunların nasıl ele alındığına dair kapsamlı bir inceleme.',
+    description: 'Kitap, 19. yüzyıl Rus edebiyatının önde gelen isimlerinin eserlerinde dönemin toplumsal yapısı, siyasi çalkantılar ve insan psikolojisi üzerindeki etkilerini mercek altına almaktadır.',
+    webLink: '',
+    publisher: 'Literatür Yayınevi',
+    fullAbstract: 'Bu kitap, Rus klasiklerinin toplumsal eleştiriye yaklaşımlarını derinlemesine inceleyerek, günümüz okuyucusuna da ışık tutmaktadır. Analizler, edebiyatın toplumsal değişime etkisini vurgulamaktadır.',
+    keywords: 'Rus edebiyatı, toplumsal eleştiri, Dostoyevski, Tolstoy, Çehov',
+    pageNumbers: '1-350',
+    volume: '',
+    issue: '',
+    isCopyrighted: false,
+    createdAt: '2022-11-15T15:30:00Z',
+  },
+];
+
+const demoUserPublicationApplications = [
+  {
+    id: '501',
+    submitterName: 'Canan Genç',
+    submitterEmail: 'canan.genc@mail.com',
+    title: 'Rusya ve Karadeniz Güvenliği',
+    authors: 'Dr. Canan Genç',
+    type: 'Makale',
+    shortAbstract: 'Karadeniz bölgesinin jeopolitik önemi ve Rusya\'nın buradaki güvenlik stratejileri üzerine bir çalışma.',
+    description: 'Karadeniz, Rusya için stratejik bir bölgedir ve bu makale, Rusya\'nın Karadeniz\'deki askeri varlığını ve güvenlik politikalarını analiz etmektedir.',
+    webLink: '',
+    publisher: 'Bölgesel Araştırmalar Dergisi',
+    fullAbstract: 'Makalede Karadeniz\'deki güncel gelişmeler, Rusya\'nın deniz gücü ve NATO\'nun bölgedeki rolü ele alınmaktadır. Güvenlik paradigmaları incelenmiştir.',
+    keywords: 'Karadeniz, Rusya, güvenlik, jeopolitik, NATO',
+    pageNumbers: '88-105',
+    volume: '7',
+    issue: '1',
+    isCopyrighted: false,
+    status: 'pending',
+    createdAt: '2023-05-10T08:00:00Z',
+  },
+  {
+    id: '502',
+    submitterName: 'Selim Aktaş',
+    submitterEmail: 'selim.aktas@email.com',
+    title: 'Rus Müzik Tarihi: Çarlık Döneminden Günümüze',
+    authors: 'Prof. Selim Aktaş',
+    type: 'Kitap',
+    shortAbstract: 'Rus müziğinin kökenlerinden günümüze uzanan zengin tarihsel yolculuğu.',
+    description: 'Kitap, Glinka\'dan Şostakoviç\'e, Çaykovski\'den Rahmaninov\'a uzanan bestecilerin eserleri üzerinden Rus müziğinin gelişimini inceliyor.',
+    webLink: '',
+    publisher: 'Sanat Yayınları',
+    fullAbstract: 'Rus müzik tarihinde dönüm noktaları, önemli besteciler ve eserleri kronolojik olarak detaylı bir şekilde sunulmaktadır. Kitap, müzikoloji öğrencileri ve Rus kültürü meraklıları için önemli bir kaynak niteliğindedir.',
+    keywords: 'Rus müzik, klasik müzik, Çaykovski, Şostakoviç, opera',
+    pageNumbers: '1-280',
+    volume: '',
+    issue: '',
+    isCopyrighted: true,
+    status: 'rejected',
+    createdAt: '2023-04-20T11:00:00Z',
+  },
+];
+
+const demoUserRusIziApplications = [
+  {
+    id: '601',
+    isim: 'Hande',
+    soyisim: 'Demirci',
+    email: 'hande.demirci@gmail.com',
+    telefon: '530-123-4567',
+    konum: 'Bursa',
+    aciklama: 'Bursa\'da bir Rus tüccarın yaptırdığı eski bir çeşme buldum. Yerel halk arasında "Rus Çeşmesi" olarak biliniyor ve üzerinde Kiril alfabesiyle bir yazı var.',
+    dosyalar: [
+      { name: 'cesme1.jpg', data: 'https://placehold.co/100x100/000000/FFFFFF?text=Çeşme1' },
+      { name: 'cesme2.jpg', data: 'https://placehold.co/100x100/000000/FFFFFF?text=Çeşme2' },
+    ],
+    status: 'pending',
+    createdAt: '2023-06-01T14:00:00Z',
+  },
+  {
+    id: '602',
+    isim: 'Kaan',
+    soyisim: 'Yıldırım',
+    email: 'kaan.yildirim@hotmail.com',
+    telefon: '541-987-6543',
+    konum: 'Trabzon',
+    aciklama: 'Trabzon\'daki eski bir Rum Ortodoks kilisesinin bahçesinde, Rus askerlerine ait olduğu düşünülen birkaç mezar taşı keşfettim. Tarihi araştırmalarla desteklenmesi gerekiyor.',
+    dosyalar: [
+      { name: 'mezar1.jpg', data: 'https://placehold.co/100x100/000000/FFFFFF?text=Mezar1' },
+      { name: 'mezar2.jpg', data: 'https://placehold.co/100x100/000000/FFFFFF?text=Mezar2' },
+      { name: 'mezar3.jpg', data: 'https://placehold.co/100x100/000000/FFFFFF?text=Mezar3' },
+    ],
+    status: 'approved',
+    createdAt: '2023-05-25T10:30:00Z',
+  },
+  {
+    id: '603',
+    isim: 'Selin',
+    soyisim: 'Tunç',
+    email: 'selin.tunc@outlook.com',
+    telefon: '506-345-6789',
+    konum: 'Kayseri',
+    aciklama: 'Kayseri merkezde eski bir handa, Rus tüccarların konakladığına dair izler taşıyan bir bölüm olduğunu duydum. Bilgi teyidi için araştırılması gerek.',
+    dosyalar: [],
+    status: 'rejected',
+    createdAt: '2023-05-18T09:00:00Z',
+  },
+];
+
 
 const Login = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
@@ -22,33 +289,15 @@ const Login = ({ onLoginSuccess }) => {
     setError('');
     setLoading(true);
 
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password
-        })
-      });
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (!response.ok) {
-        throw new Error('Giriş başarısız');
-      }
-
-      const data = await response.json();
-
-      if (data && data.token) {
-        onLoginSuccess(data.token, data.username);
-      }
-    } catch (error) {
-      console.error('Giriş hatası:', error);
+    if (formData.username === DEMO_USERNAME && formData.password === DEMO_PASSWORD) {
+      onLoginSuccess('demo_token', DEMO_USERNAME);
+    } else {
       setError('Kullanıcı adı veya şifre hatalı');
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   return (
@@ -113,10 +362,10 @@ const Login = ({ onLoginSuccess }) => {
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('partnership');
-  const [teamApplications, setTeamApplications] = useState([]);
-  const [partnershipApplications, setPartnershipApplications] = useState([]);
-  const [graduationApplications, setGraduationApplications] = useState([]);
-  const [userRusIziApplications, setUserRusIziApplications] = useState([]);
+  const [teamApplications, setTeamApplications] = useState(demoTeamApplications);
+  const [partnershipApplications, setPartnershipApplications] = useState(demoPartnershipApplications);
+  const [graduationApplications, setGraduationApplications] = useState(demoGraduationApplications);
+  const [userRusIziApplications, setUserRusIziApplications] = useState(demoUserRusIziApplications);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -124,8 +373,8 @@ const Admin = () => {
   const [username, setUsername] = useState('');
 
   // Institution management states
-  const [institutions, setInstitutions] = useState([]);
-  const [filteredInstitutions, setFilteredInstitutions] = useState([]);
+  const [institutions, setInstitutions] = useState(demoInstitutions);
+  const [filteredInstitutions, setFilteredInstitutions] = useState(demoInstitutions);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingInstitution, setEditingInstitution] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -139,7 +388,20 @@ const Admin = () => {
   });
 
   // Russian Trace management states
-  const [currentRusIzleri, setCurrentRusIzleri] = useState(rusIzleriData);
+  const [currentRusIzleri, setCurrentRusIzleri] = useState(() => {
+    const groupedData = {};
+    rusIzleriData.forEach(rusIzi => {
+      const plaka = rusIzi.plaka;
+      if (!groupedData[plaka]) {
+        groupedData[plaka] = [];
+      }
+      groupedData[plaka].push({
+        ...rusIzi,
+        id: rusIzi.id || Math.random().toString(36).substring(2, 9) // Add a dummy ID if not present
+      });
+    });
+    return groupedData;
+  });
   const [newRusIzi, setNewRusIzi] = useState({
     plaka: '',
     name: '',
@@ -153,10 +415,10 @@ const Admin = () => {
   const [showRusIziEditModal, setShowRusIziEditModal] = useState(false);
 
   // Publication management states
-  const [publications, setPublications] = useState([]);
-  const [filteredPublications, setFilteredPublications] = useState([]);
+  const [publications, setPublications] = useState(demoPublications);
+  const [filteredPublications, setFilteredPublications] = useState(demoPublications);
   const [publicationSearchTerm, setPublicationSearchTerm] = useState('');
-  const [userPublicationApplications, setUserPublicationApplications] = useState([]);
+  const [userPublicationApplications, setUserPublicationApplications] = useState(demoUserPublicationApplications);
   const [editingPublication, setEditingPublication] = useState(null);
   const [showPublicationEditModal, setShowPublicationEditModal] = useState(false);
   const [newPublication, setNewPublication] = useState({
@@ -219,23 +481,27 @@ const Admin = () => {
     }
   }, []);
 
+  // No backend fetch, so remove dependency on token/isLoggedIn for initial data load
+  // Data is now loaded from static demo arrays.
   useEffect(() => {
-    if (isLoggedIn && token) {
-      fetchApplications();
-      fetchInstitutions();
-      fetchGraduationApplications();
-      fetchUserRusIziApplications();
-      fetchCurrentRusIzleri();
-      fetchPublications();
-      fetchUserPublicationApplications();
-    }
-  }, [isLoggedIn, token]);
+    // Initial filtering for institutions and publications
+    setFilteredInstitutions(institutions);
+    setFilteredPublications(publications);
+  }, [institutions, publications]); // Only re-filter if base data changes (not expected often in demo)
+
 
   useEffect(() => {
     if (searchTerm === '') {
       setFilteredInstitutions(institutions);
     } else {
-      performSearch(searchTerm);
+      // Simulate search logic locally
+      const filtered = institutions.filter(inst =>
+        inst.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inst.plaka.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inst.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inst.address.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredInstitutions(filtered);
     }
   }, [searchTerm, institutions]);
 
@@ -282,117 +548,42 @@ const Admin = () => {
     }
   };
 
-  // Publication management functions
-  const fetchPublications = async () => {
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publications', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setPublications(data || []);
-      setFilteredPublications(data || []);
-
-    } catch (error) {
-      console.error('❌ Yayınlar API hatası:', error);
-      showMessage('Yayınlar yüklenirken hata oluştu: ' + error.message, 'error');
-    }
-  };
-
-  const fetchUserPublicationApplications = async () => {
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/user-publication-applications?status=all', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          setUserPublicationApplications([]);
-          return;
-        }
-        throw new Error(`API Hatası: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setUserPublicationApplications(data || []);
-
-    } catch (error) {
-      console.error('❌ Kullanıcı yayın başvuruları hatası:', error);
-      setUserPublicationApplications([]);
-    }
-  };
+  // Publication management functions (now local state updates)
+  // No fetchPublications - data from demoPublications
+  // No fetchUserPublicationApplications - data from demoUserPublicationApplications
 
   // CORRECTION: Special handlePublicationChange for preserving spaces
   const handlePublicationChange = (e) => {
     const { name, value } = e.target;
-    // We preserve the value as is, we don't trim() it
     setNewPublication(prev => ({
       ...prev,
-      [name]: value // Preserving spaces
+      [name]: value
     }));
   };
 
-  const handlePublicationSubmit = async (e) => {
+  const handlePublicationSubmit = (e) => {
     e.preventDefault();
 
-    // We use trim for validation but don't change the state
     if (!newPublication.title?.trim() || !newPublication.authors?.trim() || !newPublication.type ||
         !newPublication.shortAbstract?.trim() || !newPublication.description?.trim()) {
       showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
       return;
     }
 
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publication', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newPublication) // Sending with preserved spaces
-      });
+    const newPub = {
+      ...newPublication,
+      id: Math.random().toString(36).substring(2, 9), // Dummy ID
+      createdAt: new Date().toISOString(),
+    };
+    setPublications(prev => [...prev, newPub]);
+    setFilteredPublications(prev => [...prev, newPub]); // Update filtered list immediately
+    showMessage('✅ Yayın başarıyla eklendi! (Demo: Veriler kaydedilmez)');
 
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
-      }
-
-      const result = await response.json();
-      showMessage('✅ Yayın başarıyla eklendi!');
-
-      // Clear the form
-      setNewPublication({
-        title: '',
-        authors: '',
-        type: '',
-        shortAbstract: '',
-        description: '',
-        webLink: '',
-        publisher: '',
-        fullAbstract: '',
-        keywords: '',
-        pageNumbers: '',
-        volume: '',
-        issue: '',
-        isCopyrighted: false
-      });
-
-      // Refresh data
-      fetchPublications();
-
-    } catch (error) {
-      console.error('❌ Yayın ekleme hatası:', error);
-      showMessage('Yayın eklenirken hata oluştu: ' + error.message, 'error');
-    }
+    setNewPublication({
+      title: '', authors: '', type: '', shortAbstract: '', description: '',
+      webLink: '', publisher: '', fullAbstract: '', keywords: '',
+      pageNumbers: '', volume: '', issue: '', isCopyrighted: false
+    });
   };
 
   const handleEditPublication = (publication) => {
@@ -400,208 +591,78 @@ const Admin = () => {
     setShowPublicationEditModal(true);
   };
 
-  const handleUpdatePublication = async (e) => {
+  const handleUpdatePublication = (e) => {
     e.preventDefault();
+    setPublications(prev => prev.map(pub =>
+      pub.id === editingPublication.id ? editingPublication : pub
+    ));
+    setFilteredPublications(prev => prev.map(pub =>
+      pub.id === editingPublication.id ? editingPublication : pub
+    )); // Update filtered list immediately
+    showMessage('✅ Yayın başarıyla güncellendi! (Demo: Veriler kaydedilmez)');
+    setShowPublicationEditModal(false);
+    setEditingPublication(null);
+  };
 
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/publication/${editingPublication.id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingPublication)
-      });
+  const deletePublication = (id) => {
+    // No window.confirm for demo
+    setPublications(prev => prev.filter(pub => pub.id !== id));
+    setFilteredPublications(prev => prev.filter(pub => pub.id !== id)); // Update filtered list immediately
+    showMessage('✅ Yayın başarıyla silindi! (Demo: Veriler kaydedilmez)');
+  };
 
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
+  const updateUserPublicationApplicationStatus = (id, status, adminNote = '') => {
+    setUserPublicationApplications(prev => prev.map(app =>
+      app.id === id ? { ...app, status, adminNote } : app
+    ));
+
+    if (status === 'approved') {
+      const application = userPublicationApplications.find(app => app.id === id);
+      if (application) {
+        const newPubFromApp = {
+          id: Math.random().toString(36).substring(2, 9), // Dummy ID
+          title: application.title,
+          authors: application.authors,
+          type: application.type,
+          shortAbstract: application.shortAbstract,
+          description: application.description,
+          webLink: application.webLink,
+          publisher: application.publisher,
+          fullAbstract: application.fullAbstract,
+          keywords: application.keywords,
+          pageNumbers: application.pageNumbers,
+          volume: application.volume,
+          issue: application.issue,
+          isCopyrighted: application.isCopyrighted,
+          createdAt: new Date().toISOString(),
+        };
+        setPublications(prev => [...prev, newPubFromApp]);
+        setFilteredPublications(prev => [...prev, newPubFromApp]); // Update filtered list immediately
+        showMessage('✅ Başvuru onaylandı ve yayın listesine eklendi! (Demo: Veriler kaydedilmez)');
       }
-
-      showMessage('✅ Yayın başarıyla güncellendi!');
-
-      setShowPublicationEditModal(false);
-      setEditingPublication(null);
-
-      fetchPublications();
-
-    } catch (error) {
-      console.error('❌ Yayın güncelleme hatası:', error);
-      showMessage('Yayın güncellenirken hata oluştu: ' + error.message, 'error');
+    } else {
+      showMessage('Kullanıcı yayın başvuru durumu güncellendi! (Demo: Veriler kaydedilmez)');
     }
   };
 
-  const deletePublication = async (id) => {
-    if (!window.confirm('Bu yayını silmek istediğinize emin misiniz?')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/publication/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
-      }
-
-      showMessage('✅ Yayın başarıyla silindi!');
-      fetchPublications();
-
-    } catch (error) {
-      console.error('❌ Yayın silme hatası:', error);
-      showMessage('Yayın silinirken hata oluştu: ' + error.message, 'error');
-    }
+  const deleteUserPublicationApplication = (id) => {
+    // No window.confirm for demo
+    setUserPublicationApplications(prev => prev.filter(app => app.id !== id));
+    showMessage('Kullanıcı yayın başvurusu silindi! (Demo: Veriler kaydedilmez)');
   };
 
-  const updateUserPublicationApplicationStatus = async (id, status, adminNote = '') => {
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/user-publication-application/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status, adminNote })
-      });
+  // Russian Trace functions (now local state updates)
+  // No fetchCurrentRusIzleri - data from rusIzleriData via useState initializer
 
-      if (!response.ok) {
-        throw new Error(`Durum güncellenemedi: ${response.status}`);
-      }
-
-      // If the application is approved, automatically add it to the publication list
-      if (status === 'approved') {
-        const application = userPublicationApplications.find(app => app.id === id);
-        if (application) {
-          try {
-            const addResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publication-from-application', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                title: application.title,
-                authors: application.authors,
-                type: application.type,
-                shortAbstract: application.shortAbstract,
-                description: application.description,
-                webLink: application.webLink,
-                publisher: application.publisher,
-                fullAbstract: application.fullAbstract,
-                keywords: application.keywords,
-                pageNumbers: application.pageNumbers,
-                volume: application.volume,
-                issue: application.issue,
-                isCopyrighted: application.isCopyrighted
-              })
-            });
-
-            if (!addResponse.ok) {
-              throw new Error(`Yayın ekleme hatası: ${addResponse.status}`);
-            }
-
-            fetchPublications(); // Refresh publication list
-          } catch (error) {
-            console.error('❌ Yayın ekleme hatası:', error);
-            showMessage('Başvuru onaylandı ama yayın eklenirken hata oluştu', 'error');
-          }
-        }
-      }
-
-      fetchUserPublicationApplications();
-
-      if (status === 'approved') {
-        showMessage('✅ Başvuru onaylandı ve yayın listesine eklendi!');
-      } else {
-        showMessage('Kullanıcı yayın başvuru durumu güncellendi!');
-      }
-
-    } catch (error) {
-      console.error('❌ Durum güncelleme hatası:', error);
-      showMessage('Durum güncellenirken hata oluştu', 'error');
-    }
-  };
-
-  const deleteUserPublicationApplication = async (id) => {
-    if (!window.confirm('Bu kullanıcı yayın başvurusunu silmek istediğinize emin misiniz?')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/user-publication-application/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Silme işlemi başarısız: ${response.status}`);
-      }
-
-      fetchUserPublicationApplications();
-      showMessage('Kullanıcı yayın başvurusu silindi!');
-
-    } catch (error) {
-      console.error('❌ Silme hatası:', error);
-      showMessage('Silme işlemi sırasında hata oluştu', 'error');
-    }
-  };
-
-  // Russian Trace functions (continued...)
-  const fetchCurrentRusIzleri = async () => {
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izleri', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      // Convert from database format to JSON format
-      const groupedData = {};
-      data.forEach(rusIzi => {
-        const plaka = rusIzi.plaka;
-        if (!groupedData[plaka]) {
-          groupedData[plaka] = [];
-        }
-        groupedData[plaka].push({
-          ...rusIzi,
-          id: rusIzi.id // Preserve Database ID
-        });
-      });
-
-      setCurrentRusIzleri(groupedData);
-
-      return groupedData;
-    } catch (error) {
-      console.error('❌ Rus İzleri API hatası:', error);
-      showMessage('Rus İzleri yüklenirken hata oluştu: ' + error.message, 'error');
-      return {};
-    }
-  };
-
-  // CORRECTION: Special handleRusIziChange for preserving spaces
   const handleRusIziChange = (e) => {
     const { name, value } = e.target;
     setNewRusIzi(prev => ({
       ...prev,
-      [name]: value // Preserving spaces
+      [name]: value
     }));
   };
 
-  const handleRusIziSubmit = async (e) => {
+  const handleRusIziSubmit = (e) => {
     e.preventDefault();
 
     if (!newRusIzi.plaka?.trim() || !newRusIzi.name?.trim() || !newRusIzi.description?.trim() ||
@@ -610,122 +671,63 @@ const Admin = () => {
       return;
     }
 
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izi', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          plaka: newRusIzi.plaka,
-          name: newRusIzi.name,
-          description: newRusIzi.description,
-          type: newRusIzi.type,
-          address: newRusIzi.address,
-          website: newRusIzi.website || ''
-        })
-      });
+    const newIzi = {
+      ...newRusIzi,
+      id: Math.random().toString(36).substring(2, 9), // Dummy ID
+    };
 
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
+    setCurrentRusIzleri(prev => {
+      const updated = { ...prev };
+      const plakaCode = newIzi.plaka;
+      if (!updated[plakaCode]) {
+        updated[plakaCode] = [];
       }
+      updated[plakaCode].push(newIzi);
+      return updated;
+    });
 
-      const result = await response.json();
-      showMessage('✅ Rus İzi başarıyla eklendi ve JSON dosyası güncellendi!');
+    showMessage('✅ Rus İzi başarıyla eklendi! (Demo: Veriler kaydedilmez)');
 
-      // Clear the form
-      setNewRusIzi({
-        plaka: '',
-        name: '',
-        description: '',
-        type: '',
-        address: '',
-        website: ''
-      });
-
-      // Refresh data
-      fetchCurrentRusIzleri();
-
-    } catch (error) {
-      console.error('❌ Rus İzi ekleme hatası:', error);
-      showMessage('Rus İzi eklenirken hata oluştu: ' + error.message, 'error');
-    }
+    setNewRusIzi({
+      plaka: '', name: '', description: '', type: '', address: '', website: ''
+    });
   };
 
-  const handleEditRusIzi = (rusIzi, plakaCode, index) => {
-    setEditingRusIzi({ ...rusIzi, plakaCode, index });
+  const handleEditRusIzi = (rusIzi) => {
+    setEditingRusIzi({ ...rusIzi });
     setShowRusIziEditModal(true);
   };
 
-  const handleUpdateRusIzi = async (e) => {
+  const handleUpdateRusIzi = (e) => {
     e.preventDefault();
 
-    try {
-      const rusIziId = editingRusIzi.id; // Use Database ID
-
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/rus-izi/${rusIziId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          plaka: editingRusIzi.plaka,
-          name: editingRusIzi.name,
-          description: editingRusIzi.description,
-          type: editingRusIzi.type,
-          address: editingRusIzi.address,
-          website: editingRusIzi.website || ''
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
+    setCurrentRusIzleri(prev => {
+      const updated = { ...prev };
+      const plakaCode = editingRusIzi.plaka; // Ensure correct plaka for update
+      if (updated[plakaCode]) {
+        updated[plakaCode] = updated[plakaCode].map(izi =>
+          izi.id === editingRusIzi.id ? editingRusIzi : izi
+        );
       }
+      return updated;
+    });
 
-      showMessage('✅ Rus İzi başarıyla güncellendi!');
-
-      setShowRusIziEditModal(false);
-      setEditingRusIzi(null);
-
-      fetchCurrentRusIzleri();
-
-    } catch (error) {
-      console.error('❌ Rus İzi güncelleme hatası:', error);
-      showMessage('Rus İzi güncellenirken hata oluştu: ' + error.message, 'error');
-    }
+    showMessage('✅ Rus İzi başarıyla güncellendi! (Demo: Veriler kaydedilmez)');
+    setShowRusIziEditModal(false);
+    setEditingRusIzi(null);
   };
 
-  const deleteRusIzi = async (rusIzi, plakaCode, index) => {
-    if (!window.confirm('Bu Rus İzi\'ni silmek istediğinize emin misiniz?')) {
-      return;
-    }
-
-    try {
-      const rusIziId = rusIzi.id; // Use Database ID
-
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/rus-izi/${rusIziId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
+  const deleteRusIzi = (rusIziToDelete) => {
+    // No window.confirm for demo
+    setCurrentRusIzleri(prev => {
+      const updated = { ...prev };
+      const plakaCode = rusIziToDelete.plaka;
+      if (updated[plakaCode]) {
+        updated[plakaCode] = updated[plakaCode].filter(izi => izi.id !== rusIziToDelete.id);
       }
-
-      showMessage('✅ Rus İzi başarıyla silindi!');
-
-      // Refresh data
-      fetchCurrentRusIzleri();
-
-    } catch (error) {
-      console.error('❌ Rus İzi silme hatası:', error);
-      showMessage('Rus İzi silinirken hata oluştu: ' + error.message, 'error');
-    }
+      return updated;
+    });
+    showMessage('✅ Rus İzi başarıyla silindi! (Demo: Veriler kaydedilmez)');
   };
 
   // List all Russian Traces
@@ -736,7 +738,7 @@ const Admin = () => {
         allRusIzleri.push({
           ...rusIzi,
           plakaCode,
-          index,
+          index, // This index is now local to the filtered list, not original
           cityName: plakaKodlari[plakaCode.replace('TR', '')] || plakaCode
         });
       });
@@ -744,262 +746,89 @@ const Admin = () => {
     return allRusIzleri;
   };
 
-  // Graduation club functions
-  const fetchGraduationApplications = async () => {
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/graduation-applications?status=all', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+  // Graduation club functions (now local state updates)
+  // No fetchGraduationApplications - data from demoGraduationApplications
 
-      if (!response.ok) {
-        throw new Error('Mezuniyet başvuruları alınamadı');
-      }
-
-      const data = await response.json();
-      setGraduationApplications(data || []);
-
-    } catch (error) {
-      console.error('❌ Mezuniyet başvuruları yüklenirken hata:', error);
-      showMessage('Mezuniyet başvuruları yüklenirken hata oluştu: ' + error.message, 'error');
-    }
+  const updateGraduationApplicationStatus = (id, status) => {
+    setGraduationApplications(prev => prev.map(app =>
+      app.id === id ? { ...app, status } : app
+    ));
+    showMessage('Mezuniyet başvuru durumu güncellendi! (Demo: Veriler kaydedilmez)');
   };
 
-  const updateGraduationApplicationStatus = async (id, status) => {
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/graduation-application/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status })
-      });
-
-      if (!response.ok) {
-        throw new Error('Durum güncellenemedi');
-      }
-
-      fetchGraduationApplications();
-      showMessage('Mezuniyet başvuru durumu güncellendi!');
-    } catch (error) {
-      console.error('Durum güncellenirken hata:', error);
-      showMessage('Durum güncellenirken hata oluştu', 'error');
-    }
+  const deleteGraduationApplication = (id) => {
+    // No window.confirm for demo
+    setGraduationApplications(prev => prev.filter(app => app.id !== id));
+    showMessage('Mezuniyet başvurusu silindi! (Demo: Veriler kaydedilmez)');
   };
 
-  const deleteGraduationApplication = async (id) => {
-    if (!window.confirm('Bu mezuniyet başvurusunu silmek istediğinize emin misiniz?')) {
-      return;
-    }
+  // User Russian Trace functions (now local state updates)
+  // No fetchUserRusIziApplications - data from demoUserRusIziApplications
 
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/graduation-application/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+  const updateUserRusIziApplicationStatus = (id, status, adminNot = '') => {
+    setUserRusIziApplications(prev => prev.map(app =>
+      app.id === id ? { ...app, status, adminNot } : app
+    ));
 
-      if (!response.ok) {
-        throw new Error('Silme işlemi başarısız');
-      }
+    if (status === 'approved') {
+      const application = userRusIziApplications.find(app => app.id === id);
+      if (application) {
+        // Simulate adding to rus izleri list (locally)
+        const newRusIziFromApp = {
+          id: Math.random().toString(36).substring(2, 9),
+          plaka: application.konum, // Assuming konum is like plaka, adjust if needed
+          name: `${application.isim} ${application.soyisim} Katkısı`,
+          description: application.aciklama,
+          type: 'Kullanıcı Katkısı',
+          address: application.konum,
+          website: '', // No website from user contribution
+        };
 
-      fetchGraduationApplications();
-      showMessage('Mezuniyet başvurusu silindi!');
-    } catch (error) {
-      console.error('Silme işlemi sırasında hata:', error);
-      showMessage('Silme işlemi sırasında hata oluştu', 'error');
-    }
-  };
-
-  // User Russian Trace functions
-  const fetchUserRusIziApplications = async () => {
-    try {
-      const url = 'https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-applications?status=all';
-
-      const response = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          setUserRusIziApplications([]);
-          return;
-        }
-
-        const errorText = await response.text();
-        throw new Error(`Kullanıcı Rus İzi başvuruları alınamadı: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setUserRusIziApplications(data || []);
-
-    } catch (error) {
-      console.error('❌ fetchUserRusIziApplications hatası:', error);
-
-      if (error.message.includes('404')) {
-        setUserRusIziApplications([]);
-        showMessage('Kullanıcı Rus İzi modülü henüz backend\'de aktif değil', 'error');
-      } else {
-        showMessage('Kullanıcı Rus İzi başvuruları yüklenirken hata oluştu: ' + error.message, 'error');
-      }
-    }
-  };
-
-  const updateUserRusIziApplicationStatus = async (id, status, adminNot = '') => {
-    try {
-      const url = `https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-application/${id}`;
-
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status, adminNot })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Durum güncellenemedi: ${response.status}`);
-      }
-
-      // If the application is approved, add it to JSON
-      if (status === 'approved') {
-        const application = userRusIziApplications.find(app => app.id === id);
-        if (application) {
-          try {
-            const addResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izi-from-application', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                isim: application.isim,
-                soyisim: application.soyisim,
-                konum: application.konum,
-                aciklama: application.aciklama
-              })
-            });
-
-            if (!addResponse.ok) {
-              throw new Error(`Rus İzi ekleme hatası: ${addResponse.status}`);
-            }
-          } catch (error) {
-            console.error('❌ Kullanıcı katkısı ekleme hatası:', error);
-            showMessage('Başvuru onaylandı ama Rus İzi eklenirken hata oluştu', 'error');
+        setCurrentRusIzleri(prev => {
+          const updated = { ...prev };
+          const plakaCode = newRusIziFromApp.plaka;
+          if (!updated[plakaCode]) {
+            updated[plakaCode] = [];
           }
-        }
+          updated[plakaCode].push(newRusIziFromApp);
+          return updated;
+        });
+        showMessage('✅ Başvuru onaylandı ve haritaya eklendi! (Demo: Veriler kaydedilmez)');
       }
-
-      fetchUserRusIziApplications();
-
-      if (status === 'approved') {
-        showMessage('✅ Başvuru onaylandı ve haritaya eklendi!');
-      } else {
-        showMessage('Kullanıcı Rus İzi başvuru durumu güncellendi!');
-      }
-
-    } catch (error) {
-      console.error('❌ updateUserRusIziApplicationStatus hatası:', error);
-      showMessage('Durum güncellenirken hata oluştu', 'error');
+    } else {
+      showMessage('Kullanıcı Rus İzi başvuru durumu güncellendi! (Demo: Veriler kaydedilmez)');
     }
   };
 
-  const deleteUserRusIziApplication = async (id) => {
-    if (!window.confirm('Bu kullanıcı başvurusunu silmek istediğinize emin misiniz?')) {
+  const deleteUserRusIziApplication = (id) => {
+    // No window.confirm for demo
+    setUserRusIziApplications(prev => prev.filter(app => app.id !== id));
+    showMessage('Kullanıcı başvurusu silindi! (Demo: Veriler kaydedilmez)');
+  };
+
+  // Institution functions (now local state updates)
+  // No fetchInstitutions - data from demoInstitutions
+
+  const performSearch = (searchQuery) => {
+    if (!searchQuery) {
+      setFilteredInstitutions(institutions);
       return;
     }
 
-    try {
-      const url = `https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-application/${id}`;
-
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Silme işlemi başarısız: ${response.status}`);
-      }
-
-      fetchUserRusIziApplications();
-      showMessage('Kullanıcı başvurusu silindi!');
-
-    } catch (error) {
-      console.error('❌ deleteUserRusIziApplication hatası:', error);
-      showMessage('Silme işlemi sırasında hata oluştu', 'error');
-    }
+    const filtered = institutions.filter(inst =>
+      inst.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      inst.plaka.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      inst.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      inst.address.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredInstitutions(filtered);
   };
 
-  // Institution functions
-  const fetchInstitutions = async () => {
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/institutions', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Kurumlar alınamadı: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      setInstitutions(data || []);
-      setFilteredInstitutions(data || []);
-    } catch (error) {
-      console.error('❌ Kurumlar yüklenirken hata:', error);
-      showMessage(`Kurumlar yüklenirken hata: ${error.message}`, 'error');
-    }
-  };
-
-  const performSearch = async (searchQuery) => {
-    if (!searchQuery) return;
-
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Arama başarısız');
-      }
-
-      const data = await response.json();
-      setFilteredInstitutions(data.results || []);
-    } catch (error) {
-      console.error('Arama hatası:', error);
-      const filtered = institutions.filter(inst =>
-        inst.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inst.plaka.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inst.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inst.address.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredInstitutions(filtered);
-    }
-  };
-
-  // CORRECTION: Special handleInstitutionChange for preserving spaces
   const handleInstitutionChange = (e) => {
     const { name, value } = e.target;
     setNewInstitution(prev => ({
       ...prev,
-      [name]: value // Preserving spaces
+      [name]: value
     }));
   };
 
@@ -1007,11 +836,11 @@ const Admin = () => {
     const { name, value } = e.target;
     setEditingInstitution(prev => ({
       ...prev,
-      [name]: value // Preserving spaces
+      [name]: value
     }));
   };
 
-  const handleInstitutionSubmit = async (e) => {
+  const handleInstitutionSubmit = (e) => {
     e.preventDefault();
 
     if (!newInstitution.plaka?.trim() || !newInstitution.name?.trim() || !newInstitution.description?.trim() ||
@@ -1020,47 +849,18 @@ const Admin = () => {
       return;
     }
 
-    try {
-      const institutionData = {
-        plaka: newInstitution.plaka,
-        name: newInstitution.name,
-        description: newInstitution.description,
-        type: newInstitution.type,
-        address: newInstitution.address,
-        website: newInstitution.website || ''
-      };
+    const newInst = {
+      ...newInstitution,
+      id: Math.random().toString(36).substring(2, 9), // Dummy ID
+      createdAt: new Date().toISOString(),
+    };
+    setInstitutions(prev => [...prev, newInst]);
+    setFilteredInstitutions(prev => [...prev, newInst]); // Update filtered list immediately
+    showMessage('Kurum başarıyla eklendi! (Demo: Veriler kaydedilmez)');
 
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/institution', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(institutionData)
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Kurum eklenemedi: ${response.status} - ${errorText}`);
-      }
-
-      showMessage('Kurum başarıyla eklendi!');
-
-      setNewInstitution({
-        plaka: '',
-        name: '',
-        description: '',
-        type: '',
-        address: '',
-        website: ''
-      });
-
-      fetchInstitutions();
-
-    } catch (error) {
-      console.error('❌ Kurum eklenirken hata:', error);
-      showMessage(`Kurum eklenirken hata: ${error.message}`, 'error');
-    }
+    setNewInstitution({
+      plaka: '', name: '', description: '', type: '', address: '', website: ''
+    });
   };
 
   const handleEditInstitution = (institution) => {
@@ -1068,208 +868,93 @@ const Admin = () => {
     setShowEditModal(true);
   };
 
-  const handleUpdateInstitution = async (e) => {
+  const handleUpdateInstitution = (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institution/${editingInstitution.id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingInstitution)
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Kurum güncellenemedi: ${response.status} - ${errorText}`);
-      }
-
-      showMessage('Kurum bilgileri güncellendi!');
-      setShowEditModal(false);
-      setEditingInstitution(null);
-
-      fetchInstitutions();
-
-    } catch (error) {
-      console.error('Kurum güncellenirken hata:', error);
-      showMessage(`Kurum güncellenirken hata: ${error.message}`, 'error');
-    }
+    setInstitutions(prev => prev.map(inst =>
+      inst.id === editingInstitution.id ? editingInstitution : inst
+    ));
+    setFilteredInstitutions(prev => prev.map(inst =>
+      inst.id === editingInstitution.id ? editingInstitution : inst
+    )); // Update filtered list immediately
+    showMessage('Kurum bilgileri güncellendi! (Demo: Veriler kaydedilmez)');
+    setShowEditModal(false);
+    setEditingInstitution(null);
   };
 
-  const deleteInstitution = async (id) => {
-    if (!window.confirm('Bu kurumu silmek istediğinize emin misiniz?')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institution/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Kurum silinemedi');
-      }
-
-      showMessage('Kurum silindi!');
-      fetchInstitutions();
-    } catch (error) {
-      console.error('Kurum silinirken hata:', error);
-      showMessage('Kurum silinirken hata oluştu', 'error');
-    }
+  const deleteInstitution = (id) => {
+    // No window.confirm for demo
+    setInstitutions(prev => prev.filter(inst => inst.id !== id));
+    setFilteredInstitutions(prev => prev.filter(inst => inst.id !== id)); // Update filtered list immediately
+    showMessage('Kurum silindi! (Demo: Veriler kaydedilmez)');
   };
 
-  const downloadJsonFile = async () => {
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/institutions');
-      if (!response.ok) {
-        throw new Error('JSON indirilemedi');
-      }
+  const downloadJsonFile = () => {
+    // Simulate JSON download
+    const dataStr = JSON.stringify(institutions, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'russian_institutions_demo.json';
 
-      const data = await response.json();
-      const dataStr = JSON.stringify(data, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    document.body.appendChild(linkElement); // Required for Firefox
+    linkElement.click();
+    document.body.removeChild(linkElement); // Clean up
 
-      const exportFileDefaultName = 'russian_institutions.json';
-
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-
-      showMessage('JSON dosyası indirildi!');
-    } catch (error) {
-      console.error('JSON indirme hatası:', error);
-      showMessage('JSON dosyası indirilemedi', 'error');
-    }
+    showMessage('JSON dosyası indirildi! (Demo: Sadece mevcut veriler)');
   };
 
-  // Download Russian Traces JSON (from current file)
-  const downloadRusIzleriJson = async () => {
-    try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/rus-izleri');
+  const downloadRusIzleriJson = () => {
+    // Convert currentRusIzleri back to a flat array for download
+    const flatRusIzleri = getAllRusIzleri().map(item => ({
+      id: item.id,
+      plaka: item.plaka,
+      name: item.name,
+      description: item.description,
+      type: item.type,
+      address: item.address,
+      website: item.website,
+    }));
 
-      if (!response.ok) {
-        throw new Error(`API Hatası: ${response.status}`);
-      }
+    const dataStr = JSON.stringify(flatRusIzleri, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'rus_izleri_demo.json';
 
-      const data = await response.json();
-      const dataStr = JSON.stringify(data, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    document.body.appendChild(linkElement); // Required for Firefox
+    linkElement.click();
+    document.body.removeChild(linkElement); // Clean up
 
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', 'rus_izleri.json');
-      linkElement.click();
-
-      showMessage('📥 Güncel Rus İzleri JSON dosyası indirildi!');
-    } catch (error) {
-      console.error('JSON indirme hatası:', error);
-      showMessage('JSON dosyası indirilemedi: ' + error.message, 'error');
-    }
+    showMessage('📥 Güncel Rus İzleri JSON dosyası indirildi! (Demo: Sadece mevcut veriler)');
   };
 
-  // General application functions
-  const fetchApplications = async () => {
-    setLoading(true);
 
-    try {
-      const teamResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/team-applications?status=all', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+  // General application functions (now local state updates)
+  // No fetchApplications - data from demoTeamApplications and demoPartnershipApplications
 
-      if (!teamResponse.ok) {
-        throw new Error('Ekip başvuruları alınamadı');
-      }
-
-      const teamData = await teamResponse.json();
-      setTeamApplications(teamData || []);
-
-      const partnershipResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/partnership-applications?status=all', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!partnershipResponse.ok) {
-        throw new Error('İşbirliği başvuruları alınamadı');
-      }
-
-      const partnershipData = await partnershipResponse.json();
-      setPartnershipApplications(partnershipData || []);
-
-    } catch (error) {
-      console.error('❌ Başvurular yüklenirken hata:', error);
-      showMessage('Başvurular yüklenirken hata oluştu: ' + error.message, 'error');
-
-      if (error.message.includes('401')) {
-        handleLogout();
-      }
-    } finally {
-      setLoading(false);
+  const updateApplicationStatus = (id, status, type) => {
+    if (type === 'team') {
+      setTeamApplications(prev => prev.map(app =>
+        app.id === id ? { ...app, status } : app
+      ));
+    } else if (type === 'partnership') {
+      setPartnershipApplications(prev => prev.map(app =>
+        app.id === id ? { ...app, status } : app
+      ));
     }
+    showMessage('Başvuru durumu güncellendi! (Demo: Veriler kaydedilmez)');
   };
 
-  const updateApplicationStatus = async (id, status, type) => {
-    try {
-      const endpoint = type === 'team'
-        ? `https://turkey-map-wh2i.onrender.com/api/admin/team-application/${id}`
-        : `https://turkey-map-wh2i.onrender.com/api/admin/partnership-application/${id}`;
-
-      const response = await fetch(endpoint, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status })
-      });
-
-      if (!response.ok) {
-        throw new Error('Durum güncellenemedi');
-      }
-
-      fetchApplications();
-      showMessage('Başvuru durumu güncellendi!');
-    } catch (error) {
-      console.error('Durum güncellenirken hata:', error);
-      showMessage('Durum güncellenirken hata oluştu', 'error');
+  const deleteApplication = (id, type) => {
+    // No window.confirm for demo
+    if (type === 'team') {
+      setTeamApplications(prev => prev.filter(app => app.id !== id));
+    } else if (type === 'partnership') {
+      setPartnershipApplications(prev => prev.filter(app => app.id !== id));
     }
-  };
-
-  const deleteApplication = async (id, type) => {
-    if (!window.confirm('Bu başvuruyu silmek istediğinize emin misiniz?')) {
-      return;
-    }
-
-    try {
-      const endpoint = type === 'team'
-        ? `https://turkey-map-wh2i.onrender.com/api/admin/team-application/${id}`
-        : `https://turkey-map-wh2i.onrender.com/api/admin/partnership-application/${id}`;
-
-      const response = await fetch(endpoint, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Silme işlemi başarısız');
-      }
-
-      fetchApplications();
-      showMessage('Başvuru silindi!');
-    } catch (error) {
-      console.error('Silme işlemi sırasında hata:', error);
-      showMessage('Silme işlemi sırasında hata oluştu', 'error');
-    }
+    showMessage('Başvuru silindi! (Demo: Veriler kaydedilmez)');
   };
 
   const getStatusBadge = (status) => {
@@ -1325,7 +1010,7 @@ const Admin = () => {
       <div className="row">
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1>🇷🇺 Rusevi Admin Paneli</h1>
+            <h1>🇷🇺 Rusevi Admin Paneli (DEMO)</h1>
             <div>
               <span className="me-3">Hoşgeldin, {username}</span>
               <button className="btn btn-danger btn-sm" onClick={handleLogout}>
