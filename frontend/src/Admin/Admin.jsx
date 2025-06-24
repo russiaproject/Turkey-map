@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import rusIzleriData from '../data/rus_izleri.json';
 
-const BACKEND_URL = 'https://turkey-map-wh2i.onrender.com';
-
 const Login = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
     username: '',
@@ -25,11 +23,7 @@ const Login = ({ onLoginSuccess }) => {
     setLoading(true);
     
     try {
-      console.log('🚀 Login request başlatılıyor...');
-      console.log('📡 Backend URL:', 'https://turkey-map-wh2i.onrender.com/api/login');
-      console.log('📝 Gönderilen data:', { username: formData.username, password: '***' });
-      
-      const response = await fetch(`${BACKEND_URL}/api/login`, {
+      const response = await fetch('http://localhost:8080/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -40,37 +34,18 @@ const Login = ({ onLoginSuccess }) => {
         })
       });
       
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response ok:', response.ok);
-      
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Backend error response:', errorText);
-        throw new Error(`Backend hatası: ${response.status} - ${errorText}`);
+        throw new Error('Giriş başarısız');
       }
       
       const data = await response.json();
-      console.log('✅ Login başarılı, response data:', data);
       
       if (data && data.token) {
         onLoginSuccess(data.token, data.username);
-      } else {
-        throw new Error('Token alınamadı');
       }
     } catch (error) {
-      console.error('❌ Giriş hatası:', error);
-      
-      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        setError('🔌 Backend sunucusuna bağlanılamıyor. Sunucu çalışmıyor olabilir.');
-      } else if (error.message.includes('CORS')) {
-        setError('🔒 CORS hatası. Backend CORS ayarlarını kontrol edin.');
-      } else if (error.message.includes('401')) {
-        setError('🚫 Kullanıcı adı veya şifre hatalı');
-      } else if (error.message.includes('500')) {
-        setError('🛠️ Sunucu hatası. Backend loglarını kontrol edin.');
-      } else {
-        setError(`❌ Bağlantı hatası: ${error.message}`);
-      }
+      console.error('Giriş hatası:', error);
+      setError('Kullanıcı adı veya şifre hatalı');
     } finally {
       setLoading(false);
     }
@@ -200,7 +175,29 @@ const Admin = () => {
     isCopyrighted: false
   });
 
-  // Türkiye plaka kodları ve şehirler
+  // İş/Staj yönetimi state'leri
+  const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [jobSearchTerm, setJobSearchTerm] = useState('');
+  const [editingJob, setEditingJob] = useState(null);
+  const [showJobEditModal, setShowJobEditModal] = useState(false);
+  const [newJob, setNewJob] = useState({
+    title: '',
+    photoSrc: '',
+    location: '',
+    description: '',
+    details: [],
+    quota: [],
+    deadline: '',
+    application: '',
+    opportunity: '',
+    contact: '',
+    isActive: true,
+    priority: 0,
+    category: 'Staj'
+  });
+
+  // Türkiye plaka kodları
   const plakaKodlari = {
     '01': 'Adana', '02': 'Adıyaman', '03': 'Afyonkarahisar', '04': 'Ağrı', '05': 'Amasya',
     '06': 'Ankara', '07': 'Antalya', '08': 'Artvin', '09': 'Aydın', '10': 'Balıkesir',
@@ -221,7 +218,7 @@ const Admin = () => {
     '81': 'Düzce'
   };
 
-  // CSS stilleri - Boşluk sorununu çözmek için
+  // CSS stilleri
   const textAreaStyle = {
     whiteSpace: 'pre-wrap',
     lineHeight: '1.5',
@@ -253,6 +250,7 @@ const Admin = () => {
       fetchCurrentRusIzleri(); 
       fetchPublications();
       fetchUserPublicationApplications();
+      fetchJobs();
     }
   }, [isLoggedIn, token]);
 
@@ -278,6 +276,21 @@ const Admin = () => {
       setFilteredPublications(filtered);
     }
   }, [publicationSearchTerm, publications]);
+
+  // İş arama filtreleme
+  useEffect(() => {
+    if (jobSearchTerm === '') {
+      setFilteredJobs(jobs);
+    } else {
+      const filtered = jobs.filter(job => 
+        job.title.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
+        job.location.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
+        job.category.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
+        job.description.toLowerCase().includes(jobSearchTerm.toLowerCase())
+      );
+      setFilteredJobs(filtered);
+    }
+  }, [jobSearchTerm, jobs]);
 
   const handleLoginSuccess = (userToken, userUsername) => {
     setToken(userToken);
@@ -307,10 +320,221 @@ const Admin = () => {
     }
   };
 
+  // İş/Staj yönetimi fonksiyonları
+  const fetchJobs = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/admin/jobs', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API Hatası: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setJobs(data || []);
+      setFilteredJobs(data || []);
+      
+    } catch (error) {
+      console.error('❌ İş ilanları API hatası:', error);
+      showMessage('İş ilanları yüklenirken hata oluştu: ' + error.message, 'error');
+    }
+  };
+
+  const handleJobChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setNewJob(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleJobDetailChange = (index, value) => {
+    const newDetails = [...newJob.details];
+    newDetails[index] = value;
+    setNewJob(prev => ({ ...prev, details: newDetails }));
+  };
+
+  const addJobDetail = () => {
+    setNewJob(prev => ({
+      ...prev,
+      details: [...prev.details, '']
+    }));
+  };
+
+  const removeJobDetail = (index) => {
+    const newDetails = newJob.details.filter((_, i) => i !== index);
+    setNewJob(prev => ({ ...prev, details: newDetails }));
+  };
+
+  const handleJobQuotaChange = (index, value) => {
+    const newQuota = [...newJob.quota];
+    newQuota[index] = value;
+    setNewJob(prev => ({ ...prev, quota: newQuota }));
+  };
+
+  const addJobQuota = () => {
+    setNewJob(prev => ({
+      ...prev,
+      quota: [...prev.quota, '']
+    }));
+  };
+
+  const removeJobQuota = (index) => {
+    const newQuota = newJob.quota.filter((_, i) => i !== index);
+    setNewJob(prev => ({ ...prev, quota: newQuota }));
+  };
+
+  const handleJobSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newJob.title?.trim() || !newJob.location?.trim() || !newJob.description?.trim()) {
+      showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/api/admin/job', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...newJob,
+          details: newJob.details.filter(detail => detail.trim()),
+          quota: newJob.quota.filter(quota => quota.trim())
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Hatası: ${response.status}`);
+      }
+
+      const result = await response.json();
+      showMessage('✅ İş ilanı başarıyla eklendi!');
+
+      setNewJob({
+        title: '',
+        photoSrc: '',
+        location: '',
+        description: '',
+        details: [],
+        quota: [],
+        deadline: '',
+        application: '',
+        opportunity: '',
+        contact: '',
+        isActive: true,
+        priority: 0,
+        category: 'Staj'
+      });
+
+      fetchJobs();
+      
+    } catch (error) {
+      console.error('❌ İş ilanı ekleme hatası:', error);
+      showMessage('İş ilanı eklenirken hata oluştu: ' + error.message, 'error');
+    }
+  };
+
+  const handleEditJob = (job) => {
+    setEditingJob({ ...job });
+    setShowJobEditModal(true);
+  };
+
+  const handleUpdateJob = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/job/${editingJob.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...editingJob,
+          details: editingJob.details.filter(detail => detail.trim()),
+          quota: editingJob.quota.filter(quota => quota.trim())
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Hatası: ${response.status}`);
+      }
+
+      showMessage('✅ İş ilanı başarıyla güncellendi!');
+      
+      setShowJobEditModal(false);
+      setEditingJob(null);
+
+      fetchJobs();
+      
+    } catch (error) {
+      console.error('❌ İş ilanı güncelleme hatası:', error);
+      showMessage('İş ilanı güncellenirken hata oluştu: ' + error.message, 'error');
+    }
+  };
+
+  const deleteJob = async (id) => {
+    if (!window.confirm('Bu iş ilanını silmek istediğinize emin misiniz?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/job/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Hatası: ${response.status}`);
+      }
+
+      showMessage('✅ İş ilanı başarıyla silindi!');
+      fetchJobs();
+      
+    } catch (error) {
+      console.error('❌ İş ilanı silme hatası:', error);
+      showMessage('İş ilanı silinirken hata oluştu: ' + error.message, 'error');
+    }
+  };
+
+  const toggleJobStatus = async (id, currentStatus) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/job/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ isActive: !currentStatus })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Hatası: ${response.status}`);
+      }
+
+      showMessage(`✅ İş ilanı ${!currentStatus ? 'aktif' : 'pasif'} hale getirildi!`);
+      fetchJobs();
+      
+    } catch (error) {
+      console.error('❌ İş ilanı durum değiştirme hatası:', error);
+      showMessage('İş ilanı durumu değiştirilirken hata oluştu: ' + error.message, 'error');
+    }
+  };
+
   // Yayın yönetimi fonksiyonları
   const fetchPublications = async () => {
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publications', {
+      const response = await fetch('http://localhost:8080/api/admin/publications', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -333,7 +557,7 @@ const Admin = () => {
 
   const fetchUserPublicationApplications = async () => {
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/user-publication-applications?status=all', {
+      const response = await fetch('http://localhost:8080/api/admin/user-publication-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -357,20 +581,17 @@ const Admin = () => {
     }
   };
 
-  // DÜZELTME: Boşluk korunması için özel handlePublicationChange
   const handlePublicationChange = (e) => {
     const { name, value } = e.target;
-    // Değeri olduğu gibi koruyoruz, trim() yapmıyoruz
     setNewPublication(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value
     }));
   };
 
   const handlePublicationSubmit = async (e) => {
     e.preventDefault();
     
-    // Validation yaparken trim kullanıyoruz ama state'i değiştirmiyoruz
     if (!newPublication.title?.trim() || !newPublication.authors?.trim() || !newPublication.type || 
         !newPublication.shortAbstract?.trim() || !newPublication.description?.trim()) {
       showMessage('Lütfen tüm zorunlu alanları doldurun', 'error');
@@ -378,13 +599,13 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publication', {
+      const response = await fetch('http://localhost:8080/api/admin/publication', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newPublication) // Boşlukları koruyarak gönderiyoruz
+        body: JSON.stringify(newPublication)
       });
 
       if (!response.ok) {
@@ -394,7 +615,6 @@ const Admin = () => {
       const result = await response.json();
       showMessage('✅ Yayın başarıyla eklendi!');
 
-      // Formu temizle
       setNewPublication({
         title: '',
         authors: '',
@@ -411,7 +631,6 @@ const Admin = () => {
         isCopyrighted: false
       });
 
-      // Verileri yenile
       fetchPublications();
       
     } catch (error) {
@@ -429,7 +648,7 @@ const Admin = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/publication/${editingPublication.id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/publication/${editingPublication.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -461,7 +680,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/publication/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/publication/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -484,7 +703,7 @@ const Admin = () => {
 
   const updateUserPublicationApplicationStatus = async (id, status, adminNote = '') => {
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/user-publication-application/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/user-publication-application/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -497,12 +716,11 @@ const Admin = () => {
         throw new Error(`Durum güncellenemedi: ${response.status}`);
       }
       
-      // Eğer başvuru onaylandıysa, otomatik olarak yayın listesine ekle
       if (status === 'approved') {
         const application = userPublicationApplications.find(app => app.id === id);
         if (application) {
           try {
-            const addResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/publication-from-application', {
+            const addResponse = await fetch('http://localhost:8080/api/admin/publication-from-application', {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -529,7 +747,7 @@ const Admin = () => {
               throw new Error(`Yayın ekleme hatası: ${addResponse.status}`);
             }
 
-            fetchPublications(); // Yayın listesini yenile
+            fetchPublications();
           } catch (error) {
             console.error('❌ Yayın ekleme hatası:', error);
             showMessage('Başvuru onaylandı ama yayın eklenirken hata oluştu', 'error');
@@ -557,7 +775,7 @@ const Admin = () => {
     }
     
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/user-publication-application/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/user-publication-application/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -578,10 +796,10 @@ const Admin = () => {
     }
   };
 
-  // Rus İzi fonksiyonları (devam ediyor...)
+  // Rus İzi fonksiyonları
   const fetchCurrentRusIzleri = async () => {
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izleri', {
+      const response = await fetch('http://localhost:8080/api/admin/rus-izleri', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -594,7 +812,6 @@ const Admin = () => {
       
       const data = await response.json();
       
-      // Database formatından JSON formatına dönüştür
       const groupedData = {};
       data.forEach(rusIzi => {
         const plaka = rusIzi.plaka;
@@ -603,7 +820,7 @@ const Admin = () => {
         }
         groupedData[plaka].push({
           ...rusIzi,
-          id: rusIzi.id // Database ID'sini koru
+          id: rusIzi.id
         });
       });
       
@@ -617,12 +834,11 @@ const Admin = () => {
     }
   };
 
-  // DÜZELTME: Boşluk korunması için özel handleRusIziChange
   const handleRusIziChange = (e) => {
     const { name, value } = e.target;
     setNewRusIzi(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value
     }));
   };
 
@@ -636,7 +852,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izi', {
+      const response = await fetch('http://localhost:8080/api/admin/rus-izi', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -659,7 +875,6 @@ const Admin = () => {
       const result = await response.json();
       showMessage('✅ Rus İzi başarıyla eklendi ve JSON dosyası güncellendi!');
 
-      // Formu temizle
       setNewRusIzi({
         plaka: '',
         name: '',
@@ -669,7 +884,6 @@ const Admin = () => {
         website: ''
       });
 
-      // Verileri yenile
       fetchCurrentRusIzleri();
       
     } catch (error) {
@@ -687,9 +901,9 @@ const Admin = () => {
     e.preventDefault();
     
     try {
-      const rusIziId = editingRusIzi.id; // Database ID kullan
+      const rusIziId = editingRusIzi.id;
       
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/rus-izi/${rusIziId}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${rusIziId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -728,9 +942,9 @@ const Admin = () => {
     }
 
     try {
-      const rusIziId = rusIzi.id; // Database ID kullan
+      const rusIziId = rusIzi.id;
       
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/rus-izi/${rusIziId}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/rus-izi/${rusIziId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -744,7 +958,6 @@ const Admin = () => {
 
       showMessage('✅ Rus İzi başarıyla silindi!');
 
-      // Verileri yenile
       fetchCurrentRusIzleri();
       
     } catch (error) {
@@ -753,7 +966,6 @@ const Admin = () => {
     }
   };
 
-  // Rus İzlerini listele
   const getAllRusIzleri = () => {
     const allRusIzleri = [];
     Object.keys(currentRusIzleri).forEach(plakaCode => {
@@ -772,7 +984,7 @@ const Admin = () => {
   // Mezuniyet kulübü fonksiyonları
   const fetchGraduationApplications = async () => {
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/graduation-applications?status=all', {
+      const response = await fetch('http://localhost:8080/api/admin/graduation-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -793,7 +1005,7 @@ const Admin = () => {
 
   const updateGraduationApplicationStatus = async (id, status) => {
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/graduation-application/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/graduation-application/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -820,7 +1032,7 @@ const Admin = () => {
     }
     
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/graduation-application/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/graduation-application/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -842,7 +1054,7 @@ const Admin = () => {
   // Kullanıcı Rus İzi fonksiyonları
   const fetchUserRusIziApplications = async () => {
     try {
-      const url = 'https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-applications?status=all';
+      const url = 'http://localhost:8080/api/admin/user-rusizi-applications?status=all';
       
       const response = await fetch(url, {
         headers: {
@@ -878,7 +1090,7 @@ const Admin = () => {
 
   const updateUserRusIziApplicationStatus = async (id, status, adminNot = '') => {
     try {
-      const url = `https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-application/${id}`;
+      const url = `http://localhost:8080/api/admin/user-rusizi-application/${id}`;
       
       const response = await fetch(url, {
         method: 'PUT',
@@ -894,12 +1106,11 @@ const Admin = () => {
         throw new Error(`Durum güncellenemedi: ${response.status}`);
       }
 
-      // Eğer başvuru onaylandıysa JSON'a ekle
       if (status === 'approved') {
         const application = userRusIziApplications.find(app => app.id === id);
         if (application) {
           try {
-            const addResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/rus-izi-from-application', {
+            const addResponse = await fetch('http://localhost:8080/api/admin/rus-izi-from-application', {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -943,7 +1154,7 @@ const Admin = () => {
     }
     
     try {
-      const url = `https://turkey-map-wh2i.onrender.com/api/admin/user-rusizi-application/${id}`;
+      const url = `http://localhost:8080/api/admin/user-rusizi-application/${id}`;
       
       const response = await fetch(url, {
         method: 'DELETE',
@@ -970,7 +1181,7 @@ const Admin = () => {
   // Kurum fonksiyonları
   const fetchInstitutions = async () => {
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/institutions', {
+      const response = await fetch('http://localhost:8080/api/admin/institutions', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -995,7 +1206,7 @@ const Admin = () => {
     if (!searchQuery) return;
     
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/institutions/search?q=${encodeURIComponent(searchQuery)}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -1019,12 +1230,11 @@ const Admin = () => {
     }
   };
 
-  // DÜZELTME: Boşluk korunması için özel handleInstitutionChange
   const handleInstitutionChange = (e) => {
     const { name, value } = e.target;
     setNewInstitution(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value
     }));
   };
 
@@ -1032,7 +1242,7 @@ const Admin = () => {
     const { name, value } = e.target;
     setEditingInstitution(prev => ({
       ...prev,
-      [name]: value // Boşlukları koruyoruz
+      [name]: value
     }));
   };
 
@@ -1055,7 +1265,7 @@ const Admin = () => {
         website: newInstitution.website || ''
       };
       
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/institution', {
+      const response = await fetch('http://localhost:8080/api/admin/institution', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1097,7 +1307,7 @@ const Admin = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institution/${editingInstitution.id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/institution/${editingInstitution.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1129,7 +1339,7 @@ const Admin = () => {
     }
     
     try {
-      const response = await fetch(`https://turkey-map-wh2i.onrender.com/api/admin/institution/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/institution/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -1150,7 +1360,7 @@ const Admin = () => {
 
   const downloadJsonFile = async () => {
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/institutions');
+      const response = await fetch('http://localhost:8080/api/institutions');
       if (!response.ok) {
         throw new Error('JSON indirilemedi');
       }
@@ -1173,10 +1383,9 @@ const Admin = () => {
     }
   };
 
-  // Rus İzleri JSON'ını indir (güncel dosyadan)
   const downloadRusIzleriJson = async () => {
     try {
-      const response = await fetch('https://turkey-map-wh2i.onrender.com/api/rus-izleri');
+      const response = await fetch('http://localhost:8080/api/rus-izleri');
       
       if (!response.ok) {
         throw new Error(`API Hatası: ${response.status}`);
@@ -1203,7 +1412,7 @@ const Admin = () => {
     setLoading(true);
     
     try {
-      const teamResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/team-applications?status=all', {
+      const teamResponse = await fetch('http://localhost:8080/api/admin/team-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -1216,7 +1425,7 @@ const Admin = () => {
       const teamData = await teamResponse.json();
       setTeamApplications(teamData || []);
 
-      const partnershipResponse = await fetch('https://turkey-map-wh2i.onrender.com/api/admin/partnership-applications?status=all', {
+      const partnershipResponse = await fetch('http://localhost:8080/api/admin/partnership-applications?status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -1244,8 +1453,8 @@ const Admin = () => {
   const updateApplicationStatus = async (id, status, type) => {
     try {
       const endpoint = type === 'team' 
-        ? `https://turkey-map-wh2i.onrender.com/api/admin/team-application/${id}`
-        : `https://turkey-map-wh2i.onrender.com/api/admin/partnership-application/${id}`;
+        ? `http://localhost:8080/api/admin/team-application/${id}`
+        : `http://localhost:8080/api/admin/partnership-application/${id}`;
       
       const response = await fetch(endpoint, {
         method: 'PUT',
@@ -1275,8 +1484,8 @@ const Admin = () => {
     
     try {
       const endpoint = type === 'team' 
-        ? `https://turkey-map-wh2i.onrender.com/api/admin/team-application/${id}`
-        : `https://turkey-map-wh2i.onrender.com/api/admin/partnership-application/${id}`;
+        ? `http://localhost:8080/api/admin/team-application/${id}`
+        : `http://localhost:8080/api/admin/partnership-application/${id}`;
       
       const response = await fetch(endpoint, {
         method: 'DELETE',
@@ -1318,7 +1527,6 @@ const Admin = () => {
 
   return (
     <div className="container py-5">
-      {/* DÜZELTME: CSS stillerini head'e ekleme */}
       <style jsx>{`
         .form-control.text-area-custom {
           white-space: pre-wrap !important;
@@ -1335,13 +1543,11 @@ const Admin = () => {
           overflow-wrap: break-word !important;
         }
         
-        /* Textarea'da satır sonlarını koruma */
         textarea.form-control {
           white-space: pre-wrap !important;
           word-break: break-word !important;
         }
         
-        /* Input'larda normal yazı akışı */
         input.form-control {
           white-space: normal !important;
         }
@@ -1433,6 +1639,14 @@ const Admin = () => {
             </li>
             <li className="nav-item">
               <button 
+                className={`nav-link ${activeTab === 'jobs' ? 'active' : ''}`}
+                onClick={() => setActiveTab('jobs')}
+              >
+                💼 İş/Staj İlanları ({jobs.length})
+              </button>
+            </li>
+            <li className="nav-item">
+              <button 
                 className={`nav-link ${activeTab === 'institutions' ? 'active' : ''}`}
                 onClick={() => setActiveTab('institutions')}
               >
@@ -1449,10 +1663,327 @@ const Admin = () => {
             </div>
           ) : (
             <>
+              {/* İş/Staj İlanları Tab */}
+              {activeTab === 'jobs' && (
+                <div>
+                  <div className="card mb-4">
+                    <div className="card-header bg-primary text-white">
+                      <h5 className="mb-0">💼 Manuel İş/Staj İlanı Ekleme</h5>
+                    </div>
+                    <div className="card-body">
+                      <form onSubmit={handleJobSubmit}>
+                        <div className="row">
+                          <div className="col-md-8 mb-3">
+                            <label className="form-label">📋 İlan Başlığı *</label>
+                            <input
+                              type="text"
+                              className="form-control input-custom"
+                              name="title"
+                              value={newJob.title}
+                              onChange={handleJobChange}
+                              placeholder="Örn: TEMMUZ – AĞUSTOS 2025 STAJ DUYURUSU"
+                              style={inputStyle}
+                              required
+                            />
+                          </div>
+                          <div className="col-md-4 mb-3">
+                            <label className="form-label">🏷️ Kategori *</label>
+                            <select
+                              className="form-select"
+                              name="category"
+                              value={newJob.category}
+                              onChange={handleJobChange}
+                              required
+                            >
+                              <option value="Staj">Staj</option>
+                              <option value="İş">İş</option>
+                              <option value="Kurs">Kurs</option>
+                              <option value="Eğitim">Eğitim</option>
+                              <option value="Diğer">Diğer</option>
+                            </select>
+                          </div>
+                          <div className="col-md-12 mb-3">
+                            <label className="form-label">📍 Konum *</label>
+                            <input
+                              type="text"
+                              className="form-control input-custom"
+                              name="location"
+                              value={newJob.location}
+                              onChange={handleJobChange}
+                              placeholder="Örn: 📍 Akkuyu Nükleer Anaokul ve Okul Proje Ofisi"
+                              style={inputStyle}
+                              required
+                            />
+                          </div>
+                          <div className="col-md-12 mb-3">
+                            <label className="form-label">📝 Açıklama *</label>
+                            <textarea
+                              className="form-control text-area-custom"
+                              name="description"
+                              value={newJob.description}
+                              onChange={handleJobChange}
+                              rows="4"
+                              style={textAreaStyle}
+                              placeholder="İş/staj ilanının ana açıklaması..."
+                              required
+                            />
+                          </div>
+                          
+                          <div className="col-md-12 mb-3">
+                            <label className="form-label">📌 Detaylar</label>
+                            {newJob.details.map((detail, index) => (
+                              <div key={index} className="input-group mb-2">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={detail}
+                                  onChange={(e) => handleJobDetailChange(index, e.target.value)}
+                                  placeholder="Detay madde..."
+                                />
+                                <button
+                                  type="button"
+                                  className="btn btn-outline-danger"
+                                  onClick={() => removeJobDetail(index)}
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              className="btn btn-outline-primary btn-sm"
+                              onClick={addJobDetail}
+                            >
+                              ➕ Detay Ekle
+                            </button>
+                          </div>
+                          
+                          <div className="col-md-12 mb-3">
+                            <label className="form-label">👥 Kontenjan Bilgisi</label>
+                            {newJob.quota.map((quota, index) => (
+                              <div key={index} className="input-group mb-2">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={quota}
+                                  onChange={(e) => handleJobQuotaChange(index, e.target.value)}
+                                  placeholder="Kontenjan bilgisi..."
+                                />
+                                <button
+                                  type="button"
+                                  className="btn btn-outline-danger"
+                                  onClick={() => removeJobQuota(index)}
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              className="btn btn-outline-primary btn-sm"
+                              onClick={addJobQuota}
+                            >
+                              ➕ Kontenjan Ekle
+                            </button>
+                          </div>
+                          
+                          <div className="col-md-6 mb-3">
+                            <label className="form-label">📅 Son Başvuru Tarihi</label>
+                            <input
+                              type="text"
+                              className="form-control input-custom"
+                              name="deadline"
+                              value={newJob.deadline}
+                              onChange={handleJobChange}
+                              placeholder="Örn: 📅 Son Başvuru Tarihi: 02.05.2025"
+                              style={inputStyle}
+                            />
+                          </div>
+                          <div className="col-md-6 mb-3">
+                            <label className="form-label">🔢 Öncelik</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              name="priority"
+                              value={newJob.priority}
+                              onChange={handleJobChange}
+                              placeholder="0"
+                              min="0"
+                            />
+                            <small className="form-text text-muted">Yüksek sayı = yüksek öncelik</small>
+                          </div>
+                          <div className="col-md-12 mb-3">
+                            <label className="form-label">📨 Başvuru Bilgisi</label>
+                            <textarea
+                              className="form-control text-area-custom"
+                              name="application"
+                              value={newJob.application}
+                              onChange={handleJobChange}
+                              rows="2"
+                              style={textAreaStyle}
+                              placeholder="Başvuru nasıl yapılacağı..."
+                            />
+                          </div>
+                          <div className="col-md-12 mb-3">
+                            <label className="form-label">📌 Fırsat Açıklaması</label>
+                            <textarea
+                              className="form-control text-area-custom"
+                              name="opportunity"
+                              value={newJob.opportunity}
+                              onChange={handleJobChange}
+                              rows="2"
+                              style={textAreaStyle}
+                              placeholder="Bu fırsatın açıklaması..."
+                            />
+                          </div>
+                          <div className="col-md-12 mb-3">
+                            <label className="form-label">📞 İletişim Bilgisi</label>
+                            <textarea
+                              className="form-control text-area-custom"
+                              name="contact"
+                              value={newJob.contact}
+                              onChange={handleJobChange}
+                              rows="2"
+                              style={textAreaStyle}
+                              placeholder="İletişim bilgileri..."
+                            />
+                          </div>
+                          <div className="col-md-12 mb-3">
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                name="isActive"
+                                id="isActive"
+                                checked={newJob.isActive}
+                                onChange={handleJobChange}
+                              />
+                              <label className="form-check-label" htmlFor="isActive">
+                                ✅ Bu ilan aktif olsun
+                              </label>
+                            </div>
+                          </div>
+                          <div className="col-12">
+                            <button 
+                              type="submit" 
+                              className="btn btn-primary"
+                            >
+                              💼 İş İlanı Ekle
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <div className="card">
+                    <div className="card-header bg-success text-white">
+                      <div className="row align-items-center">
+                        <div className="col-md-6">
+                          <h5 className="mb-0">📋 Mevcut İş/Staj İlanları ({filteredJobs.length}/{jobs.length})</h5>
+                        </div>
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="🔍 İlan ara... (başlık, konum, kategori)"
+                            value={jobSearchTerm}
+                            onChange={(e) => setJobSearchTerm(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      <div className="table-responsive">
+                        <table className="table table-hover">
+                          <thead className="table-dark">
+                            <tr>
+                              <th>ID</th>
+                              <th>Başlık</th>
+                              <th>Konum</th>
+                              <th>Kategori</th>
+                              <th>Durum</th>
+                              <th>Öncelik</th>
+                              <th>Oluşturma Tarihi</th>
+                              <th>İşlemler</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredJobs.length === 0 ? (
+                              <tr>
+                                <td colSpan="8" className="text-center">
+                                  {jobSearchTerm ? '🔍 Arama sonucunda ilan bulunamadı' : '💼 Henüz iş ilanı eklenmemiş'}
+                                </td>
+                              </tr>
+                            ) : (
+                              filteredJobs.map((job) => (
+                                <tr key={job.id}>
+                                  <td>{job.id}</td>
+                                  <td>
+                                    <strong>{job.title}</strong>
+                                    <br />
+                                    <small className="text-muted" style={{whiteSpace: 'pre-wrap'}}>
+                                      {job.description.length > 50 ? 
+                                        `${job.description.substring(0, 50)}...` : 
+                                        job.description
+                                      }
+                                    </small>
+                                  </td>
+                                  <td><small>{job.location}</small></td>
+                                  <td><span className="badge bg-info">{job.category}</span></td>
+                                  <td>
+                                    {job.isActive ? 
+                                      <span className="badge bg-success">Aktif</span> : 
+                                      <span className="badge bg-secondary">Pasif</span>
+                                    }
+                                  </td>
+                                  <td>
+                                    <span className="badge bg-warning text-dark">{job.priority}</span>
+                                  </td>
+                                  <td>
+                                    <small>
+                                      {new Date(job.createdAt).toLocaleDateString('tr-TR')}
+                                    </small>
+                                  </td>
+                                  <td>
+                                    <div className="btn-group btn-group-sm">
+                                      <button 
+                                        className="btn btn-warning"
+                                        onClick={() => handleEditJob(job)}
+                                        title="Düzenle"
+                                      >
+                                        ✏️
+                                      </button>
+                                      <button 
+                                        className={`btn ${job.isActive ? 'btn-secondary' : 'btn-success'}`}
+                                        onClick={() => toggleJobStatus(job.id, job.isActive)}
+                                        title={job.isActive ? 'Pasif Yap' : 'Aktif Yap'}
+                                      >
+                                        {job.isActive ? '⏸️' : '▶️'}
+                                      </button>
+                                      <button 
+                                        className="btn btn-danger"
+                                        onClick={() => deleteJob(job.id)}
+                                        title="Sil"
+                                      >
+                                        🗑️
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Yayın Yönetimi Tab */}
               {activeTab === 'publications' && (
                 <div>
-                  {/* Yayın Ekleme Formu */}
                   <div className="card mb-4">
                     <div className="card-header bg-primary text-white">
                       <h5 className="mb-0">📚 Manuel Yayın Ekleme</h5>
@@ -1511,9 +2042,7 @@ const Admin = () => {
                               onChange={handlePublicationChange}
                               rows="3"
                               style={textAreaStyle}
-                              placeholder="Kart görünümünde gösterilecek kısa özet...
-
-Bu alanda satır sonları ve boşluklar korunur."
+                              placeholder="Kart görünümünde gösterilecek kısa özet..."
                               required
                             />
                           </div>
@@ -1526,18 +2055,12 @@ Bu alanda satır sonları ve boşluklar korunur."
                               onChange={handlePublicationChange}
                               rows="4"
                               style={textAreaStyle}
-                              placeholder="Yayın hakkında detaylı açıklama...
-
-Bu alanda:
-- Satır sonları korunur
-- Boşluklar korunur
-- Paragraf yapısı korunur"
+                              placeholder="Yayın hakkında detaylı açıklama..."
                               required
                             />
                           </div>
                         </div>
                         
-                        {/* Detay Bilgileri */}
                         <h6 className="text-muted mb-3">📋 Detay Bilgileri (Opsiyonel)</h6>
                         <div className="row">
                           <div className="col-md-6 mb-3">
@@ -1621,9 +2144,7 @@ Bu alanda:
                               onChange={handlePublicationChange}
                               rows="5"
                               style={textAreaStyle}
-                              placeholder="Detay sayfasında gösterilecek tam abstract...
-
-Bu alanda da satır sonları ve boşluklar korunur."
+                              placeholder="Detay sayfasında gösterilecek tam abstract..."
                             />
                           </div>
                           <div className="col-md-12 mb-3">
@@ -1657,7 +2178,6 @@ Bu alanda da satır sonları ve boşluklar korunur."
                     </div>
                   </div>
 
-                  {/* Mevcut Yayınlar */}
                   <div className="card">
                     <div className="card-header bg-success text-white">
                       <div className="row align-items-center">
@@ -1765,7 +2285,6 @@ Bu alanda da satır sonları ve boşluklar korunur."
                 </div>
               )}
 
-              {/* DİĞER TAB'LAR DEVAM EDİYOR... */}
               {/* Kullanıcı Yayın Başvuruları */}
               {activeTab === 'user-publications' && (
                 <div className="table-responsive">
@@ -2129,7 +2648,6 @@ Bu alanda da satır sonları ve boşluklar korunur."
               {/* Rus İzi Yönetimi Tab'ı */}
               {activeTab === 'rusizleri' && (
                 <div>
-                  {/* Rus İzi Ekleme Formu */}
                   <div className="card mb-4">
                     <div className="card-header d-flex justify-content-between align-items-center bg-primary text-white">
                       <h5 className="mb-0">🏛️ Manuel Rus İzi Ekleme</h5>
@@ -2182,12 +2700,7 @@ Bu alanda da satır sonları ve boşluklar korunur."
                               onChange={handleRusIziChange}
                               rows="4"
                               style={textAreaStyle}
-                              placeholder="Rus İzi hakkında detaylı açıklama...
-
-Bu alanda:
-- Satır sonları korunur
-- Boşluklar korunur
-- Paragraf yapısı korunur"
+                              placeholder="Rus İzi hakkında detaylı açıklama..."
                               required
                             />
                           </div>
@@ -2249,7 +2762,6 @@ Bu alanda:
                     </div>
                   </div>
 
-                  {/* Mevcut Rus İzleri Listesi */}
                   <div className="card">
                     <div className="card-header bg-success text-white">
                       <h5 className="mb-0">📋 Mevcut Rus İzleri ({getAllRusIzleri().length})</h5>
@@ -2474,7 +2986,6 @@ Bu alanda:
               {/* Kurum Yönetimi */}
               {activeTab === 'institutions' && (
                 <div>
-                  {/* Kurum Ekleme Formu */}
                   <div className="card mb-4">
                     <div className="card-header d-flex justify-content-between align-items-center bg-primary text-white">
                       <h5 className="mb-0">➕ Kurum Ekleme</h5>
@@ -2524,12 +3035,7 @@ Bu alanda:
                               onChange={handleInstitutionChange}
                               rows="4"
                               style={textAreaStyle}
-                              placeholder="Kurum hakkında detaylı açıklama...
-
-Bu alanda:
-- Satır sonları korunur
-- Boşluklar korunur
-- Paragraf yapısı korunur"
+                              placeholder="Kurum hakkında detaylı açıklama..."
                               required
                             />
                           </div>
@@ -2591,7 +3097,6 @@ Bu alanda:
                     </div>
                   </div>
 
-                  {/* Kurum Arama ve Listeleme */}
                   <div className="card">
                     <div className="card-header bg-success text-white">
                       <div className="row align-items-center">
@@ -2689,467 +3194,742 @@ Bu alanda:
                 </div>
               )}
 
-      {/* Modal'lar */}
+              {/* Modal'lar */}
 
-      {/* Yayın Düzenleme Modalı */}
-      {showPublicationEditModal && editingPublication && (
-        <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header bg-warning text-dark">
-                <h5 className="modal-title">✏️ Yayın Düzenle</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={() => {setShowPublicationEditModal(false); setEditingPublication(null);}}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={handleUpdatePublication}>
-                  <div className="row">
-                    <div className="col-md-12 mb-3">
-                      <label className="form-label">📖 Yayın Başlığı</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="title"
-                        value={editingPublication.title || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          title: e.target.value
-                        }))}
-                        style={inputStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">👥 Yazarlar</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="authors"
-                        value={editingPublication.authors || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          authors: e.target.value
-                        }))}
-                        style={inputStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🏷️ Yayın Türü</label>
-                      <select
-                        className="form-select"
-                        name="type"
-                        value={editingPublication.type || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          type: e.target.value
-                        }))}
-                        required
-                      >
-                        <option value="">Tür Seçiniz</option>
-                        <option value="Makale">Makale</option>
-                        <option value="Bildiri">Bildiri</option>
-                        <option value="Kitap">Kitap</option>
-                        <option value="Tez">Tez</option>
-                      </select>
-                    </div>
-                    <div className="col-md-12 mb-3">
-                      <label className="form-label">📝 Kısa Özet</label>
-                      <textarea
-                        className="form-control text-area-custom"
-                        name="shortAbstract"
-                        value={editingPublication.shortAbstract || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          shortAbstract: e.target.value
-                        }))}
-                        rows="3"
-                        style={textAreaStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-12 mb-3">
-                      <label className="form-label">📄 Ana Açıklama</label>
-                      <textarea
-                        className="form-control text-area-custom"
-                        name="description"
-                        value={editingPublication.description || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          description: e.target.value
-                        }))}
-                        rows="4"
-                        style={textAreaStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🏢 Yayıncı/Dergi</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="publisher"
-                        value={editingPublication.publisher || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          publisher: e.target.value
-                        }))}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🔗 Web Linki</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="webLink"
-                        value={editingPublication.webLink || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          webLink: e.target.value
-                        }))}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🔍 Anahtar Kelimeler</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="keywords"
-                        value={editingPublication.keywords || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          keywords: e.target.value
-                        }))}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div className="col-md-12 mb-3">
-                      <label className="form-label">📋 Tam Abstract</label>
-                      <textarea
-                        className="form-control text-area-custom"
-                        name="fullAbstract"
-                        value={editingPublication.fullAbstract || ''}
-                        onChange={(e) => setEditingPublication(prev => ({
-                          ...prev,
-                          fullAbstract: e.target.value
-                        }))}
-                        rows="4"
-                        style={textAreaStyle}
-                      />
-                    </div>
-                    <div className="col-md-12 mb-3">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          name="isCopyrighted"
-                          id="editIsCopyrighted"
-                          checked={editingPublication.isCopyrighted || false}
-                          onChange={(e) => setEditingPublication(prev => ({
-                            ...prev,
-                            isCopyrighted: e.target.checked
-                          }))}
-                        />
-                        <label className="form-check-label" htmlFor="editIsCopyrighted">
-                          📄 Bu yayın teliflidir
-                        </label>
+              {/* İş İlanı Düzenleme Modalı */}
+              {showJobEditModal && editingJob && (
+                <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
+                  <div className="modal-dialog modal-xl">
+                    <div className="modal-content">
+                      <div className="modal-header bg-warning text-dark">
+                        <h5 className="modal-title">✏️ İş İlanı Düzenle</h5>
+                        <button 
+                          type="button" 
+                          className="btn-close" 
+                          onClick={() => {setShowJobEditModal(false); setEditingJob(null);}}
+                        ></button>
+                      </div>
+                      <div className="modal-body">
+                        <form onSubmit={handleUpdateJob}>
+                          <div className="row">
+                            <div className="col-md-8 mb-3">
+                              <label className="form-label">📋 İlan Başlığı</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="title"
+                                value={editingJob.title || ''}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  title: e.target.value
+                                }))}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-4 mb-3">
+                              <label className="form-label">🏷️ Kategori</label>
+                              <select
+                                className="form-select"
+                                name="category"
+                                value={editingJob.category || 'Staj'}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  category: e.target.value
+                                }))}
+                                required
+                              >
+                                <option value="Staj">Staj</option>
+                                <option value="İş">İş</option>
+                                <option value="Kurs">Kurs</option>
+                                <option value="Eğitim">Eğitim</option>
+                                <option value="Diğer">Diğer</option>
+                              </select>
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📍 Konum</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="location"
+                                value={editingJob.location || ''}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  location: e.target.value
+                                }))}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📝 Açıklama</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="description"
+                                value={editingJob.description || ''}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  description: e.target.value
+                                }))}
+                                rows="4"
+                                style={textAreaStyle}
+                                required
+                              />
+                            </div>
+                            
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📌 Detaylar</label>
+                              {(editingJob.details || []).map((detail, index) => (
+                                <div key={index} className="input-group mb-2">
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    value={detail}
+                                    onChange={(e) => {
+                                      const newDetails = [...(editingJob.details || [])];
+                                      newDetails[index] = e.target.value;
+                                      setEditingJob(prev => ({ ...prev, details: newDetails }));
+                                    }}
+                                    placeholder="Detay madde..."
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-danger"
+                                    onClick={() => {
+                                      const newDetails = (editingJob.details || []).filter((_, i) => i !== index);
+                                      setEditingJob(prev => ({ ...prev, details: newDetails }));
+                                    }}
+                                  >
+                                    🗑️
+                                  </button>
+                                </div>
+                              ))}
+                              <button
+                                type="button"
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => {
+                                  setEditingJob(prev => ({
+                                    ...prev,
+                                    details: [...(prev.details || []), '']
+                                  }));
+                                }}
+                              >
+                                ➕ Detay Ekle
+                              </button>
+                            </div>
+                            
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">👥 Kontenjan Bilgisi</label>
+                              {(editingJob.quota || []).map((quota, index) => (
+                                <div key={index} className="input-group mb-2">
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    value={quota}
+                                    onChange={(e) => {
+                                      const newQuota = [...(editingJob.quota || [])];
+                                      newQuota[index] = e.target.value;
+                                      setEditingJob(prev => ({ ...prev, quota: newQuota }));
+                                    }}
+                                    placeholder="Kontenjan bilgisi..."
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-danger"
+                                    onClick={() => {
+                                      const newQuota = (editingJob.quota || []).filter((_, i) => i !== index);
+                                      setEditingJob(prev => ({ ...prev, quota: newQuota }));
+                                    }}
+                                  >
+                                    🗑️
+                                  </button>
+                                </div>
+                              ))}
+                              <button
+                                type="button"
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => {
+                                  setEditingJob(prev => ({
+                                    ...prev,
+                                    quota: [...(prev.quota || []), '']
+                                  }));
+                                }}
+                              >
+                                ➕ Kontenjan Ekle
+                              </button>
+                            </div>
+                            
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">📅 Son Başvuru Tarihi</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="deadline"
+                                value={editingJob.deadline || ''}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  deadline: e.target.value
+                                }))}
+                                style={inputStyle}
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🔢 Öncelik</label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                name="priority"
+                                value={editingJob.priority || 0}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  priority: parseInt(e.target.value) || 0
+                                }))}
+                                min="0"
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📨 Başvuru Bilgisi</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="application"
+                                value={editingJob.application || ''}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  application: e.target.value
+                                }))}
+                                rows="2"
+                                style={textAreaStyle}
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📌 Fırsat Açıklaması</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="opportunity"
+                                value={editingJob.opportunity || ''}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  opportunity: e.target.value
+                                }))}
+                                rows="2"
+                                style={textAreaStyle}
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📞 İletişim Bilgisi</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="contact"
+                                value={editingJob.contact || ''}
+                                onChange={(e) => setEditingJob(prev => ({
+                                  ...prev,
+                                  contact: e.target.value
+                                }))}
+                                rows="2"
+                                style={textAreaStyle}
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <div className="form-check">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  name="isActive"
+                                  id="editIsActive"
+                                  checked={editingJob.isActive || false}
+                                  onChange={(e) => setEditingJob(prev => ({
+                                    ...prev,
+                                    isActive: e.target.checked
+                                  }))}
+                                />
+                                <label className="form-check-label" htmlFor="editIsActive">
+                                  ✅ Bu ilan aktif olsun
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div className="modal-footer">
+                        <button 
+                          type="button" 
+                          className="btn btn-secondary" 
+                          onClick={() => {setShowJobEditModal(false); setEditingJob(null);}}
+                        >
+                          ❌ İptal
+                        </button>
+                        <button 
+                          type="button" 
+                          className="btn btn-primary"
+                          onClick={handleUpdateJob}
+                        >
+                          💾 Güncelle
+                        </button>
                       </div>
                     </div>
                   </div>
-                </form>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
-                  onClick={() => {setShowPublicationEditModal(false); setEditingPublication(null);}}
-                >
-                  ❌ İptal
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-primary"
-                  onClick={handleUpdatePublication}
-                >
-                  💾 Güncelle
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+                </div>
+              )}
 
-      {/* Rus İzi Düzenleme Modalı */}
-      {showRusIziEditModal && editingRusIzi && (
-        <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header bg-warning text-dark">
-                <h5 className="modal-title">✏️ Rus İzi Düzenle</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={() => {setShowRusIziEditModal(false); setEditingRusIzi(null);}}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={handleUpdateRusIzi}>
-                  <div className="row">
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🗺️ Plaka Kodu</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="plaka"
-                        value={editingRusIzi.plaka?.replace('TR', '') || ''}
-                        onChange={(e) => {
-                          let value = e.target.value.trim().toUpperCase();
-                          if (!value.startsWith('TR') && value) {
-                            value = `TR${value}`;
-                          }
-                          setEditingRusIzi(prev => ({
-                            ...prev,
-                            plaka: value
-                          }));
-                        }}
-                        placeholder="Örn: TR06, 06, 34"
-                        style={inputStyle}
-                        required
-                      />
-                      <small className="form-text text-muted">
-                        TR06, 06, 34 formatlarında yazabilirsiniz
-                      </small>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🏛️ Rus İzi Adı</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="name"
-                        value={editingRusIzi.name || ''}
-                        onChange={(e) => setEditingRusIzi(prev => ({
-                          ...prev,
-                          name: e.target.value
-                        }))}
-                        style={inputStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-12 mb-3">
-                      <label className="form-label">📝 Açıklama</label>
-                      <textarea
-                        className="form-control text-area-custom"
-                        name="description"
-                        value={editingRusIzi.description || ''}
-                        onChange={(e) => setEditingRusIzi(prev => ({
-                          ...prev,
-                          description: e.target.value
-                        }))}
-                        rows="4"
-                        style={textAreaStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🏷️ Tür</label>
-                      <select
-                        className="form-select"
-                        name="type"
-                        value={editingRusIzi.type || ''}
-                        onChange={(e) => setEditingRusIzi(prev => ({
-                          ...prev,
-                          type: e.target.value
-                        }))}
-                        required
-                      >
-                        <option value="">Kategori Seçiniz</option>
-                        <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
-                        <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
-                        <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
-                        <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
-                        <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
-                        <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
-                        <option value="Kullanıcı Katkısı">Kullanıcı Katkısı</option>
-                        <option value="Diğer">Diğer</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🌐 Web Sitesi</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="website"
-                        value={editingRusIzi.website || ''}
-                        onChange={(e) => setEditingRusIzi(prev => ({
-                          ...prev,
-                          website: e.target.value
-                        }))}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div className="col-12 mb-3">
-                      <label className="form-label">📍 Adres</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="address"
-                        value={editingRusIzi.address || ''}
-                        onChange={(e) => setEditingRusIzi(prev => ({
-                          ...prev,
-                          address: e.target.value
-                        }))}
-                        style={inputStyle}
-                        required
-                      />
+              {/* Yayın Düzenleme Modalı */}
+              {showPublicationEditModal && editingPublication && (
+                <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
+                  <div className="modal-dialog modal-lg">
+                    <div className="modal-content">
+                      <div className="modal-header bg-warning text-dark">
+                        <h5 className="modal-title">✏️ Yayın Düzenle</h5>
+                        <button 
+                          type="button" 
+                          className="btn-close" 
+                          onClick={() => {setShowPublicationEditModal(false); setEditingPublication(null);}}
+                        ></button>
+                      </div>
+                      <div className="modal-body">
+                        <form onSubmit={handleUpdatePublication}>
+                          <div className="row">
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📖 Yayın Başlığı</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="title"
+                                value={editingPublication.title || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  title: e.target.value
+                                }))}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">👥 Yazarlar</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="authors"
+                                value={editingPublication.authors || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  authors: e.target.value
+                                }))}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🏷️ Yayın Türü</label>
+                              <select
+                                className="form-select"
+                                name="type"
+                                value={editingPublication.type || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  type: e.target.value
+                                }))}
+                                required
+                              >
+                                <option value="">Tür Seçiniz</option>
+                                <option value="Makale">Makale</option>
+                                <option value="Bildiri">Bildiri</option>
+                                <option value="Kitap">Kitap</option>
+                                <option value="Tez">Tez</option>
+                              </select>
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📝 Kısa Özet</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="shortAbstract"
+                                value={editingPublication.shortAbstract || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  shortAbstract: e.target.value
+                                }))}
+                                rows="3"
+                                style={textAreaStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📄 Ana Açıklama</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="description"
+                                value={editingPublication.description || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  description: e.target.value
+                                }))}
+                                rows="4"
+                                style={textAreaStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🏢 Yayıncı/Dergi</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="publisher"
+                                value={editingPublication.publisher || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  publisher: e.target.value
+                                }))}
+                                style={inputStyle}
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🔗 Web Linki</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="webLink"
+                                value={editingPublication.webLink || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  webLink: e.target.value
+                                }))}
+                                style={inputStyle}
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🔍 Anahtar Kelimeler</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="keywords"
+                                value={editingPublication.keywords || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  keywords: e.target.value
+                                }))}
+                                style={inputStyle}
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <label className="form-label">📋 Tam Abstract</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="fullAbstract"
+                                value={editingPublication.fullAbstract || ''}
+                                onChange={(e) => setEditingPublication(prev => ({
+                                  ...prev,
+                                  fullAbstract: e.target.value
+                                }))}
+                                rows="4"
+                                style={textAreaStyle}
+                              />
+                            </div>
+                            <div className="col-md-12 mb-3">
+                              <div className="form-check">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  name="isCopyrighted"
+                                  id="editIsCopyrighted"
+                                  checked={editingPublication.isCopyrighted || false}
+                                  onChange={(e) => setEditingPublication(prev => ({
+                                    ...prev,
+                                    isCopyrighted: e.target.checked
+                                  }))}
+                                />
+                                <label className="form-check-label" htmlFor="editIsCopyrighted">
+                                  📄 Bu yayın teliflidir
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div className="modal-footer">
+                        <button 
+                          type="button" 
+                          className="btn btn-secondary" 
+                          onClick={() => {setShowPublicationEditModal(false); setEditingPublication(null);}}
+                        >
+                          ❌ İptal
+                        </button>
+                        <button 
+                          type="button" 
+                          className="btn btn-primary"
+                          onClick={handleUpdatePublication}
+                        >
+                          💾 Güncelle
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </form>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
-                  onClick={() => {setShowRusIziEditModal(false); setEditingRusIzi(null);}}
-                >
-                  ❌ İptal
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-primary"
-                  onClick={handleUpdateRusIzi}
-                >
-                  💾 Güncelle
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+                </div>
+              )}
 
-      {/* Kurum Düzenleme Modalı */}
-      {showEditModal && editingInstitution && (
-        <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header bg-warning text-dark">
-                <h5 className="modal-title">✏️ Kurum Düzenle</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={() => {setShowEditModal(false); setEditingInstitution(null);}}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={handleUpdateInstitution}>
-                  <div className="row">
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🗺️ Plaka Kodu</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="plaka"
-                        value={editingInstitution.plaka}
-                        onChange={handleEditInstitutionChange}
-                        style={inputStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🏛️ Kurum Adı</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="name"
-                        value={editingInstitution.name}
-                        onChange={handleEditInstitutionChange}
-                        style={inputStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-12 mb-3">
-                      <label className="form-label">📝 Açıklama</label>
-                      <textarea
-                        className="form-control text-area-custom"
-                        name="description"
-                        value={editingInstitution.description}
-                        onChange={handleEditInstitutionChange}
-                        rows="4"
-                        style={textAreaStyle}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🏷️ Tür</label>
-                      <select
-                        className="form-select"
-                        name="type"
-                        value={editingInstitution.type}
-                        onChange={handleEditInstitutionChange}
-                        required
-                      >
-                        <option value="">Seçiniz</option>
-                        <option value="Büyükelçilik">Büyükelçilik</option>
-                        <option value="Konsolosluk">Konsolosluk</option>
-                        <option value="Kültür">Kültür</option>
-                        <option value="Ticaret">Ticaret</option>
-                        <option value="Üniversite">Üniversite</option>
-                        <option value="Okul/Kreş">Okul/Kreş</option>
-                        <option value="Kurslar">Kurslar</option>
-                        <option value="Dernekler">Dernekler</option>
-                        <option value="Diğer">Diğer</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">🌐 Web Sitesi</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="website"
-                        value={editingInstitution.website || ''}
-                        onChange={handleEditInstitutionChange}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div className="col-12 mb-3">
-                      <label className="form-label">📍 Adres</label>
-                      <input
-                        type="text"
-                        className="form-control input-custom"
-                        name="address"
-                        value={editingInstitution.address}
-                        onChange={handleEditInstitutionChange}
-                        style={inputStyle}
-                        required
-                      />
+              {/* Rus İzi Düzenleme Modalı */}
+              {showRusIziEditModal && editingRusIzi && (
+                <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
+                  <div className="modal-dialog modal-lg">
+                    <div className="modal-content">
+                      <div className="modal-header bg-warning text-dark">
+                        <h5 className="modal-title">✏️ Rus İzi Düzenle</h5>
+                        <button 
+                          type="button" 
+                          className="btn-close" 
+                          onClick={() => {setShowRusIziEditModal(false); setEditingRusIzi(null);}}
+                        ></button>
+                      </div>
+                      <div className="modal-body">
+                        <form onSubmit={handleUpdateRusIzi}>
+                          <div className="row">
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🗺️ Plaka Kodu</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="plaka"
+                                value={editingRusIzi.plaka?.replace('TR', '') || ''}
+                                onChange={(e) => {
+                                  let value = e.target.value.trim().toUpperCase();
+                                  if (!value.startsWith('TR') && value) {
+                                    value = `TR${value}`;
+                                  }
+                                  setEditingRusIzi(prev => ({
+                                    ...prev,
+                                    plaka: value
+                                  }));
+                                }}
+                                placeholder="Örn: TR06, 06, 34"
+                                style={inputStyle}
+                                required
+                              />
+                              <small className="form-text text-muted">
+                                TR06, 06, 34 formatlarında yazabilirsiniz
+                              </small>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🏛️ Rus İzi Adı</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="name"
+                                value={editingRusIzi.name || ''}
+                                onChange={(e) => setEditingRusIzi(prev => ({
+                                  ...prev,
+                                  name: e.target.value
+                                }))}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-12 mb-3">
+                              <label className="form-label">📝 Açıklama</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="description"
+                                value={editingRusIzi.description || ''}
+                                onChange={(e) => setEditingRusIzi(prev => ({
+                                  ...prev,
+                                  description: e.target.value
+                                }))}
+                                rows="4"
+                                style={textAreaStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🏷️ Tür</label>
+                              <select
+                                className="form-select"
+                                name="type"
+                                value={editingRusIzi.type || ''}
+                                onChange={(e) => setEditingRusIzi(prev => ({
+                                  ...prev,
+                                  type: e.target.value
+                                }))}
+                                required
+                              >
+                                <option value="">Kategori Seçiniz</option>
+                                <option value="Mimari ve Tarihi Yapılar">Mimari ve Tarihi Yapılar</option>
+                                <option value="Kültürel ve Ticari İzler">Kültürel ve Ticari İzler</option>
+                                <option value="Dini ve Mezhepsel İzler">Dini ve Mezhepsel İzler</option>
+                                <option value="Eğitim ve Akademik İzler">Eğitim ve Akademik İzler</option>
+                                <option value="Tarihi Olaylar ve Diplomatik İzler">Tarihi Olaylar ve Diplomatik İzler</option>
+                                <option value="Göç ve Yerleşim">Göç ve Yerleşim</option>
+                                <option value="Kullanıcı Katkısı">Kullanıcı Katkısı</option>
+                                <option value="Diğer">Diğer</option>
+                              </select>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🌐 Web Sitesi</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="website"
+                                value={editingRusIzi.website || ''}
+                                onChange={(e) => setEditingRusIzi(prev => ({
+                                  ...prev,
+                                  website: e.target.value
+                                }))}
+                                style={inputStyle}
+                              />
+                            </div>
+                            <div className="col-12 mb-3">
+                              <label className="form-label">📍 Adres</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="address"
+                                value={editingRusIzi.address || ''}
+                                onChange={(e) => setEditingRusIzi(prev => ({
+                                  ...prev,
+                                  address: e.target.value
+                                }))}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div className="modal-footer">
+                        <button 
+                          type="button" 
+                          className="btn btn-secondary" 
+                          onClick={() => {setShowRusIziEditModal(false); setEditingRusIzi(null);}}
+                        >
+                          ❌ İptal
+                        </button>
+                        <button 
+                          type="button" 
+                          className="btn btn-primary"
+                          onClick={handleUpdateRusIzi}
+                        >
+                          💾 Güncelle
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </form>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
-                  onClick={() => {setShowEditModal(false); setEditingInstitution(null);}}
-                >
-                  ❌ İptal
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-primary"
-                  onClick={handleUpdateInstitution}
-                >
-                  💾 Güncelle
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+                </div>
+              )}
+
+              {/* Kurum Düzenleme Modalı */}
+              {showEditModal && editingInstitution && (
+                <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
+                  <div className="modal-dialog modal-lg">
+                    <div className="modal-content">
+                      <div className="modal-header bg-warning text-dark">
+                        <h5 className="modal-title">✏️ Kurum Düzenle</h5>
+                        <button 
+                          type="button" 
+                          className="btn-close" 
+                          onClick={() => {setShowEditModal(false); setEditingInstitution(null);}}
+                        ></button>
+                      </div>
+                      <div className="modal-body">
+                        <form onSubmit={handleUpdateInstitution}>
+                          <div className="row">
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🗺️ Plaka Kodu</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="plaka"
+                                value={editingInstitution.plaka}
+                                onChange={handleEditInstitutionChange}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🏛️ Kurum Adı</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="name"
+                                value={editingInstitution.name}
+                                onChange={handleEditInstitutionChange}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-12 mb-3">
+                              <label className="form-label">📝 Açıklama</label>
+                              <textarea
+                                className="form-control text-area-custom"
+                                name="description"
+                                value={editingInstitution.description}
+                                onChange={handleEditInstitutionChange}
+                                rows="4"
+                                style={textAreaStyle}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🏷️ Tür</label>
+                              <select
+                                className="form-select"
+                                name="type"
+                                value={editingInstitution.type}
+                                onChange={handleEditInstitutionChange}
+                                required
+                              >
+                                <option value="">Seçiniz</option>
+                                <option value="Büyükelçilik">Büyükelçilik</option>
+                                <option value="Konsolosluk">Konsolosluk</option>
+                                <option value="Kültür">Kültür</option>
+                                <option value="Ticaret">Ticaret</option>
+                                <option value="Üniversite">Üniversite</option>
+                                <option value="Okul/Kreş">Okul/Kreş</option>
+                                <option value="Kurslar">Kurslar</option>
+                                <option value="Dernekler">Dernekler</option>
+                                <option value="Diğer">Diğer</option>
+                              </select>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                              <label className="form-label">🌐 Web Sitesi</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="website"
+                                value={editingInstitution.website || ''}
+                                onChange={handleEditInstitutionChange}
+                                style={inputStyle}
+                              />
+                            </div>
+                            <div className="col-12 mb-3">
+                              <label className="form-label">📍 Adres</label>
+                              <input
+                                type="text"
+                                className="form-control input-custom"
+                                name="address"
+                                value={editingInstitution.address}
+                                onChange={handleEditInstitutionChange}
+                                style={inputStyle}
+                                required
+                              />
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div className="modal-footer">
+                        <button 
+                          type="button" 
+                          className="btn btn-secondary" 
+                          onClick={() => {setShowEditModal(false); setEditingInstitution(null);}}
+                        >
+                          ❌ İptal
+                        </button>
+                        <button 
+                          type="button" 
+                          className="btn btn-primary"
+                          onClick={handleUpdateInstitution}
+                        >
+                          💾 Güncelle
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               
             </>
           )}
