@@ -1051,10 +1051,11 @@ const Admin = () => {
     }
   };
 
-  // Kullanıcı Rus İzi fonksiyonları
+  // Kullanıcı Rus İzi fonksiyonları - GÜNCELLENMIŞ BÖLÜM
   const fetchUserRusIziApplications = async () => {
     try {
-      const url = 'http://localhost:8080/api/admin/user-rusizi-applications?status=all';
+      // Artık tüm başvuruları getir (approved olanlar zaten silinmiş olacak)
+      const url = 'http://localhost:8080/api/admin/user-rusizi-applications';
       
       const response = await fetch(url, {
         headers: {
@@ -1068,31 +1069,21 @@ const Admin = () => {
           setUserRusIziApplications([]);
           return;
         }
-        
-        const errorText = await response.text();
-        throw new Error(`Kullanıcı Rus İzi başvuruları alınamadı: ${response.status}`);
+        throw new Error(`API Hatası: ${response.status}`);
       }
       
       const data = await response.json();
       setUserRusIziApplications(data || []);
       
     } catch (error) {
-      console.error('❌ fetchUserRusIziApplications hatası:', error);
-      
-      if (error.message.includes('404')) {
-        setUserRusIziApplications([]);
-        showMessage('Kullanıcı Rus İzi modülü henüz backend\'de aktif değil', 'error');
-      } else {
-        showMessage('Kullanıcı Rus İzi başvuruları yüklenirken hata oluştu: ' + error.message, 'error');
-      }
+      console.error('❌ Kullanıcı Rus İzi başvuruları hatası:', error);
+      setUserRusIziApplications([]);
     }
   };
 
   const updateUserRusIziApplicationStatus = async (id, status, adminNot = '') => {
     try {
-      const url = `http://localhost:8080/api/admin/user-rusizi-application/${id}`;
-      
-      const response = await fetch(url, {
+      const response = await fetch(`http://localhost:8080/api/admin/user-rusizi-application/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1102,48 +1093,24 @@ const Admin = () => {
       });
       
       if (!response.ok) {
-        const errorText = await response.text();
         throw new Error(`Durum güncellenemedi: ${response.status}`);
       }
-
-      if (status === 'approved') {
-        const application = userRusIziApplications.find(app => app.id === id);
-        if (application) {
-          try {
-            const addResponse = await fetch('http://localhost:8080/api/admin/rus-izi-from-application', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                isim: application.isim,
-                soyisim: application.soyisim,
-                konum: application.konum,
-                aciklama: application.aciklama
-              })
-            });
-
-            if (!addResponse.ok) {
-              throw new Error(`Rus İzi ekleme hatası: ${addResponse.status}`);
-            }
-          } catch (error) {
-            console.error('❌ Kullanıcı katkısı ekleme hatası:', error);
-            showMessage('Başvuru onaylandı ama Rus İzi eklenirken hata oluştu', 'error');
-          }
-        }
-      }
       
+      const result = await response.json();
+      
+      // Başvuru listesini yenile
       fetchUserRusIziApplications();
       
+      // Eğer onaylandıysa Rus İzi listesini de yenile
       if (status === 'approved') {
-        showMessage('✅ Başvuru onaylandı ve haritaya eklendi!');
+        fetchCurrentRusIzleri();
+        showMessage('✅ Başvuru onaylandı ve Rus İzi yönetimine aktarıldı!');
       } else {
         showMessage('Kullanıcı Rus İzi başvuru durumu güncellendi!');
       }
       
     } catch (error) {
-      console.error('❌ updateUserRusIziApplicationStatus hatası:', error);
+      console.error('❌ Durum güncelleme hatası:', error);
       showMessage('Durum güncellenirken hata oluştu', 'error');
     }
   };
@@ -1154,9 +1121,7 @@ const Admin = () => {
     }
     
     try {
-      const url = `http://localhost:8080/api/admin/user-rusizi-application/${id}`;
-      
-      const response = await fetch(url, {
+      const response = await fetch(`http://localhost:8080/api/admin/user-rusizi-application/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1165,7 +1130,6 @@ const Admin = () => {
       });
       
       if (!response.ok) {
-        const errorText = await response.text();
         throw new Error(`Silme işlemi başarısız: ${response.status}`);
       }
       
@@ -1173,7 +1137,7 @@ const Admin = () => {
       showMessage('Kullanıcı başvurusu silindi!');
       
     } catch (error) {
-      console.error('❌ deleteUserRusIziApplication hatası:', error);
+      console.error('❌ Silme hatası:', error);
       showMessage('Silme işlemi sırasında hata oluştu', 'error');
     }
   };
@@ -2775,6 +2739,7 @@ const Admin = () => {
                               <th>Adı</th>
                               <th>Kategori</th>
                               <th>Adres</th>
+                              <th>Kullanıcı Katkısı</th>
                               <th>Web Sitesi</th>
                               <th>İşlemler</th>
                             </tr>
@@ -2782,7 +2747,7 @@ const Admin = () => {
                           <tbody>
                             {getAllRusIzleri().length === 0 ? (
                               <tr>
-                                <td colSpan="6" className="text-center">
+                                <td colSpan="7" className="text-center">
                                   🏛️ Henüz Rus İzi eklenmemiş
                                 </td>
                               </tr>
@@ -2806,6 +2771,19 @@ const Admin = () => {
                                   </td>
                                   <td><span className="badge bg-info">{rusIzi.type}</span></td>
                                   <td><small>{rusIzi.address}</small></td>
+                                  <td>
+                                    {rusIzi.userContribution ? (
+                                      <div>
+                                        <span className="badge bg-success">✓ Kullanıcı Katkısı</span>
+                                        <br />
+                                        <small className="text-muted">
+                                          {rusIzi.contributorName}
+                                        </small>
+                                      </div>
+                                    ) : (
+                                      <span className="badge bg-secondary">Admin</span>
+                                    )}
+                                  </td>
                                   <td>
                                     {rusIzi.website && rusIzi.website !== '-' ? (
                                       <a href={rusIzi.website} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline-primary">
@@ -2854,7 +2832,9 @@ const Admin = () => {
                         <th>Ad Soyad</th>
                         <th>Email</th>
                         <th>Telefon</th>
-                        <th>Konum</th>
+                        <th>Plaka</th>
+                        <th>Rus İzi Adı</th>
+                        <th>Kategori</th>
                         <th>Açıklama</th>
                         <th>Fotoğraflar</th>
                         <th>Durum</th>
@@ -2865,7 +2845,7 @@ const Admin = () => {
                     <tbody>
                       {userRusIziApplications.length === 0 ? (
                         <tr>
-                          <td colSpan="10" className="text-center">Kullanıcı Rus İzi başvurusu bulunamadı</td>
+                          <td colSpan="12" className="text-center">Kullanıcı Rus İzi başvurusu bulunamadı</td>
                         </tr>
                       ) : (
                         userRusIziApplications.map((app) => (
@@ -2883,13 +2863,19 @@ const Admin = () => {
                               </a>
                             </td>
                             <td>
-                              <span className="badge bg-secondary">{app.konum}</span>
+                              <span className="badge bg-secondary">{app.plaka}</span>
+                            </td>
+                            <td>
+                              <strong>{app.name}</strong>
+                            </td>
+                            <td>
+                              <span className="badge bg-info">{app.type}</span>
                             </td>
                             <td>
                               <div style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'pre-wrap' }}>
-                                {app.aciklama && app.aciklama.length > 100 ? 
-                                  `${app.aciklama.substring(0, 100)}...` : 
-                                  app.aciklama
+                                {app.description && app.description.length > 100 ? 
+                                  `${app.description.substring(0, 100)}...` : 
+                                  app.description
                                 }
                               </div>
                             </td>
@@ -2931,7 +2917,7 @@ const Admin = () => {
                                   className="btn btn-success"
                                   onClick={() => updateUserRusIziApplicationStatus(app.id, 'approved')}
                                   disabled={app.status === 'approved'}
-                                  title="Onayla ve Haritaya Ekle"
+                                  title="Onayla ve Rus İzi Yönetimine Aktar"
                                 >
                                   ✅
                                 </button>
@@ -2954,12 +2940,16 @@ const Admin = () => {
                                 <button 
                                   className="btn btn-info"
                                   onClick={() => window.open(`data:text/plain;charset=utf-8,${encodeURIComponent(
-                                    `KULLANICI BİLGİLERİ:\n` +
-                                    `Ad Soyad: ${app.isim} ${app.soyisim}\n` +
+                                    `RUS İZİ BİLGİLERİ:\n` +
+                                    `Plaka: ${app.plaka}\n` +
+                                    `Adı: ${app.name}\n` +
+                                    `Kategori: ${app.type}\n` +
+                                    `Adres: ${app.address}\n` +
+                                    `Web Sitesi: ${app.website || 'Belirtilmemiş'}\n\n` +
+                                    `AÇIKLAMA:\n${app.description}\n\n` +
+                                    `BAŞVURAN:\n${app.isim} ${app.soyisim}\n` +
                                     `Email: ${app.email}\n` +
                                     `Telefon: ${app.telefon}\n` +
-                                    `Konum: ${app.konum}\n\n` +
-                                    `AÇIKLAMA:\n${app.aciklama}\n\n` +
                                     `Başvuru Tarihi: ${new Date(app.createdAt).toLocaleString('tr-TR')}`
                                   )}`, '_blank')}
                                   title="Detayları Görüntüle"
