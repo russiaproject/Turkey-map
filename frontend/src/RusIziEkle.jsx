@@ -7,20 +7,205 @@ const RusIziEkle = () => {
     soyisim: "",
     email: "",
     telefon: "",
-    aciklama: "",
-    konum: "",
+    plaka: "",
+    name: "",
+    description: "",
+    type: "",
+    website: "",
+    address: "",
     dosyalar: []
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
+  
+  // Validasyon state'leri
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  // Rus İzi kategorileri
+  const rusIziKategorileri = [
+    "Mimari ve Tarihi Yapılar",
+    "Kültürel ve Ticari İzler", 
+    "Dini ve Mezhepsel İzler",
+    "Eğitim ve Akademik İzler",
+    "Tarihi Olaylar ve Diplomatik İzler",
+    "Göç ve Yerleşim",
+    "Kullanıcı Katkısı",
+    "Diğer"
+  ];
+
+  // Validasyon kuralları
+  const validateField = (name, value) => {
+    let error = '';
+    
+    switch (name) {
+      case 'isim':
+        if (!value.trim()) {
+          error = 'İsim zorunludur';
+        } else if (value.trim().length < 2) {
+          error = 'İsim en az 2 karakter olmalıdır';
+        } else if (value.trim().length > 50) {
+          error = 'İsim en fazla 50 karakter olmalıdır';
+        }
+        break;
+        
+      case 'soyisim':
+        if (!value.trim()) {
+          error = 'Soyisim zorunludur';
+        } else if (value.trim().length < 2) {
+          error = 'Soyisim en az 2 karakter olmalıdır';
+        } else if (value.trim().length > 50) {
+          error = 'Soyisim en fazla 50 karakter olmalıdır';
+        }
+        break;
+        
+      case 'email':
+        if (!value.trim()) {
+          error = 'E-mail zorunludur';
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value.trim())) {
+            error = 'Geçerli bir e-mail adresi giriniz';
+          }
+        }
+        break;
+        
+      case 'telefon':
+        if (!value.trim()) {
+          error = 'Telefon numarası zorunludur';
+        } else {
+          const phoneRegex = /^[0-9\s\-\+\(\)]{10,15}$/;
+          if (!phoneRegex.test(value.replace(/\s/g, ''))) {
+            error = 'Geçerli bir telefon numarası giriniz (10-15 rakam)';
+          }
+        }
+        break;
+        
+      case 'plaka':
+        if (!value.trim()) {
+          error = 'Plaka kodu zorunludur';
+        } else {
+          // TR06, 06, 34 gibi formatları kabul et
+          const plakaRegex = /^(TR)?[0-9]{1,2}$/i;
+          if (!plakaRegex.test(value.trim())) {
+            error = 'Geçerli bir plaka kodu giriniz (TR06, 06, 34 formatlarında)';
+          }
+        }
+        break;
+        
+      case 'name':
+        if (!value.trim()) {
+          error = 'Rus İzi adı zorunludur';
+        } else if (value.trim().length < 3) {
+          error = 'Rus İzi adı en az 3 karakter olmalıdır';
+        } else if (value.trim().length > 200) {
+          error = 'Rus İzi adı en fazla 200 karakter olmalıdır';
+        }
+        break;
+        
+      case 'description':
+        if (!value.trim()) {
+          error = 'Açıklama zorunludur';
+        } else if (value.trim().length < 10) {
+          error = 'Açıklama en az 10 karakter olmalıdır';
+        } else if (value.trim().length > 2000) {
+          error = 'Açıklama en fazla 2000 karakter olmalıdır';
+        }
+        break;
+        
+      case 'type':
+        if (!value.trim()) {
+          error = 'Kategori seçimi zorunludur';
+        }
+        break;
+        
+      case 'address':
+        if (!value.trim()) {
+          error = 'Adres zorunludur';
+        } else if (value.trim().length < 5) {
+          error = 'Adres en az 5 karakter olmalıdır';
+        } else if (value.trim().length > 200) {
+          error = 'Adres en fazla 200 karakter olmalıdır';
+        }
+        break;
+        
+      case 'website':
+        if (value.trim() && value.trim().length > 0) {
+          const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+          if (!urlRegex.test(value.trim())) {
+            error = 'Geçerli bir web sitesi adresi giriniz';
+          }
+        }
+        break;
+        
+      default:
+        break;
+    }
+    
+    return error;
+  };
+
+  // Tüm form geçerli mi kontrol et
+  const isFormValid = () => {
+    const requiredFields = ['isim', 'soyisim', 'email', 'telefon', 'plaka', 'name', 'description', 'type', 'address'];
+    
+    // Tüm zorunlu alanlar dolu mu?
+    const allFieldsFilled = requiredFields.every(field => formData[field].trim());
+    
+    // Hiç validasyon hatası var mı?
+    const noErrors = Object.keys(fieldErrors).length === 0 || 
+                     Object.values(fieldErrors).every(error => !error);
+    
+    return allFieldsFilled && noErrors;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Plaka kodunu normalize et
+    let normalizedValue = value;
+    if (name === 'plaka') {
+      normalizedValue = value.toUpperCase();
+      // Sadece TR ve rakam kabul et
+      normalizedValue = normalizedValue.replace(/[^TR0-9]/g, '');
+    }
+    
+    // Form data'yı güncelle
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: normalizedValue
+    }));
+    
+    // Alan dokunuldu olarak işaretle
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+    
+    // Validasyon yap
+    const error = validateField(name, normalizedValue);
+    setFieldErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    
+    // Alan dokunuldu olarak işaretle
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+    
+    // Validasyon yap
+    const error = validateField(name, value);
+    setFieldErrors(prev => ({
+      ...prev,
+      [name]: error
     }));
   };
 
@@ -77,56 +262,105 @@ const RusIziEkle = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Tüm alanları dokunuldu olarak işaretle
+    const requiredFields = ['isim', 'soyisim', 'email', 'telefon', 'plaka', 'name', 'description', 'type', 'address'];
+    const newTouched = {};
+    const newErrors = {};
+    
+    requiredFields.forEach(field => {
+      newTouched[field] = true;
+      newErrors[field] = validateField(field, formData[field]);
+    });
+    
+    // Website opsiyonel ama dolu ise kontrol et
+    if (formData.website.trim()) {
+      newTouched.website = true;
+      newErrors.website = validateField('website', formData.website);
+    }
+    
+    setTouched(newTouched);
+    setFieldErrors(newErrors);
+    
+    // Form geçerli değilse submit etme
+    if (!isFormValid() || Object.values(newErrors).some(error => error)) {
+      showMessage('Lütfen tüm alanları doğru şekilde doldurun', 'error');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      console.log('📝 Form submit başlıyor...');
-      console.log('📋 Form Data:', formData);
+      // Plaka kodunu normalize et (TR ön eki ekle)
+      let normalizedPlaka = formData.plaka.toUpperCase();
+      if (!normalizedPlaka.startsWith('TR')) {
+        normalizedPlaka = `TR${normalizedPlaka.padStart(2, '0')}`;
+      }
+      
+      const submitData = {
+        // Kullanıcı bilgileri
+        isim: formData.isim.trim(),
+        soyisim: formData.soyisim.trim(),
+        email: formData.email.trim().toLowerCase(),
+        telefon: formData.telefon.trim(),
+        
+        // Rus İzi bilgileri
+        plaka: normalizedPlaka,
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        type: formData.type.trim(),
+        website: formData.website.trim() || '',
+        address: formData.address.trim(),
+        dosyalar: formData.dosyalar || []
+      };
       
       const url = 'http://localhost:8080/api/user-rusizi-application';
-      console.log('📡 API URL:', url);
 
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(submitData)
       });
-
-      console.log('📊 Response Status:', response.status);
-      console.log('📋 Response OK:', response.ok);
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('❌ API Error:', errorData);
         throw new Error(errorData.error || 'Başvuru gönderilemedi');
       }
 
       const data = await response.json();
-      console.log('✅ API Success:', data);
       
-      showMessage('✅ Rus izi bilginiz başarıyla gönderildi! İncelendikten sonra yayınlanacaktır.', 'success');
+      showMessage('✅ Rus izi bilginiz başarıyla gönderildi! İncelendikten sonra haritada yayınlanacaktır.', 'success');
       
-      // Formu temizle
-      setFormData({
-        isim: "",
-        soyisim: "",
-        email: "",
-        telefon: "",
-        aciklama: "",
-        konum: "",
-        dosyalar: []
-      });
+      // Formu temizle - setTimeout ile state güncellemelerini sırala
+      setTimeout(() => {
+        setFormData({
+          isim: "",
+          soyisim: "",
+          email: "",
+          telefon: "",
+          plaka: "",
+          name: "",
+          description: "",
+          type: "",
+          website: "",
+          address: "",
+          dosyalar: []
+        });
+        
+        // Validasyon state'lerini temizle
+        setFieldErrors({});
+        setTouched({});
 
-      // Dosya input'unu da temizle
-      const fileInput = document.getElementById('dosyaForm');
-      if (fileInput) {
-        fileInput.value = '';
-      }
+        // Dosya input'unu da temizle
+        const fileInput = document.getElementById('dosyaForm');
+        if (fileInput) {
+          fileInput.value = '';
+        }
+      }, 100);
 
     } catch (error) {
-      console.error('❌ Form submit hatası:', error);
       showMessage(`❌ Başvuru gönderilirken hata oluştu: ${error.message}`, 'error');
     } finally {
       setLoading(false);
@@ -139,6 +373,17 @@ const RusIziEkle = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // Hata durumunda input sınıfı
+  const getInputClass = (fieldName) => {
+    const baseClass = "form-control";
+    if (touched[fieldName] && fieldErrors[fieldName]) {
+      return `${baseClass} is-invalid`;
+    } else if (touched[fieldName] && !fieldErrors[fieldName] && formData[fieldName].trim()) {
+      return `${baseClass} is-valid`;
+    }
+    return baseClass;
   };
 
   return (
@@ -179,7 +424,7 @@ const RusIziEkle = () => {
               Yeni Rus İzi Bilgisi Ekle
             </h4>
             <p className="text-muted">
-              Türkiye'de keşfettiğiniz Rus izlerini bizimle paylaşın! Başvurunuz incelendikten sonra yayınlanacaktır.
+              Türkiye'de keşfettiğiniz Rus izlerini bizimle paylaşın! Başvurunuz incelendikten sonra haritada yayınlanacaktır.
             </p>
           </div>
 
@@ -191,21 +436,37 @@ const RusIziEkle = () => {
           )}
           
           <form onSubmit={handleSubmit}>
-            <div className="row g-3">
+            {/* Kişisel Bilgiler Başlığı */}
+            <div className="row mb-3">
+              <div className="col-12">
+                <h5 className="text-primary border-bottom pb-2">
+                  <i className="fa-solid fa-user me-2"></i>
+                  Kişisel Bilgileriniz
+                </h5>
+              </div>
+            </div>
+            
+            <div className="row g-3 mb-4">
               <div className="col-md-6">
                 <label htmlFor="isimForm" className="form-label fw-semibold">
                   <i className="fa-solid fa-user me-1"></i> İsminiz *
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={getInputClass('isim')}
                   id="isimForm"
                   name="isim"
                   value={formData.isim}
                   onChange={handleInputChange}
+                  onBlur={handleBlur}
                   placeholder="İsminizi giriniz"
                   required
                 />
+                {touched.isim && fieldErrors.isim && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.isim}
+                  </div>
+                )}
               </div>
               
               <div className="col-md-6">
@@ -214,14 +475,20 @@ const RusIziEkle = () => {
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={getInputClass('soyisim')}
                   id="soyisimForm"
                   name="soyisim"
                   value={formData.soyisim}
                   onChange={handleInputChange}
+                  onBlur={handleBlur}
                   placeholder="Soyisminizi giriniz"
                   required
                 />
+                {touched.soyisim && fieldErrors.soyisim && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.soyisim}
+                  </div>
+                )}
               </div>
               
               <div className="col-md-6">
@@ -230,14 +497,20 @@ const RusIziEkle = () => {
                 </label>
                 <input
                   type="email"
-                  className="form-control"
+                  className={getInputClass('email')}
                   id="emailForm"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  onBlur={handleBlur}
                   placeholder="ornek@mail.com"
                   required
                 />
+                {touched.email && fieldErrors.email && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.email}
+                  </div>
+                )}
               </div>
               
               <div className="col-md-6">
@@ -246,47 +519,181 @@ const RusIziEkle = () => {
                 </label>
                 <input
                   type="tel"
-                  className="form-control"
+                  className={getInputClass('telefon')}
                   id="telefonForm"
                   name="telefon"
                   value={formData.telefon}
                   onChange={handleInputChange}
+                  onBlur={handleBlur}
                   placeholder="5XX XXX XX XX"
                   required
                 />
+                {touched.telefon && fieldErrors.telefon && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.telefon}
+                  </div>
+                )}
               </div>
+            </div>
 
+            {/* Rus İzi Bilgileri Başlığı */}
+            <div className="row mb-3">
               <div className="col-12">
-                <label htmlFor="konumForm" className="form-label fw-semibold">
-                  <i className="fa-solid fa-map-marker-alt me-1"></i> Konum/Şehir *
+                <h5 className="text-primary border-bottom pb-2">
+                  <i className="fa-solid fa-landmark me-2"></i>
+                  Rus İzi Bilgileri
+                </h5>
+              </div>
+            </div>
+
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label htmlFor="plakaForm" className="form-label fw-semibold">
+                  🗺️ Plaka Kodu *
                 </label>
                 <input
                   type="text"
-                  className="form-control"
-                  id="konumForm"
-                  name="konum"
-                  value={formData.konum}
+                  className={getInputClass('plaka')}
+                  id="plakaForm"
+                  name="plaka"
+                  value={formData.plaka}
                   onChange={handleInputChange}
-                  placeholder="Örn: İstanbul, Galata Kulesi"
+                  onBlur={handleBlur}
+                  placeholder="Örn: TR06, 06, 34"
+                  maxLength="4"
                   required
                 />
+                <div className="form-text">
+                  TR06, 06, 34 formatlarında yazabilirsiniz
+                </div>
+                {touched.plaka && fieldErrors.plaka && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.plaka}
+                  </div>
+                )}
+              </div>
+              
+              <div className="col-md-6">
+                <label htmlFor="nameForm" className="form-label fw-semibold">
+                  🏛️ Rus İzi Adı *
+                </label>
+                <input
+                  type="text"
+                  className={getInputClass('name')}
+                  id="nameForm"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  placeholder="Örn: Kars Fethiye Camii"
+                  required
+                />
+                {touched.name && fieldErrors.name && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.name}
+                  </div>
+                )}
               </div>
               
               <div className="col-12">
-                <label htmlFor="aciklamaForm" className="form-label fw-semibold">
-                  <i className="fa-solid fa-info-circle me-1"></i> Rus İzi Hakkında Bilgi *
+                <label htmlFor="descriptionForm" className="form-label fw-semibold">
+                  📝 Açıklama *
                 </label>
                 <textarea
-                  className="form-control"
-                  id="aciklamaForm"
-                  name="aciklama"
-                  value={formData.aciklama}
+                  className={getInputClass('description')}
+                  id="descriptionForm"
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Bulduğunuz Rus izi hakkında detaylı bilgi verin... Tarihi, mimarisi, hikayesi vb."
+                  onBlur={handleBlur}
+                  placeholder="Rus izi hakkında detaylı açıklama yazın... Tarihi, mimarisi, hikayesi vb."
                   rows="4"
                   style={{ resize: 'vertical' }}
                   required
                 />
+                <div className="form-text">
+                  <small>
+                    En az 10 karakter yazmanız gerekmektedir. 
+                    {formData.description.length > 0 && (
+                      <span className={formData.description.length >= 10 ? 'text-success' : 'text-warning'}>
+                        {' '}({formData.description.length}/2000 karakter)
+                      </span>
+                    )}
+                  </small>
+                </div>
+                {touched.description && fieldErrors.description && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.description}
+                  </div>
+                )}
+              </div>
+              
+              <div className="col-md-6">
+                <label htmlFor="typeForm" className="form-label fw-semibold">
+                  🏷️ Tür *
+                </label>
+                <select
+                  className={getInputClass('type')}
+                  id="typeForm"
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  required
+                >
+                  <option value="">Kategori Seçiniz</option>
+                  {rusIziKategorileri.map(kategori => (
+                    <option key={kategori} value={kategori}>{kategori}</option>
+                  ))}
+                </select>
+                {touched.type && fieldErrors.type && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.type}
+                  </div>
+                )}
+              </div>
+              
+              <div className="col-md-6">
+                <label htmlFor="websiteForm" className="form-label fw-semibold">
+                  🌐 Web Sitesi
+                </label>
+                <input
+                  type="url"
+                  className={getInputClass('website')}
+                  id="websiteForm"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  placeholder="https://example.com (opsiyonel)"
+                />
+                {touched.website && fieldErrors.website && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.website}
+                  </div>
+                )}
+              </div>
+              
+              <div className="col-12">
+                <label htmlFor="addressForm" className="form-label fw-semibold">
+                  📍 Adres *
+                </label>
+                <input
+                  type="text"
+                  className={getInputClass('address')}
+                  id="addressForm"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  placeholder="Örn: Fethiye, Kars"
+                  required
+                />
+                {touched.address && fieldErrors.address && (
+                  <div className="invalid-feedback">
+                    {fieldErrors.address}
+                  </div>
+                )}
               </div>
 
               <div className="col-12">
@@ -352,8 +759,8 @@ const RusIziEkle = () => {
               <div className="col-12 text-center mt-4">
                 <button 
                   type="submit" 
-                  className="btn btn-primary btn-lg px-5"
-                  disabled={loading}
+                  className={`btn btn-lg px-5 ${isFormValid() ? 'btn-primary' : 'btn-secondary'}`}
+                  disabled={loading || !isFormValid()}
                 >
                   {loading ? (
                     <>
@@ -363,10 +770,18 @@ const RusIziEkle = () => {
                   ) : (
                     <>
                       <i className="fa-solid fa-paper-plane me-2"></i>
-                      Rus İzi Bilgisini Paylaş!
+                      {isFormValid() ? 'Rus İzi Bilgisini Paylaş!' : 'Lütfen Tüm Alanları Doldurun'}
                     </>
                   )}
                 </button>
+                {!isFormValid() && (
+                  <div className="text-muted mt-2">
+                    <small>
+                      <i className="fa-solid fa-info-circle me-1"></i>
+                      Formu göndermek için tüm zorunlu alanları doğru şekilde doldurmanız gerekmektedir.
+                    </small>
+                  </div>
+                )}
               </div>
             </div>
           </form>
